@@ -1,4 +1,4 @@
-export const OrderPanel = () => {
+export const OrderPanel = (isBottomSheet = false) => {
   // Initialize state if not present
   if (window.orderState === undefined) {
     window.orderState = {
@@ -13,8 +13,12 @@ export const OrderPanel = () => {
     // Force re-render of components that use this
     const desktopPanel = document.getElementById('desktop-order-panel');
     if (desktopPanel) {
-      // Re-render only if the panel is visible
-      desktopPanel.innerHTML = OrderPanel();
+      desktopPanel.innerHTML = OrderPanel(false);
+    }
+    
+    const sheetContent = document.querySelector('#trade-bottom-sheet > div:last-child');
+    if (sheetContent) {
+      sheetContent.innerHTML = OrderPanel(true);
     }
     
     // Update mobile terminal button if it exists
@@ -58,14 +62,15 @@ export const OrderPanel = () => {
   window.confirmTradeExecution = () => {
     const overlay = document.querySelector('.modal-overlay');
     if (overlay) overlay.classList.remove('active');
-    
+    window.toggleBottomSheet(false);
     window.showToast('Order executed successfully', 'success');
   };
 
   const isBuy = window.orderState.type === 'BUY';
 
   return `
-    <aside class="w-full xl:w-80 border-l border-gray-800 h-full flex flex-col bg-[#131722]/50 backdrop-blur-sm transition-colors duration-300 overflow-y-auto">
+    <div class="${isBottomSheet ? 'w-full' : 'w-full xl:w-80 border-l border-gray-800 h-full bg-[#131722]/50 backdrop-blur-sm'} flex flex-col transition-colors duration-300">
+      ${!isBottomSheet ? `
       <div class="p-6 md:p-8 border-b border-gray-800">
         <h2 class="text-lg md:text-xl font-black tracking-tight text-white">Execution</h2>
         <div class="flex items-center gap-2 mt-2">
@@ -73,8 +78,9 @@ export const OrderPanel = () => {
           <p class="text-[9px] md:text-[10px] font-bold text-gray-500 uppercase tracking-widest">${window.orderState.symbol} · Live Feed</p>
         </div>
       </div>
+      ` : ''}
 
-      <div class="flex-1 p-6 md:p-8 space-y-6 md:space-y-8">
+      <div class="flex-1 ${isBottomSheet ? 'p-0' : 'p-6 md:p-8'} space-y-6 md:space-y-8">
         <!-- Execution Type -->
         <div class="space-y-3">
           <label class="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Order Type</label>
@@ -86,11 +92,11 @@ export const OrderPanel = () => {
         </div>
 
         <!-- Position Direction -->
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid ${isBottomSheet ? 'grid-cols-1 gap-3' : 'grid-cols-2 gap-3'}">
           <button onclick="window.setOrderDirection('BUY')" 
-                  class="py-3 md:py-4 rounded-xl font-black text-xs md:text-sm tracking-widest transition-all hover:scale-[1.02] ${isBuy ? 'border-2 border-green-500 bg-green-500/10 text-green-500 shadow-lg shadow-green-500/10' : 'border border-gray-800 bg-[#0f1115] text-gray-500'}">BUY</button>
+                  class="py-3 md:py-4 rounded-xl font-black text-xs md:text-sm tracking-widest transition-all hover:scale-[1.01] active:scale-95 ${isBuy ? 'border-2 border-green-500 bg-green-500/10 text-green-500 shadow-lg shadow-green-500/10' : 'border border-gray-800 bg-[#0f1115] text-gray-500'}">BUY</button>
           <button onclick="window.setOrderDirection('SELL')" 
-                  class="py-3 md:py-4 rounded-xl font-black text-xs md:text-sm tracking-widest transition-all hover:scale-[1.02] ${!isBuy ? 'border-2 border-red-500 bg-red-500/10 text-red-500 shadow-lg shadow-red-500/10' : 'border border-gray-800 bg-[#0f1115] text-gray-500'}">SELL</button>
+                  class="py-3 md:py-4 rounded-xl font-black text-xs md:text-sm tracking-widest transition-all hover:scale-[1.01] active:scale-95 ${!isBuy ? 'border-2 border-red-500 bg-red-500/10 text-red-500 shadow-lg shadow-red-500/10' : 'border border-gray-800 bg-[#0f1115] text-gray-500'}">SELL</button>
         </div>
 
         <!-- Parameters -->
@@ -105,13 +111,13 @@ export const OrderPanel = () => {
             </div>
             <div class="grid grid-cols-4 gap-2">
               ${[0.01, 0.1, 0.5, 1.0].map(val => `
-                <button onclick="window.orderState.lots = ${val}; document.querySelector('input[type=number]').value = '${val}'; window.setOrderDirection(window.orderState.type)" 
-                        class="py-1 md:py-1.5 text-[8px] md:text-[9px] font-black rounded-lg bg-[#0f1115] border border-gray-800 hover:border-blue-500/50 hover:text-blue-500 transition-all text-gray-500">${val}</button>
+                <button onclick="window.orderState.lots = ${val}; window.setOrderDirection(window.orderState.type)" 
+                        class="py-2 text-[10px] font-black rounded-lg bg-[#0f1115] border border-gray-800 hover:border-blue-500/50 hover:text-blue-500 transition-all text-gray-500">${val}</button>
               `).join('')}
             </div>
           </div>
 
-          <div class="grid grid-cols-1 gap-3 md:gap-4">
+          <div class="grid grid-cols-2 lg:grid-cols-1 gap-3 md:gap-4">
             <div class="space-y-2">
               <label class="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Take Profit (TP)</label>
               <input type="text" placeholder="1.09500" class="input-field py-2.5 md:py-3 text-xs md:text-sm text-white border-gray-800 bg-[#0f1115] focus:border-blue-500">
@@ -133,23 +139,20 @@ export const OrderPanel = () => {
             <span class="text-gray-500 uppercase tracking-wider">Estimated Pip</span>
             <span class="text-blue-500 font-black">$10.00</span>
           </div>
-          <div class="pt-2 border-t border-gray-800 flex justify-between text-[10px] md:text-xs font-black">
-            <span class="text-gray-500 uppercase">Potential profit</span>
-            <span class="text-green-500">+$1,000.00</span>
-          </div>
         </div>
       </div>
 
-      <div class="p-6 md:p-8 border-t border-gray-800 bg-[#131722]">
+      <div class="${isBottomSheet ? 'pt-6' : 'p-6 md:p-8 border-t border-gray-800 bg-[#131722]'}">
         <button onclick="window.executeTrade()" 
-                class="${isBuy ? 'btn-success' : 'btn-danger'} w-full py-4 md:py-5 text-xs md:text-sm font-black tracking-widest uppercase shadow-xl hover:scale-[0.98]">
-          Execute Order
+                class="${isBuy ? 'btn-success' : 'btn-danger'} w-full py-4 md:py-5 text-xs md:text-sm font-black tracking-widest uppercase shadow-xl active:scale-[0.98]">
+          Execute ${window.orderState.type}
         </button>
         <p class="text-[8px] md:text-[9px] text-gray-500/50 text-center mt-4 font-bold uppercase tracking-tighter leading-tight">
           Executing this order will utilize $450.00 of your margin.
         </p>
       </div>
-    </aside>
+    </div>
   `;
 };
+
 

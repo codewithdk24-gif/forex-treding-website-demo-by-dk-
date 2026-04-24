@@ -17,6 +17,15 @@ export const Layout = (content) => {
       
       <!-- Mobile Fullscreen Terminal Overlay -->
       ${MobileTerminal()}
+
+      <!-- Trade Bottom Sheet for Mobile -->
+      <div id="sheet-overlay" onclick="window.toggleBottomSheet(false)" class="drawer-overlay lg:hidden"></div>
+      <div id="trade-bottom-sheet" class="bottom-sheet lg:hidden">
+        <div class="bottom-sheet-handle"></div>
+        <div class="p-4 sm:p-6">
+           ${OrderPanel(true)}
+        </div>
+      </div>
       
       <div class="flex-1 flex flex-col min-w-0">
         ${Header()}
@@ -28,10 +37,11 @@ export const Layout = (content) => {
           
           <!-- Order Panel -->
           <div id="desktop-order-panel" class="hidden xl:block">
-            ${['dashboard', 'markets'].some(h => currentHash.includes(h)) ? OrderPanel() : ''}
+            ${['dashboard', 'markets'].some(h => currentHash.includes(h)) ? OrderPanel(false) : ''}
           </div>
         </main>
       </div>
     </div>
   `;
 };
+
