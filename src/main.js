@@ -100,6 +100,8 @@ window.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('pageLoaded', (e) => {
   document.getElementById('mobile-sidebar')?.classList.remove('active');
   document.getElementById('sidebar-overlay')?.classList.remove('active');
+  document.getElementById('trade-bottom-sheet')?.classList.remove('active');
+  document.getElementById('sheet-overlay')?.classList.remove('active');
 
   const page = e.detail.page;
   
@@ -137,6 +139,33 @@ window.toggleSidebar = () => {
   sidebar?.classList.toggle('active');
   overlay?.classList.toggle('active');
 };
+
+window.toggleBottomSheet = (isOpen) => {
+  const sheet = document.getElementById('trade-bottom-sheet');
+  const overlay = document.getElementById('sheet-overlay');
+  if (isOpen) {
+    sheet?.classList.add('active');
+    overlay?.classList.add('active');
+  } else {
+    sheet?.classList.remove('active');
+    overlay?.classList.remove('active');
+  }
+};
+
+window.toggleChartFullscreen = () => {
+  const container = document.getElementById('tv-chart-container');
+  if (container) {
+    container.classList.toggle('chart-fullscreen');
+    // Re-initialize chart to fit new size
+    const symbol = container.dataset.symbol || 'FX:EURUSD';
+    TradingViewChart('tv-chart-container', symbol, 'dark');
+    
+    if (container.classList.contains('chart-fullscreen')) {
+       window.showToast('Fullscreen Mode Enabled', 'info');
+    }
+  }
+};
+
 
 window.toggleTerminal = (isOpen) => {
   const terminal = document.getElementById('mobile-terminal');
