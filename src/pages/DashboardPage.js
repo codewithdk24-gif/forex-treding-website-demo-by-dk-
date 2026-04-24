@@ -69,8 +69,9 @@ export const DashboardPage = () => {
           <div class="space-y-4">
              <div class="flex items-center justify-between px-2">
                 <h3 class="text-[11px] font-black text-gray-500 uppercase tracking-widest">Active Positions</h3>
-                <span class="text-[10px] font-black text-blue-500 uppercase">Manage All →</span>
+                <a href="/#orders" class="text-[10px] font-black text-blue-500 uppercase">Manage All →</a>
              </div>
+
              
              ${[
                { symbol: 'EUR/USD', type: 'BUY', size: '1.00', entry: '1.08620', pl: '+$322.00', color: 'green' },
@@ -96,12 +97,13 @@ export const DashboardPage = () => {
           <div class="card bg-blue-600/5 border-blue-600/10 p-6 flex flex-col md:flex-row items-center justify-between gap-6 reveal">
              <div class="space-y-2 text-center md:text-left">
                 <h4 class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Risk Intelligence Analysis</h4>
-                <p class="text-xs text-gray-400 leading-relaxed font-medium max-w-xl">Your portfolio is currently optimized. Institutional liquidity is guaranteed for your open positions. Risk exposure is within L4 protocol limits.</p>
+                <p class="text-xs text-gray-400 leading-relaxed font-medium max-w-xl">Your portfolio is currently optimized. Deep liquidity access is guaranteed for your open positions. Risk exposure is within L4 protocol limits.</p>
              </div>
-             <button class="w-full md:w-auto btn-outline min-h-0 py-3 px-10 text-[10px] font-black border-blue-600/20 text-blue-500 hover:bg-blue-600 hover:text-white transition-all">REBALANCE PORTFOLIO</button>
+             <button onclick="window.showToast('Portfolio rebalancing initiated', 'info')" class="w-full md:w-auto btn-outline min-h-0 py-3 px-10 text-[10px] font-black border-blue-600/20 text-blue-500 hover:bg-blue-600 hover:text-white transition-all">REBALANCE PORTFOLIO</button>
           </div>
         </div>
       </div>
     </div>
   `;
 };
+

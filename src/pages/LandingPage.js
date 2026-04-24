@@ -16,14 +16,15 @@ export const LandingPage = () => {
           <span class="text-xl md:text-2xl font-black tracking-tighter">Forex<span class="text-blue-500">Pro</span></span>
         </div>
         <div class="hidden lg:flex items-center gap-10">
-          <a href="#" class="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">Markets</a>
-          <a href="#" class="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">Execution</a>
-          <a href="#" class="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">Pricing</a>
+          <a href="/#markets" class="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">Markets</a>
+          <a href="/#orders" class="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">Execution</a>
+          <a href="#cta" class="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">Pricing</a>
         </div>
         <div class="flex items-center gap-3">
           <a href="#auth" class="btn-primary min-h-0 py-2 md:py-2.5 px-5 md:px-7 text-[10px] md:text-xs font-black">LOGIN</a>
         </div>
       </nav>
+
 
       <!-- Hero Section -->
       <section class="relative pt-32 pb-16 md:pt-48 md:pb-32 px-6 overflow-hidden">
@@ -35,12 +36,13 @@ export const LandingPage = () => {
           </div>
           
           <h1 class="text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.1] text-white fade-in" style="animation-delay: 0.1s">
-            Where Serious Traders <br class="hidden sm:block"> Build Real Wealth
+            Institutional-Grade <br class="hidden sm:block"> Trading Infrastructure
           </h1>
           
           <p class="text-sm md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed font-medium px-4 md:px-0 fade-in" style="animation-delay: 0.2s">
-            Professional-grade forex terminal with institutional speed, real-time analytics, and guaranteed liquidity.
+            Professional-grade forex terminal with institutional speed, real-time analytics, and deep liquidity access.
           </p>
+
           
           <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 fade-in" style="animation-delay: 0.3s">
             <a href="#auth" class="w-full sm:w-auto btn-primary px-10 btn-glow">Launch Terminal</a>
@@ -132,15 +134,16 @@ export const LandingPage = () => {
       <!-- Features Section -->
       <section class="section-container space-y-12 md:space-y-32">
         <!-- Feature 1 -->
-        <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-10 md:gap-20 reveal">
+        <div id="features" class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-10 md:gap-20 reveal">
           <div class="flex-1 space-y-5 text-center lg:text-left order-2 lg:order-1">
             <div class="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-500 mx-auto lg:mx-0">${Icons.lightning}</div>
             <h2 class="text-3xl md:text-5xl font-black tracking-tight text-white">Lightning Fast <br class="hidden md:block"> Execution Engine</h2>
-            <p class="text-sm md:text-lg text-gray-400 font-medium">Experience sub-millisecond precision with institutional grade execution. No slippage, just results.</p>
+            <p class="text-sm md:text-lg text-gray-400 font-medium">Experience sub-millisecond precision with institutional grade execution. Optimized execution, just results.</p>
             <div class="pt-2">
-               <button class="flex items-center gap-2 text-[10px] font-black text-blue-500 uppercase tracking-widest mx-auto lg:mx-0 hover:gap-4 transition-all">Learn More ${Icons.arrowRight}</button>
+               <a href="#features" class="flex items-center gap-2 text-[10px] font-black text-blue-500 uppercase tracking-widest mx-auto lg:mx-0 hover:gap-4 transition-all">Learn More ${Icons.arrowRight}</a>
             </div>
           </div>
+
           <div class="flex-1 w-full order-1 lg:order-2">
              <div class="card bg-blue-600/5 border-blue-600/10 p-4 md:p-8 hover-lift">
                 <div class="aspect-video bg-[#0f1115] rounded-xl overflow-hidden border border-white/5 relative">
@@ -156,15 +159,16 @@ export const LandingPage = () => {
         </div>
 
         <!-- Feature 2 -->
-        <div class="max-w-6xl mx-auto flex flex-col lg:flex-row-reverse items-center gap-10 md:gap-20 reveal">
+        <div id="safety" class="max-w-6xl mx-auto flex flex-col lg:flex-row-reverse items-center gap-10 md:gap-20 reveal">
           <div class="flex-1 space-y-5 text-center lg:text-left">
             <div class="w-12 h-12 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-500 mx-auto lg:mx-0">${Icons.shield}</div>
             <h2 class="text-3xl md:text-5xl font-black tracking-tight text-white">Institutional <br class="hidden md:block"> Risk Protocol</h2>
             <p class="text-sm md:text-lg text-gray-400 font-medium">Automated margin intelligence and negative balance protection. Your capital is secured by industry leading protocols.</p>
             <div class="pt-2">
-               <button class="flex items-center gap-2 text-[10px] font-black text-green-500 uppercase tracking-widest mx-auto lg:mx-0 hover:gap-4 transition-all">Explore Safety ${Icons.arrowRight}</button>
+               <a href="#safety" class="flex items-center gap-2 text-[10px] font-black text-green-500 uppercase tracking-widest mx-auto lg:mx-0 hover:gap-4 transition-all">Explore Safety ${Icons.arrowRight}</a>
             </div>
           </div>
+
           <div class="flex-1 w-full">
              <div class="card bg-green-500/5 border-green-500/10 p-4 md:p-8 hover-lift">
                 <div class="aspect-video bg-[#0f1115] rounded-xl border border-white/5 relative flex items-center justify-center">
@@ -179,7 +183,8 @@ export const LandingPage = () => {
       </section>
 
       <!-- CTA Section -->
-      <section class="section-container relative overflow-hidden text-center bg-[#131722]/50 border-t border-white/5">
+      <section id="cta" class="section-container relative overflow-hidden text-center bg-[#131722]/50 border-t border-white/5">
+
         <div class="absolute inset-0 bg-blue-600/5 blur-[120px] -z-10"></div>
         <div class="max-w-3xl mx-auto space-y-8 relative z-10">
           <h2 class="text-3xl md:text-6xl font-black tracking-tighter text-white">Stop Guessing. <br> <span class="text-blue-500">Trade Like a Pro.</span></h2>
@@ -199,11 +204,41 @@ export const LandingPage = () => {
           </div>
           <p class="text-[10px] font-black uppercase tracking-widest text-gray-600">© 2024 ForexPro Institutional. All rights reserved.</p>
           <div class="flex gap-8 text-[10px] font-black uppercase tracking-widest text-gray-500">
-             <a href="#" class="hover:text-blue-500 transition-colors">Privacy</a>
-             <a href="#" class="hover:text-blue-500 transition-colors">Terms</a>
+             <a href="javascript:void(0)" onclick="window.openPrivacy()" class="hover:text-blue-500 transition-colors">Privacy</a>
+             <a href="javascript:void(0)" onclick="window.openTerms()" class="hover:text-blue-500 transition-colors">Terms</a>
           </div>
         </div>
       </footer>
     </div>
   `;
 };
+
+window.openPrivacy = () => {
+  window.showModal('Privacy Policy', `
+    <div class="space-y-4">
+      <p>This institutional trading platform adheres to the highest standards of data protection and privacy.</p>
+      <p>Our infrastructure utilizes military-grade encryption to ensure that your trading activities and personal information remain confidential at all times.</p>
+      <p class="font-black text-white">KEY PROTOCOLS:</p>
+      <ul class="list-disc pl-5 space-y-2">
+        <li>Zero-knowledge architecture for sensitive data.</li>
+        <li>End-to-end encryption for all trade communications.</li>
+        <li>Compliance with global financial privacy standards.</li>
+      </ul>
+    </div>
+  `);
+};
+
+window.openTerms = () => {
+  window.showModal('Terms of Service', `
+    <div class="space-y-4">
+      <p>By accessing the ForexPro Institutional Terminal, you agree to the following institutional-grade terms:</p>
+      <ul class="list-disc pl-5 space-y-2">
+        <li>Execution speed is subject to global liquidity conditions.</li>
+        <li>Risk protocols are automatically enforced by the L4 liquidity engine.</li>
+        <li>Users must maintain minimum margin requirements as specified in the risk protocol.</li>
+      </ul>
+      <p>Failure to comply with risk protocols may result in automated portfolio rebalancing.</p>
+    </div>
+  `);
+};
+

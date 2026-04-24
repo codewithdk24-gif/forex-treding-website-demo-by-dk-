@@ -11,50 +11,76 @@ export const AuthPage = () => {
   };
 
   // Handle Auth Logic
-  window.handleAuth = (event) => {
+  window.handleAuth = async (event) => {
     event.preventDefault();
     const mode = window.authMode;
     const form = event.target;
-    const email = form.email.value;
-    const password = form.password.value;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.innerHTML;
+    
+    const email = form.email.value.trim();
+    const password = form.password.value.trim();
     const users = JSON.parse(localStorage.getItem('users') || '[]');
+
+    // Basic Validation
+    if (!email || !password) {
+      window.showToast('Please fill in all fields', 'error');
+      return;
+    }
+
+    if (!isLogin && !form.name.value.trim()) {
+      window.showToast('Please enter your full name', 'error');
+      return;
+    }
+
+    // Show Loading
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<div class="loading-spinner"></div>';
+
+    // Simulate Network Delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
 
     if (isAdminLogin) {
       if (email === 'admin' && password === '123456') {
         localStorage.setItem('currentUser', JSON.stringify({ name: 'Admin', role: 'admin' }));
+        window.showToast('Root Access Verified', 'success');
         window.location.hash = 'admin';
       } else {
-        alert('Invalid Admin Credentials');
+        window.showToast('Invalid Admin Credentials', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
       }
       return;
     }
 
     if (mode === 'signup') {
-      const name = form.name.value;
-      // Check for duplicate email
+      const name = form.name.value.trim();
       if (users.find(u => u.email === email)) {
-        alert('User already exists with this email');
+        window.showToast('User already exists with this email', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
         return;
       }
-      // Save new user
       const newUser = { name, email, password, role: 'user', balance: 10000 };
       users.push(newUser);
       localStorage.setItem('users', JSON.stringify(users));
-      
-      // Auto login after signup
       localStorage.setItem('currentUser', JSON.stringify({ name, role: 'user' }));
+      window.showToast('Account Created Successfully', 'success');
       window.location.hash = 'dashboard';
     } else {
-      // Login logic
       const user = users.find(u => u.email === email && u.password === password);
       if (user) {
         localStorage.setItem('currentUser', JSON.stringify({ name: user.name, role: user.role }));
+        window.showToast('Welcome back to the Terminal', 'success');
         window.location.hash = 'dashboard';
       } else {
-        alert('Invalid Email or Password');
+        window.showToast('Invalid Email or Password', 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
       }
     }
   };
+
 
   const isLogin = window.authMode === 'login' || isAdminLogin;
 

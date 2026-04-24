@@ -149,3 +149,60 @@ window.toggleTerminal = (isOpen) => {
     terminal?.classList.remove('active');
   }
 };
+
+// Global Feedback System
+window.showToast = (message, type = 'success') => {
+  let container = document.querySelector('.toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  
+  const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+  
+  toast.innerHTML = `
+    <span>${icon}</span>
+    <p>${message}</p>
+  `;
+  
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(100%) scale(0.9)';
+    setTimeout(() => toast.remove(), 400);
+  }, 3000);
+};
+
+window.showModal = (title, content) => {
+  let overlay = document.querySelector('.modal-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    document.body.appendChild(overlay);
+  }
+
+  overlay.innerHTML = `
+    <div class="modal-content relative">
+      <button onclick="this.closest('.modal-overlay').classList.remove('active')" class="absolute top-4 right-4 text-gray-500 hover:text-white">✕</button>
+      <h3 class="text-xl font-black text-white mb-4">${title}</h3>
+      <div class="text-gray-400 text-sm leading-relaxed space-y-4">
+        ${content}
+      </div>
+      <div class="mt-8 flex justify-end">
+        <button onclick="this.closest('.modal-overlay').classList.remove('active')" class="btn-primary py-2 px-6 text-xs font-black">CLOSE</button>
+      </div>
+    </div>
+  `;
+  
+  overlay.onclick = (e) => {
+    if (e.target === overlay) overlay.classList.remove('active');
+  };
+
+  setTimeout(() => overlay.classList.add('active'), 10);
+};
+

@@ -13,9 +13,12 @@ export const Header = () => {
         </button>
 
         <div class="relative hidden lg:block group">
-           <input type="text" placeholder="Search markets (CMD+K)" class="w-64 bg-[#131722] border border-gray-800 rounded-xl py-2 px-10 text-[10px] font-black uppercase tracking-widest placeholder:text-gray-600 focus:border-blue-500/50 transition-all">
+           <input type="text" 
+                  onkeydown="if(event.key === 'Enter') { window.showToast('Searching for assets...', 'info'); window.location.hash = 'markets'; }"
+                  placeholder="Search markets (CMD+K)" class="w-64 bg-[#131722] border border-gray-800 rounded-xl py-2 px-10 text-[10px] font-black uppercase tracking-widest placeholder:text-gray-600 focus:border-blue-500/50 transition-all">
            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 group-focus-within:text-blue-500 transition-colors">🔍</span>
         </div>
+
         
         ${user.role === 'admin' ? `
           <div class="flex items-center gap-2 px-3 py-1 bg-blue-600/10 border border-blue-600/20 rounded-full">
