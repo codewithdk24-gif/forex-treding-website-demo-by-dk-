@@ -15,11 +15,9 @@ export const Layout = (content) => {
       <!-- Desktop Sidebar -->
       ${Sidebar(false)}
       
-      <!-- Mobile Fullscreen Terminal Overlay -->
-      ${MobileTerminal()}
 
       <!-- Trade Bottom Sheet for Mobile -->
-      <div id="sheet-overlay" onclick="window.toggleBottomSheet(false)" class="drawer-overlay lg:hidden"></div>
+      <div id="sheet-overlay" onclick="window.toggleBottomSheet(false)" class="drawer-overlay lg:hidden" style="z-index: 240;"></div>
       <div id="trade-bottom-sheet" class="bottom-sheet lg:hidden">
         <div class="bottom-sheet-handle"></div>
         <div class="p-4 sm:p-6">
@@ -36,9 +34,9 @@ export const Layout = (content) => {
           </div>
           
           <!-- Order Panel -->
-          <div id="desktop-order-panel" class="hidden xl:block">
-            ${['dashboard', 'markets'].some(h => currentHash.includes(h)) ? OrderPanel(false) : ''}
-          </div>
+          <aside id="desktop-order-panel" class="hidden lg:block">
+            ${currentHash.includes('dashboard') ? OrderPanel(false) : ''}
+          </aside>
         </main>
       </div>
     </div>

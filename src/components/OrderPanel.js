@@ -71,87 +71,106 @@ export const OrderPanel = (isBottomSheet = false) => {
   return `
     <div class="${isBottomSheet ? 'w-full' : 'w-full xl:w-80 border-l border-gray-800 h-full bg-[#131722]/50 backdrop-blur-sm'} flex flex-col transition-colors duration-300">
       ${!isBottomSheet ? `
-      <div class="p-6 md:p-8 border-b border-gray-800">
-        <h2 class="text-lg md:text-xl font-black tracking-tight text-white">Execution</h2>
-        <div class="flex items-center gap-2 mt-2">
-          <span class="w-2 h-2 rounded-full bg-green-500"></span>
-          <p class="text-[9px] md:text-[10px] font-bold text-gray-500 uppercase tracking-widest">${window.orderState.symbol} · Live Feed</p>
+      <div class="p-5 border-b border-gray-800 bg-white/[0.02]">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h3 class="text-sm font-black tracking-tight text-white uppercase">Execution</h3>
+            <div class="flex items-center gap-1 mt-0.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+              <p class="text-[8px] font-bold text-gray-500 uppercase tracking-widest">${window.orderState.symbol}</p>
+            </div>
+          </div>
+          <div class="text-right">
+             <p class="text-[7px] font-black text-gray-500 uppercase mb-0">Equity</p>
+             <p class="text-xs font-black text-white">$124,592</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mt-2 pt-2.5 border-t border-white/5">
+           <div>
+              <p class="text-[7px] font-black text-gray-500 uppercase mb-0">Margin</p>
+              <p class="text-[10px] font-black text-blue-500">92.4%</p>
+           </div>
+           <div class="text-right">
+              <p class="text-[7px] font-black text-gray-500 uppercase mb-0">Avail. Bal</p>
+              <p class="text-[10px] font-black text-green-500">$12,400</p>
+           </div>
         </div>
       </div>
       ` : ''}
 
-      <div class="flex-1 ${isBottomSheet ? 'p-0' : 'p-6 md:p-8'} space-y-6 md:space-y-8">
+      <div class="flex-1 ${isBottomSheet ? 'p-0' : 'p-5'} space-y-5">
         <!-- Execution Type -->
-        <div class="space-y-3">
-          <label class="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Order Type</label>
+        <div class="space-y-2">
+          <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest pl-1">Order Type</label>
           <div class="flex bg-[#0f1115] border border-gray-800 rounded-xl p-1">
-            <button class="flex-1 py-1.5 md:py-2 text-[10px] md:text-xs font-black rounded-lg bg-[#131722] text-white shadow-sm border border-gray-800">Market</button>
-            <button class="flex-1 py-1.5 md:py-2 text-[10px] md:text-xs font-bold text-gray-500 hover:text-white transition-colors">Limit</button>
-            <button class="flex-1 py-1.5 md:py-2 text-[10px] md:text-xs font-bold text-gray-500 hover:text-white transition-colors">Stop</button>
+            <button class="flex-1 py-1.5 text-[10px] font-black rounded-lg bg-[#131722] text-white shadow-sm border border-gray-800">Market</button>
+            <button class="flex-1 py-1.5 text-[10px] font-bold text-gray-500 hover:text-white transition-colors">Limit</button>
+            <button class="flex-1 py-1.5 text-[10px] font-bold text-gray-500 hover:text-white transition-colors">Stop</button>
           </div>
         </div>
 
         <!-- Position Direction -->
-        <div class="grid ${isBottomSheet ? 'grid-cols-1 gap-3' : 'grid-cols-2 gap-3'}">
+        <div class="grid ${isBottomSheet ? 'grid-cols-1 gap-2' : 'grid-cols-2 gap-2'}">
           <button onclick="window.setOrderDirection('BUY')" 
-                  class="py-3 md:py-4 rounded-xl font-black text-xs md:text-sm tracking-widest transition-all hover:scale-[1.01] active:scale-95 ${isBuy ? 'border-2 border-green-500 bg-green-500/10 text-green-500 shadow-lg shadow-green-500/10' : 'border border-gray-800 bg-[#0f1115] text-gray-500'}">BUY</button>
+                  class="py-3 rounded-xl font-black text-xs tracking-widest transition-all hover:scale-[1.01] active:scale-95 ${isBuy ? 'border-2 border-green-500 bg-green-500/10 text-green-500 shadow-lg shadow-green-500/10' : 'border border-gray-800 bg-[#0f1115] text-gray-500'}">BUY</button>
           <button onclick="window.setOrderDirection('SELL')" 
-                  class="py-3 md:py-4 rounded-xl font-black text-xs md:text-sm tracking-widest transition-all hover:scale-[1.01] active:scale-95 ${!isBuy ? 'border-2 border-red-500 bg-red-500/10 text-red-500 shadow-lg shadow-red-500/10' : 'border border-gray-800 bg-[#0f1115] text-gray-500'}">SELL</button>
+                  class="py-3 rounded-xl font-black text-xs tracking-widest transition-all hover:scale-[1.01] active:scale-95 ${!isBuy ? 'border-2 border-red-500 bg-red-500/10 text-red-500 shadow-lg shadow-red-500/10' : 'border border-gray-800 bg-[#0f1115] text-gray-500'}">SELL</button>
         </div>
 
         <!-- Parameters -->
-        <div class="space-y-4 md:space-y-6">
-          <div class="space-y-2 md:space-y-3">
-            <label class="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Position Size</label>
+        <div class="space-y-4">
+          <div class="space-y-2">
+            <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest pl-1">Position Size</label>
             <div class="relative group">
               <input type="number" 
                      oninput="window.orderState.lots = parseFloat(this.value) || 0"
-                     value="${window.orderState.lots}" step="0.01" class="input-field py-3 md:py-4 pr-16 text-lg md:text-xl font-black text-white bg-[#0f1115]">
-              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] md:text-[10px] font-black text-gray-500 group-focus-within:text-blue-500 transition-colors">LOTS</span>
+                     value="${window.orderState.lots}" step="0.01" class="input-field py-3 pr-16 text-lg font-black text-white bg-[#0f1115] min-h-0 h-11">
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-gray-500 group-focus-within:text-blue-500 transition-colors">LOTS</span>
             </div>
-            <div class="grid grid-cols-4 gap-2">
+            <div class="grid grid-cols-4 gap-1.5">
               ${[0.01, 0.1, 0.5, 1.0].map(val => `
                 <button onclick="window.orderState.lots = ${val}; window.setOrderDirection(window.orderState.type)" 
-                        class="py-2 text-[10px] font-black rounded-lg bg-[#0f1115] border border-gray-800 hover:border-blue-500/50 hover:text-blue-500 transition-all text-gray-500">${val}</button>
+                        class="py-1.5 text-[9px] font-black rounded-lg bg-[#0f1115] border border-gray-800 hover:border-blue-500/50 hover:text-blue-500 transition-all text-gray-500">${val}</button>
               `).join('')}
             </div>
           </div>
 
-          <div class="grid grid-cols-2 lg:grid-cols-1 gap-3 md:gap-4">
-            <div class="space-y-2">
-              <label class="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Take Profit (TP)</label>
-              <input type="text" placeholder="1.09500" class="input-field py-2.5 md:py-3 text-xs md:text-sm text-white border-gray-800 bg-[#0f1115] focus:border-blue-500">
+          <div class="grid grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3">
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest pl-1">Take Profit</label>
+              <input type="text" placeholder="1.09500" class="input-field py-2 text-xs text-white border-gray-800 bg-[#0f1115] focus:border-blue-500 min-h-0 h-9">
             </div>
-            <div class="space-y-2">
-              <label class="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest pl-1">Stop Loss (SL)</label>
-              <input type="text" placeholder="1.08500" class="input-field py-2.5 md:py-3 text-xs md:text-sm text-white border-gray-800 bg-[#0f1115] focus:border-red-500/30">
+            <div class="space-y-1.5">
+              <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest pl-1">Stop Loss</label>
+              <input type="text" placeholder="1.08500" class="input-field py-2 text-xs text-white border-gray-800 bg-[#0f1115] focus:border-red-500/30 min-h-0 h-9">
             </div>
           </div>
         </div>
 
         <!-- Summary -->
-        <div class="card p-4 md:p-5 bg-[#0f1115]/50 border-dashed border-gray-800 space-y-2 md:space-y-3">
-          <div class="flex justify-between text-[9px] md:text-[10px] font-bold">
+        <div class="card p-3 bg-[#0f1115]/50 border-dashed border-gray-800 space-y-1.5">
+          <div class="flex justify-between text-[9px] font-bold">
             <span class="text-gray-500 uppercase tracking-wider">Margin Req.</span>
-            <span class="text-white">$450.00</span>
+            <span class="text-white font-black">$450.00</span>
           </div>
-          <div class="flex justify-between text-[9px] md:text-[10px] font-bold">
-            <span class="text-gray-500 uppercase tracking-wider">Estimated Pip</span>
+          <div class="flex justify-between text-[9px] font-bold">
+            <span class="text-gray-500 uppercase tracking-wider">Pip Value</span>
             <span class="text-blue-500 font-black">$10.00</span>
           </div>
         </div>
       </div>
 
-      <div class="${isBottomSheet ? 'pt-6' : 'p-6 md:p-8 border-t border-gray-800 bg-[#131722]'}">
+      <div class="${isBottomSheet ? 'pt-4' : 'p-5 border-t border-gray-800 bg-[#131722]'}">
         <button onclick="window.executeTrade()" 
-                class="${isBuy ? 'btn-success' : 'btn-danger'} w-full py-4 md:py-5 text-xs md:text-sm font-black tracking-widest uppercase shadow-xl active:scale-[0.98]">
+                class="${isBuy ? 'btn-success' : 'btn-danger'} w-full py-4 text-xs font-black tracking-widest uppercase shadow-xl active:scale-[0.98] min-h-0 h-14">
           Execute ${window.orderState.type}
         </button>
-        <p class="text-[8px] md:text-[9px] text-gray-500/50 text-center mt-4 font-bold uppercase tracking-tighter leading-tight">
-          Executing this order will utilize $450.00 of your margin.
+        <p class="text-[8px] text-gray-500/50 text-center mt-3 font-bold uppercase tracking-tighter leading-tight">
+          Utilizes $450.00 of margin.
         </p>
       </div>
     </div>
+
   `;
 };
 

@@ -1,7 +1,6 @@
 export const AuthPage = () => {
   const isAdminLogin = window.location.hash === '#admin-login';
   
-  // Shared state for toggle (default to login)
   if (window.authMode === undefined) window.authMode = 'login';
 
   window.toggleAuthMode = (mode) => {
@@ -10,7 +9,6 @@ export const AuthPage = () => {
     if (app) app.innerHTML = AuthPage();
   };
 
-  // Handle Auth Logic
   window.handleAuth = async (event) => {
     event.preventDefault();
     const mode = window.authMode;
@@ -18,12 +16,11 @@ export const AuthPage = () => {
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalBtnText = submitBtn.innerHTML;
     
-    const email = form.email.value.trim();
-    const password = form.password.value.trim();
+    const login_id = form.login_id.value.trim();
+    const login_key = form.login_key.value.trim();
     const users = JSON.parse(localStorage.getItem('users') || '[]');
 
-    // Basic Validation
-    if (!email || !password) {
+    if (!login_id || !login_key) {
       window.showToast('Please fill in all fields', 'error');
       return;
     }
@@ -33,15 +30,13 @@ export const AuthPage = () => {
       return;
     }
 
-    // Show Loading
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<div class="loading-spinner"></div>';
 
-    // Simulate Network Delay
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     if (isAdminLogin) {
-      if (email === 'admin' && password === '123456') {
+      if (login_id === 'admin' && login_key === '123456') {
         localStorage.setItem('currentUser', JSON.stringify({ name: 'Admin', role: 'admin' }));
         window.showToast('Root Access Verified', 'success');
         window.location.hash = 'admin';
@@ -55,71 +50,74 @@ export const AuthPage = () => {
 
     if (mode === 'signup') {
       const name = form.name.value.trim();
-      if (users.find(u => u.email === email)) {
-        window.showToast('User already exists with this email', 'error');
+      if (users.find(u => u.email === login_id)) {
+        window.showToast('User already exists', 'error');
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalBtnText;
         return;
       }
-      const newUser = { name, email, password, role: 'user', balance: 10000 };
+      const newUser = { name, email: login_id, password: login_key, role: 'user', balance: 10000 };
       users.push(newUser);
       localStorage.setItem('users', JSON.stringify(users));
       localStorage.setItem('currentUser', JSON.stringify({ name, role: 'user' }));
-      window.showToast('Account Created Successfully', 'success');
+      window.showToast('Account Created', 'success');
       window.location.hash = 'dashboard';
     } else {
-      const user = users.find(u => u.email === email && u.password === password);
+      // Demo Account Bypass
+      if (login_id === 'demo@forexpro.com' && login_key === 'demo123') {
+         localStorage.setItem('currentUser', JSON.stringify({ name: 'Demo Trader', role: 'user' }));
+         window.showToast('Accessing Demo Terminal', 'success');
+         window.location.hash = 'dashboard';
+         return;
+      }
+
+      const user = users.find(u => u.email === login_id && u.password === login_key);
       if (user) {
         localStorage.setItem('currentUser', JSON.stringify({ name: user.name, role: user.role }));
-        window.showToast('Welcome back to the Terminal', 'success');
+        window.showToast('Welcome back', 'success');
         window.location.hash = 'dashboard';
       } else {
-        window.showToast('Invalid Email or Password', 'error');
+        window.showToast('Invalid Credentials', 'error');
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalBtnText;
       }
     }
-  };
 
+
+  };
 
   const isLogin = window.authMode === 'login' || isAdminLogin;
 
   return `
-    <div class="min-h-screen w-full flex bg-[#0f1115] relative overflow-hidden">
+    <div class="min-h-screen w-full flex flex-col lg:flex-row bg-[#0f1115] relative overflow-hidden">
       <!-- Background Effects -->
       <div class="absolute top-[-10%] left-[-5%] w-full max-w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] -z-10 opacity-30"></div>
       <div class="absolute bottom-[-10%] right-[-5%] w-full max-w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] -z-10 opacity-30"></div>
 
-      <!-- Left Branding -->
-      <div class="hidden lg:flex flex-1 flex-col justify-between p-16 relative z-10 border-r border-white/5 bg-[#131722]/40 backdrop-blur-sm">
-        <div class="flex items-center gap-3">
+      <!-- Left Branding / Top Mobile Branding -->
+      <div class="w-full lg:w-1/2 p-8 lg:p-20 flex flex-col justify-between relative z-10 lg:border-r border-white/5 bg-[#131722]/40 lg:bg-[#131722]/40 backdrop-blur-sm">
+        <div class="flex items-center gap-3 justify-center lg:justify-start">
           <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl shadow-blue-600/20">FX</div>
           <span class="text-3xl font-black tracking-tighter text-white">Forex<span class="text-blue-500">Pro</span></span>
         </div>
 
-        <div class="space-y-8">
-          <h1 class="text-7xl font-black leading-none tracking-tighter text-white">
-            ${isAdminLogin ? 'Root <br> <span class="text-blue-600 text-6xl">Control.</span>' : (isLogin ? 'Welcome <br> <span class="text-blue-600 text-6xl">Back.</span>' : 'Join the <br> <span class="text-blue-600 text-6xl">Elite.</span>')}
+        <div class="space-y-4 lg:space-y-8 mt-12 lg:mt-0 text-center lg:text-left">
+          <h1 class="text-4xl lg:text-7xl font-black leading-tight tracking-tighter text-white">
+            ${isAdminLogin ? 'Root <br class="hidden lg:block"> <span class="text-blue-600">Control.</span>' : (isLogin ? 'Welcome <br class="hidden lg:block"> <span class="text-blue-600">Back.</span>' : 'Join the <br class="hidden lg:block"> <span class="text-blue-600">Elite.</span>')}
           </h1>
-          <p class="text-gray-400 text-lg max-w-sm leading-relaxed font-medium">
+          <p class="text-gray-400 text-sm lg:text-lg max-w-sm mx-auto lg:mx-0 leading-relaxed font-medium">
             ${isAdminLogin ? 'Administrative console for liquidity and system parameters.' : 'Access institutional grade liquidity and precision execution in real-time.'}
           </p>
         </div>
 
-        <div class="text-[10px] text-gray-600 font-bold uppercase tracking-widest">
+        <div class="hidden lg:block text-[10px] text-gray-600 font-bold uppercase tracking-widest mt-12">
           © 2024 ForexPro Institutional Terminal
         </div>
       </div>
 
       <!-- Auth Form Container -->
-      <div class="flex-1 flex flex-col justify-center items-center p-6 md:p-12 relative z-10">
+      <div class="flex-1 flex flex-col justify-center items-center p-6 lg:p-20 relative z-10">
         <div class="w-full max-w-sm space-y-8">
-          <!-- Mobile Branding -->
-          <div class="lg:hidden flex flex-col items-center mb-6">
-            <div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-black text-3xl mb-4 shadow-2xl shadow-blue-600/30">FX</div>
-            <h2 class="text-3xl font-black tracking-tighter text-white">ForexPro</h2>
-          </div>
-          
           <!-- Mode Toggle (Only for User Auth) -->
           ${!isAdminLogin ? `
             <div class="flex bg-[#131722] p-1.5 rounded-2xl border border-white/5 shadow-inner">
@@ -129,11 +127,11 @@ export const AuthPage = () => {
           ` : ''}
 
           <div class="text-center lg:text-left space-y-2">
-            <h2 class="text-3xl md:text-4xl font-black tracking-tighter text-white">
+            <h2 class="text-2xl lg:text-4xl font-black tracking-tighter text-white">
                ${isAdminLogin ? 'Admin Command' : (isLogin ? 'Login to Terminal' : 'Create Account')}
             </h2>
-            <p class="text-gray-500 text-sm font-medium">
-               ${isAdminLogin ? 'Secure root authentication required.' : (isLogin ? 'Access your institutional dashboard.' : 'Start your institutional trading journey.')}
+            <p class="text-gray-500 text-[10px] lg:text-sm font-medium uppercase tracking-[0.2em]">
+               ${isAdminLogin ? 'Secure root authentication' : (isLogin ? 'Access your dashboard' : 'Institutional registration')}
             </p>
           </div>
 
@@ -141,10 +139,7 @@ export const AuthPage = () => {
             ${!isLogin ? `
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Full Name</label>
-                <div class="relative group">
-                  <input name="name" type="text" placeholder="John Doe" required class="input-field pl-12 bg-[#131722]">
-                  <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 opacity-40 group-focus-within:text-blue-500">👤</span>
-                </div>
+                <input name="name" type="text" placeholder="John Doe" required class="input-field bg-[#131722] py-4">
               </div>
             ` : ''}
 
@@ -152,29 +147,37 @@ export const AuthPage = () => {
               <label class="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">
                  ${isAdminLogin ? 'Operator ID' : 'Authorized Email'}
               </label>
-              <div class="relative group">
-                <input name="email" type="${isAdminLogin ? 'text' : 'email'}" placeholder="${isAdminLogin ? 'admin' : 'agent@forexpro.io'}" required class="input-field pl-12 bg-[#131722]">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 opacity-40 group-focus-within:text-blue-500">✉️</span>
-              </div>
+              <input name="login_id" type="${isAdminLogin ? 'text' : 'email'}" value="" placeholder="${isAdminLogin ? 'Enter ID' : 'Enter Email'}" required autocomplete="new-password" class="input-field bg-[#131722] py-4">
             </div>
 
             <div class="space-y-2">
               <label class="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Keyphrase</label>
-              <div class="relative group">
-                <input name="password" type="password" placeholder="••••••••••••" required class="input-field pl-12 bg-[#131722]">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 opacity-40 group-focus-within:text-blue-500">🔒</span>
-              </div>
+              <input name="login_key" type="password" value="" placeholder="Enter Password" required autocomplete="new-password" class="input-field bg-[#131722] py-4">
             </div>
 
-            <button type="submit" class="btn-primary w-full py-5 text-sm btn-glow">
+
+
+
+            <button type="submit" class="btn-primary w-full py-5 text-sm btn-glow active:scale-95 transition-all">
               ${isAdminLogin ? 'VERIFY ROOT ACCESS' : (isLogin ? 'ENTER TERMINAL' : 'CREATE ACCOUNT')}
             </button>
+
+            ${isLogin && !isAdminLogin ? `
+               <div class="p-4 bg-blue-500/5 border border-blue-500/10 rounded-2xl space-y-2 mt-8">
+                  <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest">Demo Access Credentials</p>
+                  <div class="flex flex-col gap-1">
+                     <p class="text-[10px] text-gray-500 font-bold">Email: <span class="text-white">demo@forexpro.com</span></p>
+                     <p class="text-[10px] text-gray-500 font-bold">Password: <span class="text-white">demo123</span></p>
+                  </div>
+               </div>
+            ` : ''}
           </form>
+
 
           <p class="text-center text-xs text-gray-500 font-medium">
             ${isAdminLogin ? 
-              '<a href="#auth" class="text-blue-500 font-bold hover:underline">Back to User Terminal</a>' : 
-              (isLogin ? 'System Administrator? <a href="#admin-login" class="text-blue-500 font-bold hover:underline">Admin Command</a>' : 'Already have an account? <a href="javascript:void(0)" onclick="window.toggleAuthMode(\'login\')" class="text-blue-500 font-bold hover:underline">Log In</a>')}
+              '<a href="#auth" class="text-blue-500 font-bold hover:underline uppercase tracking-widest">Back to User Terminal</a>' : 
+              (isLogin ? 'Administrator? <a href="#admin-login" class="text-blue-500 font-bold hover:underline uppercase tracking-widest">Admin Command</a>' : 'Already have an account? <a href="javascript:void(0)" onclick="window.toggleAuthMode(\'login\')" class="text-blue-500 font-bold hover:underline uppercase tracking-widest">Log In</a>')}
           </p>
         </div>
       </div>

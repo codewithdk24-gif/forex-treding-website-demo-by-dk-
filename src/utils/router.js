@@ -9,12 +9,26 @@ export class Router {
 
   async handleRoute() {
     const hash = window.location.hash.slice(1) || 'landing';
+    
+    // If the hash is not a defined route but is an element ID, let the browser handle it (scrolling)
+    if (!this.routes[hash] && document.getElementById(hash)) {
+      return;
+    }
+
     const routeFunc = this.routes[hash] || this.routes['landing'];
     
     if (!routeFunc) return;
 
     // Determine if this route needs a layout
     const needsLayout = !['landing', 'auth', 'admin-login'].includes(hash);
+    
+    // Auth Protection: Redirect to auth if trying to access terminal without login
+    const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (needsLayout && !user) {
+      window.location.hash = 'auth';
+      return;
+    }
+
     const newLayoutType = needsLayout ? 'layout' : 'full';
 
     const content = await routeFunc();

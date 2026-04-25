@@ -1,111 +1,328 @@
-const Icons = {
-  lightning: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
-  shield: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
-  chart: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
-  globe: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
-  arrowRight: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`
-};
-
 export const LandingPage = () => {
+  const Icons = {
+    lightning: `<svg class="icon-glow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+    shield: `<svg class="icon-glow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+    chart: `<svg class="icon-glow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>`,
+    globe: `<svg class="icon-glow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+    menu: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`,
+    close: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+    check: `<svg class="text-green-500" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+    cpu: `<svg class="icon-glow" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="15" x2="23" y2="15"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="15" x2="4" y2="15"/></svg>`
+  };
+  setTimeout(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('active');
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Live Hero Data Simulation
+    const bidEl = document.getElementById('hero-bid-value');
+    const askEl = document.getElementById('hero-ask-value');
+    const priceEl = document.getElementById('hero-main-price');
+    
+    if (bidEl && askEl && priceEl) {
+      setInterval(() => {
+        const base = 1.08240;
+        const rand = (Math.random() * 0.00050);
+        const bid = (base + rand).toFixed(5);
+        const ask = (base + rand + 0.00012).toFixed(5);
+        bidEl.innerText = bid;
+        askEl.innerText = ask;
+        priceEl.innerText = bid;
+        
+        // Randomly pulse colors
+        const colorClass = Math.random() > 0.5 ? 'text-green-500' : 'text-red-500';
+        priceEl.className = `text-3xl font-black tracking-tighter transition-colors duration-300 ${colorClass}`;
+      }, 1000);
+    }
+  }, 100);
+
+
+  window.toggleLandingMenu = (isOpen) => {
+    const menu = document.getElementById('landing-mobile-menu');
+    if (isOpen) {
+      menu?.classList.remove('translate-x-full');
+      document.body.style.overflow = 'hidden';
+    } else {
+      menu?.classList.add('translate-x-full');
+      document.body.style.overflow = 'auto';
+    }
+  };
+
+  window.toggleFAQ = (id) => {
+    const faq = document.getElementById(`faq-${id}`);
+    const card = document.getElementById(`faq-card-${id}`);
+    const icon = document.getElementById(`faq-icon-${id}`);
+    const isShowing = faq.classList.contains('show');
+    
+    document.querySelectorAll('.faq-content').forEach(el => el.classList.remove('show'));
+    document.querySelectorAll('.faq-icon').forEach(el => el.style.transform = 'rotate(0deg)');
+    document.querySelectorAll('.faq-card').forEach(el => el.classList.remove('border-blue-500/30'));
+
+    if (!isShowing) {
+      faq.classList.add('show');
+      icon.style.transform = 'rotate(180deg)';
+      card.classList.add('border-blue-500/30');
+    }
+  };
+
   return `
-    <div class="min-h-screen bg-[#0f1115] text-white bg-grid transition-colors duration-300 selection:bg-blue-500/30 selection:text-blue-500">
+    <div class="min-h-screen bg-[#0f1115] text-white transition-all duration-300 overflow-x-hidden selection:bg-blue-500/20">
       <!-- Navbar -->
-      <nav class="fixed top-0 w-full z-50 glass border-b border-white/5 h-16 md:h-20 flex items-center justify-between px-6 md:px-12 lg:px-20">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 md:w-10 md:h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-600/20">FX</div>
-          <span class="text-xl md:text-2xl font-black tracking-tighter">Forex<span class="text-blue-500">Pro</span></span>
+      <nav class="fixed top-0 w-full z-50 bg-[#0f1115]/80 backdrop-blur-md border-b border-white/[0.03] h-16 md:h-20 flex items-center justify-between px-6 lg:px-20">
+        <div class="flex items-center gap-2.5 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+          <div class="w-8 h-8 md:w-9 md:h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white font-black shadow-lg shadow-blue-600/10">FX</div>
+          <span class="text-xl md:text-2xl font-black tracking-tight">Forex<span class="text-blue-500">Pro</span></span>
         </div>
+        
         <div class="hidden lg:flex items-center gap-10">
-          <a href="/#markets" class="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">Markets</a>
-          <a href="/#orders" class="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">Execution</a>
-          <a href="#cta" class="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">Pricing</a>
+          <a href="#markets-page" class="text-[10px] font-bold tracking-widest text-gray-400 hover:text-white transition-all uppercase">Markets</a>
+          <a href="#orders-page" class="text-[10px] font-bold tracking-widest text-gray-400 hover:text-white transition-all uppercase">Execution</a>
+          <a href="#pricing-section" class="text-[10px] font-bold tracking-widest text-gray-400 hover:text-white transition-all uppercase">Pricing</a>
         </div>
-        <div class="flex items-center gap-3">
-          <a href="#auth" class="btn-primary min-h-0 py-2 md:py-2.5 px-5 md:px-7 text-[10px] md:text-xs font-black">LOGIN</a>
+
+        <div class="flex items-center gap-4">
+          <a href="#auth" class="btn-primary py-1.5 px-4 text-[8px] md:text-[10px] font-black uppercase tracking-widest rounded-lg h-8 md:h-10 w-auto">Join Now</a>
+
+          <button onclick="window.toggleLandingMenu(true)" class="lg:hidden p-2 text-gray-400 hover:text-white transition-colors">
+            ${Icons.menu}
+          </button>
         </div>
       </nav>
 
 
-      <!-- Hero Section -->
-      <section class="relative pt-32 pb-16 md:pt-48 md:pb-32 px-6 overflow-hidden">
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] -z-10 opacity-40"></div>
-        
-        <div class="max-w-4xl mx-auto text-center space-y-6 md:space-y-10 relative z-10">
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-600/10 border border-blue-600/20 text-blue-500 text-[10px] md:text-xs font-black uppercase tracking-widest fade-in">
-            ${Icons.globe} Global Liquidity Pool Access
-          </div>
-          
-          <h1 class="text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[1.1] text-white fade-in" style="animation-delay: 0.1s">
-            Institutional-Grade <br class="hidden sm:block"> Trading Infrastructure
-          </h1>
-          
-          <p class="text-sm md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed font-medium px-4 md:px-0 fade-in" style="animation-delay: 0.2s">
-            Professional-grade forex terminal with institutional speed, real-time analytics, and deep liquidity access.
-          </p>
 
-          
-          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 fade-in" style="animation-delay: 0.3s">
-            <a href="#auth" class="w-full sm:w-auto btn-primary px-10 btn-glow">Launch Terminal</a>
-            <a href="#dashboard" class="w-full sm:w-auto btn-outline px-10">Watch Live Demo</a>
+      <!-- Mobile Menu (Native Overlay Feel) -->
+      <div id="landing-mobile-menu" class="fixed inset-0 z-[100] bg-[#0f1115]/95 backdrop-blur-xl transform translate-x-full transition-transform duration-500 p-8 flex flex-col justify-between">
+        <div>
+           <div class="flex justify-between items-center mb-12">
+              <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-black shadow-lg shadow-blue-600/10">FX</div>
+              <button onclick="window.toggleLandingMenu(false)" class="p-2 text-gray-500 hover:text-white">
+                ${Icons.close}
+              </button>
+           </div>
+           <div class="flex flex-col gap-6 text-xl font-black tracking-tighter uppercase">
+             <a href="#markets-page" onclick="window.toggleLandingMenu(false)" class="p-4 bg-white/5 rounded-2xl flex items-center justify-between group">
+                <span>Markets</span>
+                <span class="text-blue-500 text-sm group-hover:translate-x-1 transition-transform">→</span>
+             </a>
+             <a href="#orders-page" onclick="window.toggleLandingMenu(false)" class="p-4 bg-white/5 rounded-2xl flex items-center justify-between group">
+                <span>Execution</span>
+                <span class="text-blue-500 text-sm group-hover:translate-x-1 transition-transform">→</span>
+             </a>
+             <a href="#pricing-section" onclick="window.toggleLandingMenu(false)" class="p-4 bg-white/5 rounded-2xl flex items-center justify-between group">
+                <span>Infrastructure</span>
+                <span class="text-blue-500 text-sm group-hover:translate-x-1 transition-transform">→</span>
+             </a>
+           </div>
+        </div>
+        <div class="space-y-4">
+           <a href="#auth" onclick="window.toggleLandingMenu(false)" class="btn-primary w-full py-4 text-center text-[10px] font-black uppercase tracking-widest rounded-2xl">Join Now</a>
+           <p class="text-[9px] text-gray-700 text-center uppercase tracking-widest italic">Institutional Grade Terminal Node v2.4</p>
+        </div>
+      </div>
+
+      <!-- Hero Section -->
+      <section class="hero-section relative flex items-center justify-center pt-32 pb-12 px-6 overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:40px_40px] opacity-[0.03]"></div>
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1200px] h-[600px] bg-blue-600/5 blur-[120px] rounded-full -z-10 opacity-30"></div>
+
+        <div class="max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center gap-12 md:gap-20 relative z-10 reveal">
+          <div class="flex-1 text-center lg:text-left space-y-8 md:space-y-12">
+            <!-- Trust Strip (Minimal) -->
+            <div class="flex flex-wrap justify-center lg:justify-start items-center gap-3 md:gap-6 opacity-60">
+               <div class="flex items-center gap-2">
+                  <span class="w-1 h-1 rounded-full bg-blue-500"></span>
+                  <span class="text-[9px] font-black uppercase tracking-widest text-white">0.01% Slippage</span>
+               </div>
+               <div class="flex items-center gap-2">
+                  <span class="w-1 h-1 rounded-full bg-blue-500"></span>
+                  <span class="text-[9px] font-black uppercase tracking-widest text-white">0.4ms Execution</span>
+               </div>
+               <div class="flex items-center gap-2">
+                  <span class="w-1 h-1 rounded-full bg-blue-500"></span>
+                  <span class="text-[9px] font-black uppercase tracking-widest text-white">99.99% Uptime</span>
+               </div>
+            </div>
+
+            <div class="space-y-6">
+              <h1 class="text-3xl md:text-8xl font-black tracking-tighter leading-[0.95] text-white uppercase">
+                Trade with <br> <span class="text-blue-500">Institutional</span> <br class="hidden lg:block"> Edge.
+              </h1>
+              <p class="text-sm md:text-xl text-gray-500 max-w-lg mx-auto lg:mx-0 leading-relaxed font-medium">
+                High-fidelity trading infrastructure for global institutional players.
+              </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
+              <a href="#auth" class="btn-primary w-full sm:w-auto px-8 py-3.5 text-[10px] font-black uppercase tracking-widest rounded-xl">Join Now</a>
+              <a href="#dashboard" class="w-full sm:w-auto px-8 py-3.5 text-[10px] font-black text-gray-500 hover:text-white uppercase tracking-widest rounded-xl border border-white/5 hover:bg-white/5 transition-all">Explore Demo</a>
+            </div>
+
+            <!-- Mobile Mini Terminal Card (Visual Filler) -->
+            <div class="lg:hidden w-full max-w-sm mx-auto mt-12 pt-4 reveal" style="transition-delay: 0.3s">
+               <div class="glass-card p-6 rounded-[2rem] border border-white/5 shadow-2xl shadow-blue-600/5 relative overflow-hidden group">
+                  <div class="flex justify-between items-center mb-6">
+                     <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <p class="text-[8px] font-black text-white uppercase tracking-widest">EUR / USD</p>
+                     </div>
+                     <p class="text-[8px] font-black text-green-500 uppercase tracking-widest">+1.42%</p>
+                  </div>
+                  <div class="flex justify-between items-end mb-4">
+                     <p class="text-3xl font-black text-white tracking-tighter">1.08245</p>
+                     <div class="h-8 w-24 relative">
+                        <svg class="w-full h-full" viewBox="0 0 100 40" preserveAspectRatio="none">
+                           <path d="M0,30 Q25,25 50,35 T100,10" stroke="#3b82f6" stroke-width="2" fill="none" class="animate-pulse"></path>
+                        </svg>
+                     </div>
+                  </div>
+                  <div class="pt-4 border-t border-white/5 flex justify-between items-center opacity-40">
+                     <p class="text-[7px] font-black text-gray-500 uppercase tracking-widest">Spread: 0.2 Pips</p>
+                     <p class="text-[7px] font-black text-gray-500 uppercase tracking-widest">Latency: 0.4ms</p>
+                  </div>
+               </div>
+            </div>
+          </div>
+
+          <!-- Desktop Terminal Preview -->
+          <div class="flex-1 w-full max-w-2xl relative hidden lg:block perspective-2000">
+             <div class="glass-card rounded-[2.5rem] p-10 border border-white/10 shadow-2xl shadow-blue-600/5 rotate-3d hover:rotate-0 transition-all duration-700">
+                <div class="flex items-center justify-between mb-10 pb-6 border-b border-white/5">
+                   <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black">FX</div>
+                      <span class="text-xs font-black uppercase tracking-widest text-white">Institutional Node v2.4</span>
+                   </div>
+                   <div class="px-3 py-1 bg-green-500/10 rounded-full flex items-center gap-2">
+                      <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                      <span class="text-[9px] font-black text-green-500 uppercase tracking-widest">Live Execution</span>
+                   </div>
+                </div>
+                
+                <div class="space-y-8">
+                   <div class="flex justify-between items-end">
+                      <div>
+                         <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">EUR / USD</p>
+                         <p class="text-5xl font-black text-white tracking-tighter">1.08245</p>
+                      </div>
+                      <div class="text-right">
+                         <p class="text-[10px] font-black text-green-500 uppercase tracking-widest">+1.42%</p>
+                         <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest">Spread: 0.2 Pips</p>
+                      </div>
+                   </div>
+                   
+                   <div class="h-32 w-full bg-blue-500/5 rounded-2xl border border-blue-500/10 flex items-center justify-center relative overflow-hidden">
+                      <svg class="w-full h-full px-4" viewBox="0 0 400 100" preserveAspectRatio="none">
+                         <path d="M0,80 Q50,70 100,85 T200,60 T300,75 T400,50" stroke="#3b82f6" stroke-width="3" fill="none" class="animate-pulse"></path>
+                      </svg>
+                   </div>
+                </div>
+             </div>
           </div>
         </div>
+      </section>
 
-        <!-- Premium Product Preview (Restored & Improved) -->
-        <div class="mt-16 md:mt-32 max-w-6xl mx-auto px-4 md:px-0 fade-in relative group" style="animation-delay: 0.4s">
-           <div class="absolute -inset-4 bg-blue-600/20 blur-[100px] opacity-0 group-hover:opacity-30 transition-opacity"></div>
+      <!-- Institutional Market Feed (Now below fold) -->
+      <section class="lg:hidden border-t border-white/5 py-12 px-6">
+         <div class="space-y-6">
+            <p class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em] text-center">Institutional Feed</p>
+            <div class="flex justify-between items-center px-4">
+                <div class="space-y-1">
+                   <p class="text-[9px] font-black text-white uppercase tracking-widest">EUR / USD</p>
+                   <p class="text-[11px] font-black text-green-500 animate-pulse">1.08245</p>
+                </div>
+                <div class="space-y-1 text-center">
+                   <p class="text-[9px] font-black text-white uppercase tracking-widest">GBP / USD</p>
+                   <p class="text-[11px] font-black text-blue-500 animate-pulse">1.26410</p>
+                </div>
+                <div class="space-y-1 text-right">
+                   <p class="text-[9px] font-black text-white uppercase tracking-widest">USD / JPY</p>
+                   <p class="text-[11px] font-black text-red-500 animate-pulse">150.42</p>
+                </div>
+             </div>
+             <div class="flex justify-center items-center gap-6 opacity-20 grayscale pt-4 border-t border-white/[0.03]">
+                <span class="text-[7px] font-black uppercase tracking-[0.3em]">JP_MORGAN</span>
+                <span class="text-[7px] font-black uppercase tracking-[0.3em]">GS_LIQUIDITY</span>
+             </div>
+         </div>
+      </section>
+
+      <!-- Terminal Feature Section -->
+      <section class="max-w-7xl mx-auto px-6 py-20 md:py-32 reveal">
+        <div class="flex flex-col gap-12">
+           <div class="max-w-2xl space-y-4">
+              <h2 class="text-3xl md:text-5xl font-black tracking-tight text-white uppercase leading-tight">Inside the <br> <span class="text-blue-500">Terminal.</span></h2>
+              <p class="text-gray-500 text-sm md:text-lg font-medium leading-relaxed">Institutional-grade execution with sub-millisecond precision.</p>
+           </div>
            
-           <!-- Floating UI Overlay Cards -->
-           <div class="absolute -top-10 -left-6 md:-left-12 card glass p-4 space-y-3 hidden lg:block z-20 float shadow-2xl">
-              <div class="flex items-center gap-3">
-                 <div class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center text-green-500">${Icons.lightning}</div>
-                 <div>
-                    <p class="text-[10px] font-black text-white/50 uppercase">Order Execution</p>
-                    <p class="text-xs font-black text-white">0.001s Latency</p>
-                 </div>
-              </div>
-           </div>
-
-           <div class="absolute -bottom-10 -right-6 md:-right-12 card glass p-4 space-y-3 hidden lg:block z-20 float-delayed shadow-2xl">
-              <div class="flex items-center gap-3">
-                 <div class="w-8 h-8 rounded-lg bg-blue-600/20 flex items-center justify-center text-blue-500">${Icons.chart}</div>
-                 <div>
-                    <p class="text-[10px] font-black text-white/50 uppercase">Portfolio Alpha</p>
-                    <p class="text-xs font-black text-green-500">+$12,450.00</p>
-                 </div>
-              </div>
-           </div>
-
-           <!-- The "Live" Terminal Preview -->
-           <div class="relative rounded-2xl md:rounded-[40px] border border-white/5 bg-[#131722] p-2 md:p-4 shadow-2xl overflow-hidden transition-transform duration-700 hover:scale-[1.01] hover:-rotate-1">
-              <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-transparent to-purple-600/10"></div>
-              <div class="relative bg-[#0f1115] rounded-xl md:rounded-[32px] aspect-[16/10] md:aspect-video overflow-hidden border border-white/5">
-                 <!-- Mock Dashboard UI -->
-                 <div class="w-full h-full flex flex-col">
-                    <div class="h-10 md:h-14 border-b border-white/5 flex items-center px-6 gap-4">
-                       <div class="flex gap-1.5"><div class="w-2 h-2 rounded-full bg-red-500/50"></div><div class="w-2 h-2 rounded-full bg-yellow-500/50"></div><div class="w-2 h-2 rounded-full bg-green-500/50"></div></div>
-                       <div class="h-4 w-32 bg-white/5 rounded-full"></div>
+           <!-- Primary Terminal Feature -->
+           <div class="relative group cursor-pointer" onclick="window.location.hash = 'dashboard'">
+              <div class="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-blue-900/20 rounded-[2rem] blur-xl opacity-0 group-hover:opacity-100 transition duration-1000"></div>
+              
+              <div class="relative bg-[#0f1115] border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl flex flex-col">
+                 <!-- Terminal Header Bar -->
+                 <div class="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-white/[0.02]">
+                    <div class="flex items-center gap-3">
+                       <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                       <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Institutional Feed</span>
                     </div>
-                    <div class="flex-1 flex">
-                       <div class="w-16 md:w-20 border-r border-white/5 p-4 space-y-6">
-                          <div class="w-8 h-8 bg-blue-600/20 rounded-lg"></div>
-                          <div class="w-8 h-8 bg-white/5 rounded-lg"></div>
-                          <div class="w-8 h-8 bg-white/5 rounded-lg"></div>
-                       </div>
-                       <div class="flex-1 p-6 space-y-6">
-                          <div class="h-8 w-1/3 bg-white/5 rounded-lg"></div>
-                          <div class="flex-1 bg-white/[0.02] rounded-2xl border border-white/5 relative overflow-hidden">
-                             <svg class="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 1000 400">
-                                <path d="M0 300 Q100 150 200 250 T400 100 T600 280 T800 120 T1000 200" fill="none" stroke="#3b82f6" stroke-width="4" />
-                             </svg>
-                             <div class="absolute inset-0 bg-gradient-to-t from-blue-600/5 to-transparent"></div>
+                    <div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
+                       <span class="text-[10px] font-black text-white uppercase tracking-widest">EUR / USD</span>
+                       <span class="text-[8px] font-bold text-green-500 uppercase tracking-widest bg-green-500/10 px-2 py-0.5 rounded">Live</span>
+                    </div>
+                    <div class="text-gray-500 group-hover:text-white transition-colors">
+                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                    </div>
+                 </div>
+
+                 <!-- Terminal Body -->
+                 <div class="flex-1 min-h-[300px] md:min-h-[420px] p-4 md:p-8 flex flex-col md:flex-row gap-8">
+                    <!-- Chart Area -->
+                    <div class="flex-1 bg-white/[0.01] rounded-2xl border border-white/5 p-6 relative overflow-hidden flex flex-col justify-between">
+                       <div class="flex justify-between items-start">
+                          <div>
+                             <p class="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-1">Market Execution</p>
+                             <p class="text-4xl font-black text-white tracking-tighter">1.08245</p>
+                          </div>
+                          <div class="text-right">
+                             <p class="text-xs font-black text-green-500">+$420.50</p>
+                             <p class="text-[8px] font-bold text-gray-700 uppercase tracking-widest">Unrealized P/L</p>
                           </div>
                        </div>
+                       
+                       <div class="flex-1 flex items-center justify-center">
+                          <svg class="w-full h-full opacity-40" viewBox="0 0 400 120" preserveAspectRatio="none">
+                             <path d="M0,100 Q50,90 100,110 T200,70 T300,90 T400,60" stroke="#3b82f6" stroke-width="3" fill="none" class="animate-pulse"></path>
+                             <path d="M0,105 Q50,95 100,115 T200,75 T300,95 T400,65" stroke="#3b82f6" stroke-width="1" fill="none" opacity="0.3"></path>
+                             <!-- Indicator Line -->
+                             <line x1="0" y1="80" x2="400" y2="80" stroke="rgba(255,255,255,0.05)" stroke-width="1" stroke-dasharray="4"></line>
+                          </svg>
+                       </div>
                     </div>
-                 </div>
-                 <!-- Interactive Overlay -->
-                 <div class="absolute inset-0 flex items-center justify-center bg-[#0f1115]/40 backdrop-blur-[2px] opacity-0 hover:opacity-100 transition-opacity cursor-pointer group/overlay">
-                    <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center shadow-2xl scale-90 group-hover/overlay:scale-110 transition-transform">
-                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" class="ml-1"><path d="M8 5v14l11-7z"/></svg>
+
+                    <!-- Side Controls (Compact) -->
+                    <div class="w-full md:w-64 space-y-4">
+                       <div class="p-5 bg-white/[0.02] rounded-2xl border border-white/5 space-y-4">
+                          <div class="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-gray-500">
+                             <span>Order Entry</span>
+                             <span class="text-blue-500">Market</span>
+                          </div>
+                          <div class="h-10 bg-white/5 rounded-xl border border-white/5 flex items-center px-4 justify-between">
+                             <span class="text-xs font-black text-white">0.50</span>
+                             <span class="text-[8px] font-black text-gray-600 uppercase">Lots</span>
+                          </div>
+                          <div class="grid grid-cols-2 gap-3">
+                             <button class="py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-[9px] font-black text-red-500 uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all">Sell</button>
+                             <button class="py-3 bg-green-500/10 border border-green-500/20 rounded-xl text-[9px] font-black text-green-500 uppercase tracking-widest hover:bg-green-500 hover:text-white transition-all">Buy</button>
+                          </div>
+                       </div>
+                       
+                       <div class="p-5 bg-blue-600/5 rounded-2xl border border-blue-600/10">
+                          <p class="text-[8px] font-black text-blue-500 uppercase tracking-widest mb-2">Platform Node</p>
+                          <p class="text-[10px] font-black text-white leading-relaxed uppercase tracking-wider">L4 Liquidity Engine Active</p>
+                       </div>
                     </div>
                  </div>
               </div>
@@ -113,99 +330,192 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      <!-- Stats Section -->
-      <section class="section-container border-y border-white/5 bg-[#131722]/50">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-12 md:gap-0 divide-y md:divide-y-0 md:divide-x divide-white/5">
-           <div class="flex-1 text-center py-6 md:py-0 group">
-              <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">Active Users</p>
-              <h3 class="text-4xl md:text-5xl font-black text-white group-hover:text-blue-500 transition-colors">50K+</h3>
+
+      <!-- Institutional Trust Bar -->
+      <section id="markets-page" class="max-w-7xl mx-auto px-6 py-12 md:py-16 reveal">
+
+        <div class="glass-card rounded-[2rem] p-1 shadow-2xl shadow-blue-600/5">
+           <div class="flex flex-col md:flex-row justify-between items-center bg-[#0f1115]/40 rounded-[1.9rem] divide-y md:divide-y-0 md:divide-x divide-white/[0.03]">
+              ${[
+                { label: 'Active Traders', value: '50K+', sub: 'Verified Est.' },
+                { label: 'Monthly Volume', value: '$2.4B+', sub: 'Institutional Est.' },
+                { label: 'System Uptime', value: '99.99%', sub: 'Global Node' },
+                { label: 'Latency Speed', value: '0.4ms', sub: 'Est. Execution' }
+              ].map(stat => `
+                <div class="w-full md:px-10 py-8 md:py-10 text-center space-y-1.5 hover:bg-white/[0.01] transition-colors group">
+                  <p class="text-[9px] font-bold text-blue-500/80 uppercase tracking-[0.2em] group-hover:translate-y-[-2px] transition-transform">${stat.label}</p>
+                  <p class="text-4xl font-black text-white tracking-tighter">${stat.value}</p>
+                  <p class="text-[9px] font-bold text-gray-600 uppercase tracking-widest">${stat.sub}</p>
+                </div>
+              `).join('')}
            </div>
-           <div class="flex-1 text-center py-6 md:py-0 group">
-              <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">Total Volume</p>
-              <h3 class="text-4xl md:text-5xl font-black text-blue-500">$2.4B</h3>
-           </div>
-           <div class="flex-1 text-center py-6 md:py-0 group">
-              <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3">Uptime</p>
-              <h3 class="text-4xl md:text-5xl font-black text-white group-hover:text-blue-500 transition-colors">99.9%</h3>
-           </div>
+           <p class="text-[8px] text-gray-700 text-center mt-4 font-bold uppercase tracking-widest opacity-40">Simulated demo environment. All metrics are estimated based on historical institutional data node performance.</p>
         </div>
       </section>
 
-      <!-- Features Section -->
-      <section class="section-container space-y-12 md:space-y-32">
-        <!-- Feature 1 -->
-        <div id="features" class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-10 md:gap-20 reveal">
-          <div class="flex-1 space-y-5 text-center lg:text-left order-2 lg:order-1">
-            <div class="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-500 mx-auto lg:mx-0">${Icons.lightning}</div>
-            <h2 class="text-3xl md:text-5xl font-black tracking-tight text-white">Lightning Fast <br class="hidden md:block"> Execution Engine</h2>
-            <p class="text-sm md:text-lg text-gray-400 font-medium">Experience sub-millisecond precision with institutional grade execution. Optimized execution, just results.</p>
-            <div class="pt-2">
-               <a href="#features" class="flex items-center gap-2 text-[10px] font-black text-blue-500 uppercase tracking-widest mx-auto lg:mx-0 hover:gap-4 transition-all">Learn More ${Icons.arrowRight}</a>
+      <!-- Trusted Infrastructure -->
+      <section id="orders-page" class="max-w-7xl mx-auto px-6 py-12 reveal">
+        <div class="text-center mb-10 space-y-3">
+          <h2 class="text-2xl md:text-5xl font-black tracking-tight text-white uppercase">Trusted <span class="text-blue-500">Infrastructure.</span></h2>
+          <p class="text-gray-500 text-[8px] font-black uppercase tracking-[0.3em]">Institutional Grade Reliability</p>
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+           ${[
+             { title: 'Regulated', desc: 'Demo node compliance.', icon: Icons.shield, badge: 'Demo' },
+             { title: 'Security', desc: 'AES-256 encryption.', icon: Icons.lightning, badge: 'AES' },
+             { title: 'Monitoring', desc: '24/7 health checks.', icon: Icons.cpu, badge: 'LIVE' },
+             { title: 'Liquidity', desc: 'Multi-bank pools.', icon: Icons.globe, badge: 'DEEP' }
+           ].map(item => `
+             <div class="glass-card p-5 rounded-2xl border border-white/[0.03] flex flex-col items-center text-center space-y-2">
+                <div class="w-10 h-10 bg-blue-600/5 rounded-xl flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+                   ${item.icon}
+                </div>
+                <h3 class="text-[9px] font-black text-white uppercase tracking-widest">${item.title}</h3>
+                <p class="text-[7px] text-gray-600 font-bold uppercase tracking-widest">${item.desc}</p>
+             </div>
+           `).join('')}
+        </div>
+      </section>
+
+
+
+      <!-- Features Infrastructure -->
+      <section id="pricing-section" class="section-container py-24 space-y-16 px-6 reveal">
+
+        <div class="text-center space-y-4">
+          <h2 class="text-3xl md:text-5xl font-black tracking-tight text-white uppercase">Platform <span class="text-blue-500">Infrastructure.</span></h2>
+          <p class="text-gray-500 text-[10px] font-black uppercase tracking-[0.4em]">Built for high-frequency precision.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+           ${[
+             { icon: Icons.lightning, title: 'Ultra-Low Latency', desc: 'Sub-millisecond routing engine for precise entry points.' },
+             { icon: Icons.globe, title: 'Deep Liquidity', desc: 'Access multi-bank liquidity pools for tightest spreads.' },
+             { icon: Icons.cpu, title: 'Network Engine', desc: 'L4 performance nodes optimized for trade execution.' },
+             { icon: Icons.chart, title: 'Analytics Node', desc: 'Real-time market intelligence and risk assessment.' }
+           ].map(item => `
+             <div class="glass-card p-10 rounded-3xl flex items-start gap-8 hover-lift border border-white/[0.03]">
+                <div class="w-14 h-14 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-500 shrink-0 soft-shadow">
+                  ${item.icon}
+                </div>
+                <div class="space-y-2">
+                   <h3 class="text-sm font-black text-white uppercase tracking-widest">${item.title}</h3>
+                   <p class="text-[11px] text-gray-600 font-medium leading-relaxed">${item.desc}</p>
+                </div>
+             </div>
+           `).join('')}
+        </div>
+      </section>
+
+      <!-- Capital Fortification -->
+      <section class="section-container py-32 px-6 relative overflow-hidden reveal">
+        <div class="absolute inset-0 bg-green-500/[0.02] pointer-events-none"></div>
+        <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-20 relative z-10">
+          <div class="flex-1 space-y-8 text-center lg:text-left">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-green-500/5 border border-green-500/10 rounded-full">
+               <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
+               <span class="text-[9px] font-black text-green-500 uppercase tracking-widest">Safety Protocol Active</span>
+            </div>
+            <h2 class="text-4xl md:text-7xl font-black tracking-tighter text-white leading-none">Capital <br> <span class="text-green-500">Fortification.</span></h2>
+            <p class="text-gray-500 text-sm md:text-lg font-medium leading-relaxed max-w-xl mx-auto lg:mx-0">Multi-layer verification nodes and military-grade encryption to safeguard global assets.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left pt-4 max-w-md mx-auto lg:mx-0">
+               ${['AES-256 Protocol', 'Multi-Sig Access', 'Cold Asset Nodes', '24/7 Monitoring'].map(item => `
+                 <div class="flex items-center gap-3 group">
+                   <div class="w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                     ${Icons.check}
+                   </div>
+                   <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest group-hover:text-green-500 transition-colors">${item}</span>
+                 </div>
+               `).join('')}
             </div>
           </div>
-
-          <div class="flex-1 w-full order-1 lg:order-2">
-             <div class="card bg-blue-600/5 border-blue-600/10 p-4 md:p-8 hover-lift">
-                <div class="aspect-video bg-[#0f1115] rounded-xl overflow-hidden border border-white/5 relative">
-                   <div class="absolute inset-0 bg-gradient-to-t from-blue-600/10 to-transparent"></div>
-                   <div class="p-6 space-y-4">
-                      <div class="flex justify-between items-center"><div class="h-2 w-20 bg-white/5 rounded"></div><div class="badge bg-green-500/20 text-green-500">LOCKED</div></div>
-                      <div class="h-1 bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-blue-600 w-3/4"></div></div>
-                      <div class="flex justify-between items-center"><div class="h-8 w-24 bg-white/5 rounded"></div><div class="h-8 w-8 rounded-full bg-blue-600/20"></div></div>
-                   </div>
+          <div class="flex-1 flex justify-center w-full">
+             <div class="w-56 h-56 md:w-80 md:h-80 glass-card p-12 rounded-full flex items-center justify-center border-green-500/10 soft-shadow relative">
+                <div class="absolute inset-0 bg-green-500/5 blur-3xl opacity-20"></div>
+                <div class="text-green-500 pulse-shield relative z-10">
+                   ${Icons.shield}
                 </div>
              </div>
           </div>
         </div>
+      </section>
 
-        <!-- Feature 2 -->
-        <div id="safety" class="max-w-6xl mx-auto flex flex-col lg:flex-row-reverse items-center gap-10 md:gap-20 reveal">
-          <div class="flex-1 space-y-5 text-center lg:text-left">
-            <div class="w-12 h-12 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-500 mx-auto lg:mx-0">${Icons.shield}</div>
-            <h2 class="text-3xl md:text-5xl font-black tracking-tight text-white">Institutional <br class="hidden md:block"> Risk Protocol</h2>
-            <p class="text-sm md:text-lg text-gray-400 font-medium">Automated margin intelligence and negative balance protection. Your capital is secured by industry leading protocols.</p>
-            <div class="pt-2">
-               <a href="#safety" class="flex items-center gap-2 text-[10px] font-black text-green-500 uppercase tracking-widest mx-auto lg:mx-0 hover:gap-4 transition-all">Explore Safety ${Icons.arrowRight}</a>
+      <!-- Inquiries -->
+      <section class="section-container py-24 px-6 max-w-3xl mx-auto space-y-12 reveal">
+        <div class="text-center space-y-4">
+          <h2 class="text-2xl md:text-5xl font-black text-white uppercase tracking-tighter">Inquiries.</h2>
+          <p class="text-[9px] font-black text-gray-500 uppercase tracking-[0.4em]">Clarifying the infrastructure.</p>
+        </div>
+        <div class="space-y-4">
+          ${[
+            { q: 'Is this platform secure?', a: 'Institutional-grade multi-signature storage and end-to-end AES-256 encryption for all assets.' },
+            { q: 'How fast is execution?', a: 'Average execution speed is sub-1.2ms through our optimized L4 liquidity nodes.' },
+            { q: 'Is it beginner friendly?', a: 'Precision-engineered interface designed for evolving professional traders.' }
+          ].map((faq, i) => `
+            <div id="faq-card-${i}" class="faq-card glass-card rounded-2xl overflow-hidden border border-white/[0.03] transition-all duration-300">
+              <button onclick="window.toggleFAQ(${i})" class="w-full p-6 text-left flex justify-between items-center hover:bg-white/[0.01] transition-colors">
+                <span class="text-[11px] font-black text-white uppercase tracking-widest transition-colors">${faq.q}</span>
+                <span id="faq-icon-${i}" class="faq-icon transition-transform duration-300 text-blue-500 text-[10px]">▼</span>
+              </button>
+              <div id="faq-${i}" class="faq-content ${i === 0 ? 'show' : ''} px-6 pb-6 text-[11px] text-gray-600 leading-relaxed font-medium">
+                ${faq.a}
+              </div>
             </div>
-          </div>
-
-          <div class="flex-1 w-full">
-             <div class="card bg-green-500/5 border-green-500/10 p-4 md:p-8 hover-lift">
-                <div class="aspect-video bg-[#0f1115] rounded-xl border border-white/5 relative flex items-center justify-center">
-                   <div class="text-center space-y-3">
-                      <div class="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto text-3xl">🛡️</div>
-                      <p class="text-xs font-black text-white/50 uppercase tracking-widest">Health Score: 98.4%</p>
-                   </div>
-                </div>
-             </div>
-          </div>
+          `).join('')}
         </div>
       </section>
 
-      <!-- CTA Section -->
-      <section id="cta" class="section-container relative overflow-hidden text-center bg-[#131722]/50 border-t border-white/5">
-
-        <div class="absolute inset-0 bg-blue-600/5 blur-[120px] -z-10"></div>
-        <div class="max-w-3xl mx-auto space-y-8 relative z-10">
-          <h2 class="text-3xl md:text-6xl font-black tracking-tighter text-white">Stop Guessing. <br> <span class="text-blue-500">Trade Like a Pro.</span></h2>
-          <p class="text-sm md:text-lg text-gray-400 font-medium px-6 md:px-0">Join 50,000+ elite traders scaling their legacy with the world's most advanced terminal.</p>
-          <div class="pt-4 px-6 md:px-0">
-             <a href="#auth" class="btn-primary w-full sm:w-auto px-12 btn-glow">Get Started Now</a>
+      <!-- Final Elite CTA -->
+      <section id="cta" class="wave-bg py-16 md:py-32 px-6 text-center reveal">
+        <div class="max-w-4xl mx-auto space-y-6 relative z-10">
+          <p class="text-[9px] font-black text-blue-500 uppercase tracking-[0.5em] animate-pulse">Institutional Hub Active</p>
+          <h2 class="text-3xl md:text-7xl font-black tracking-tighter text-white leading-none uppercase">Join the <span class="text-blue-500">Elite.</span></h2>
+          <p class="text-[10px] md:text-lg text-gray-600 font-bold uppercase tracking-widest max-w-sm mx-auto">High-speed execution 24/7 globally.</p>
+          <div class="pt-4">
+             <a href="#auth" class="btn-primary w-full md:w-auto shine-effect px-12 py-5 text-[11px] font-black uppercase tracking-widest rounded-2xl">Launch Live Account</a>
           </div>
         </div>
       </section>
 
       <!-- Footer -->
-      <footer class="py-12 md:py-20 px-6 md:px-20 border-t border-white/5 bg-[#0f1115]">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-black">FX</div>
-            <span class="text-xl font-black tracking-tighter text-white">ForexPro</span>
+      <footer class="border-t border-white/[0.03] px-6 py-12 bg-[#0b0d11]">
+        <div class="max-w-7xl mx-auto">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-10">
+            <div class="col-span-2 md:col-span-1 space-y-4">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-blue-600 rounded flex items-center justify-center text-white font-black text-xs">FX</div>
+                <span class="text-lg font-black tracking-tight text-white uppercase">Forex<span class="text-blue-500">Pro</span></span>
+              </div>
+              <p class="text-[9px] text-gray-700 font-bold uppercase tracking-wider leading-relaxed">Institutional trading terminal infrastructure.</p>
+            </div>
+            
+            <div class="space-y-4">
+              <h4 class="text-[9px] font-black text-white uppercase tracking-widest">Markets</h4>
+              <ul class="space-y-2 text-[9px] text-gray-600 font-bold uppercase tracking-widest">
+                <li><a href="#markets" class="hover:text-white transition-all">EUR/USD Pair</a></li>
+                <li><a href="#markets" class="hover:text-white transition-all">Commodities</a></li>
+              </ul>
+            </div>
+
+            <div class="space-y-4">
+              <h4 class="text-[9px] font-black text-white uppercase tracking-widest">Legal</h4>
+              <ul class="space-y-2 text-[9px] text-gray-600 font-bold uppercase tracking-widest">
+                <li><a href="javascript:void(0)" onclick="window.openPrivacy()" class="hover:text-white transition-all">Privacy</a></li>
+                <li><a href="javascript:void(0)" onclick="window.openTerms()" class="hover:text-white transition-all">Terms</a></li>
+              </ul>
+            </div>
+
+            <div class="space-y-4">
+              <h4 class="text-[9px] font-black text-white uppercase tracking-widest">Hub Status</h4>
+              <div class="flex gap-2.5 items-center">
+                 <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                 <span class="text-[9px] font-black text-green-500 uppercase tracking-widest">Operational</span>
+              </div>
+              <p class="text-[8px] text-gray-800 font-bold uppercase tracking-widest">Simulated platform.</p>
+            </div>
           </div>
-          <p class="text-[10px] font-black uppercase tracking-widest text-gray-600">© 2024 ForexPro Institutional. All rights reserved.</p>
-          <div class="flex gap-8 text-[10px] font-black uppercase tracking-widest text-gray-500">
-             <a href="javascript:void(0)" onclick="window.openPrivacy()" class="hover:text-blue-500 transition-colors">Privacy</a>
-             <a href="javascript:void(0)" onclick="window.openTerms()" class="hover:text-blue-500 transition-colors">Terms</a>
+          <div class="mt-10 pt-8 border-t border-white/[0.02] flex flex-col md:flex-row justify-between gap-4">
+            <p class="text-[8px] text-gray-800 font-bold uppercase tracking-widest">&copy; 2024 ForexPro Institutional.</p>
+            <p class="text-[8px] text-gray-800 font-bold uppercase tracking-widest italic">Trading involves risk.</p>
           </div>
         </div>
       </footer>
@@ -215,30 +525,55 @@ export const LandingPage = () => {
 
 window.openPrivacy = () => {
   window.showModal('Privacy Policy', `
-    <div class="space-y-4">
-      <p>This institutional trading platform adheres to the highest standards of data protection and privacy.</p>
-      <p>Our infrastructure utilizes military-grade encryption to ensure that your trading activities and personal information remain confidential at all times.</p>
-      <p class="font-black text-white">KEY PROTOCOLS:</p>
-      <ul class="list-disc pl-5 space-y-2">
-        <li>Zero-knowledge architecture for sensitive data.</li>
-        <li>End-to-end encryption for all trade communications.</li>
-        <li>Compliance with global financial privacy standards.</li>
-      </ul>
+    <div class="space-y-6 text-gray-400 text-xs font-medium leading-relaxed">
+      <p class="text-white font-bold">Your privacy is our priority.</p>
+      <p>This Privacy Policy describes how ForexPro collects, uses, and protects your personal information in our demo environment.</p>
+      <div class="space-y-2">
+         <h4 class="text-blue-500 font-black uppercase tracking-widest text-[10px]">Data Collection</h4>
+         <p>We collect simulated trade data and basic profile information to enhance your terminal experience.</p>
+      </div>
+      <div class="space-y-2">
+         <h4 class="text-blue-500 font-black uppercase tracking-widest text-[10px]">Security</h4>
+         <p>All data is encrypted using institutional-grade AES-256 protocols within our simulated nodes.</p>
+      </div>
+      <p class="italic text-[10px]">Note: This is a demo platform. No real financial data is required or stored.</p>
     </div>
   `);
 };
 
+
 window.openTerms = () => {
   window.showModal('Terms of Service', `
-    <div class="space-y-4">
-      <p>By accessing the ForexPro Institutional Terminal, you agree to the following institutional-grade terms:</p>
-      <ul class="list-disc pl-5 space-y-2">
-        <li>Execution speed is subject to global liquidity conditions.</li>
-        <li>Risk protocols are automatically enforced by the L4 liquidity engine.</li>
-        <li>Users must maintain minimum margin requirements as specified in the risk protocol.</li>
-      </ul>
-      <p>Failure to comply with risk protocols may result in automated portfolio rebalancing.</p>
+    <div class="space-y-6 text-gray-400 text-xs font-medium leading-relaxed">
+      <p class="text-white font-bold">Standard Institutional Terms</p>
+      <div class="space-y-2">
+         <h4 class="text-blue-500 font-black uppercase tracking-widest text-[10px]">1. Usage Agreement</h4>
+         <p>By accessing the ForexPro terminal, you agree to use the platform for educational and demonstration purposes only.</p>
+      </div>
+      <div class="space-y-2">
+         <h4 class="text-blue-500 font-black uppercase tracking-widest text-[10px]">2. Simulated Trading</h4>
+         <p>All trades, balances, and market movements are simulated. No actual financial liability or gain is incurred.</p>
+      </div>
+      <div class="space-y-2">
+         <h4 class="text-blue-500 font-black uppercase tracking-widest text-[10px]">3. Account Access</h4>
+         <p>Demo accounts are temporary and may be reset periodically for node maintenance.</p>
+      </div>
     </div>
   `);
 };
+
+window.openRisk = () => {
+  window.showModal('Risk Disclaimer', `
+    <div class="space-y-6 text-gray-400 text-xs font-medium leading-relaxed">
+      <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
+         <h4 class="text-red-500 font-black uppercase tracking-widest text-[10px] mb-2">High Risk Warning</h4>
+         <p class="text-red-500/80">Trading foreign exchange on margin carries a high level of risk and may not be suitable for all investors.</p>
+      </div>
+      <p>The high degree of leverage can work against you as well as for you. Before deciding to trade foreign exchange, you should carefully consider your investment objectives, level of experience, and risk appetite.</p>
+      <p class="text-white font-bold uppercase tracking-widest text-[10px]">Simulation Notice</p>
+      <p>ForexPro is a demo platform. The virtual trading environment aims to replicate institutional execution but does not involve real capital.</p>
+    </div>
+  `);
+};
+
 

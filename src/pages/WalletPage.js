@@ -1,201 +1,125 @@
-// Simulated Global State for Demo
-if (!window.walletState) {
-  window.walletState = {
-    balance: 124592.00,
-    transactions: []
-  };
-}
-
 export const WalletPage = () => {
-  // Update UI Helper
-  const refreshWalletUI = () => {
-    const balanceEl = document.getElementById('main-balance');
-    const headerBalanceEl = document.getElementById('header-balance');
-    const historyEl = document.getElementById('transaction-history');
-    
-    if (balanceEl) balanceEl.innerText = '$' + window.walletState.balance.toLocaleString(undefined, { minimumFractionDigits: 2 });
-    if (headerBalanceEl) headerBalanceEl.innerText = '$' + window.walletState.balance.toLocaleString(undefined, { minimumFractionDigits: 2 });
-    
-    if (historyEl) {
-      if (window.walletState.transactions.length === 0) {
-        historyEl.innerHTML = `
-          <div class="p-6 text-center space-y-4">
-             <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto opacity-20 text-3xl">📝</div>
-             <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">No recent transactions</p>
-          </div>
-        `;
-      } else {
-        historyEl.innerHTML = window.walletState.transactions.map(tx => `
-          <div class="px-6 py-4 space-y-2 hover:bg-white/5 cursor-pointer transition-all border-b border-gray-800 last:border-none">
-            <div class="flex justify-between items-start">
-              <span class="text-[9px] font-black ${tx.type === 'DEPOSIT' ? 'text-blue-500' : 'text-red-500'} uppercase tracking-widest">${tx.type}</span>
-              <span class="text-[8px] font-black px-1.5 py-0.5 rounded bg-green-500/10 text-green-500">COMPLETED</span>
-            </div>
-            <div class="flex justify-between items-center">
-              <p class="font-black text-white text-sm">USD Wallet</p>
-              <p class="font-black text-sm ${tx.type === 'DEPOSIT' ? 'text-green-500' : 'text-white'}">${tx.amount}</p>
-            </div>
-            <p class="text-[9px] font-bold text-gray-600">${tx.date}</p>
-          </div>
-        `).reverse().join('');
-      }
-    }
-  };
+  const assets = [
+    { name: 'US Dollar', symbol: 'USD', balance: '124,592.00', value: '$124,592.00', change: '0.00%', icon: '💵' },
+    { name: 'Euro', symbol: 'EUR', balance: '42,105.50', value: '$45,892.20', change: '+0.45%', icon: '💶' },
+    { name: 'Bitcoin', symbol: 'BTC', balance: '1.45023', value: '$94,264.95', change: '+2.10%', icon: '₿' },
+    { name: 'Gold', symbol: 'XAU', balance: '10.50', value: '$24,592.00', change: '-0.15%', icon: '🥇' },
+  ];
 
-  // Simulated Withdrawal Logic
-  window.handleWithdrawal = (event) => {
-    event.preventDefault();
-    const amount = parseFloat(event.target.amount.value);
-    const btn = event.target.querySelector('button');
-
-    if (!amount || amount <= 0) return;
-
-    btn.innerText = 'PROCESSING...';
-    btn.disabled = true;
-
-    setTimeout(() => {
-      window.walletState.balance -= amount;
-      window.walletState.transactions.push({
-        type: 'WITHDRAWAL',
-        amount: '-$' + amount.toLocaleString(),
-        date: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-      });
-
-      // Show Success Toast
-      const toast = document.createElement('div');
-      toast.className = 'fixed bottom-10 left-1/2 -translate-x-1/2 bg-green-500 text-white font-black px-8 py-4 rounded-2xl shadow-2xl z-[500] fade-in';
-      toast.innerText = 'WITHDRAWAL SUCCESSFUL';
-      document.body.appendChild(toast);
-
-      window.toggleWithdrawModal(false);
-      refreshWalletUI();
-
-      setTimeout(() => {
-        toast.classList.add('opacity-0');
-        setTimeout(() => toast.remove(), 300);
-      }, 2000);
-
-      btn.innerText = 'WITHDRAW NOW';
-      btn.disabled = false;
-      event.target.reset();
-    }, 1500);
-  };
-
-  // Simulated Deposit Logic
-  window.handleDeposit = () => {
-    const amount = 100000;
-    window.walletState.balance += amount;
-    window.walletState.transactions.push({
-      type: 'DEPOSIT',
-      amount: '+$' + amount.toLocaleString(),
-      date: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-    });
-
-    // Show Success Toast
-    const toast = document.createElement('div');
-    toast.className = 'fixed bottom-10 left-1/2 -translate-x-1/2 bg-blue-600 text-white font-black px-8 py-4 rounded-2xl shadow-2xl z-[500] fade-in';
-    toast.innerText = '$100,000.00 DEPOSITED';
-    document.body.appendChild(toast);
-
-    refreshWalletUI();
-
-    setTimeout(() => {
-      toast.classList.add('opacity-0');
-      setTimeout(() => toast.remove(), 300);
-    }, 2000);
-  };
-
-  window.toggleWithdrawModal = (isOpen) => {
-    const modal = document.getElementById('withdraw-modal');
-    modal?.classList.toggle('active', isOpen);
-  };
-
-  // Initial UI sync
-  setTimeout(refreshWalletUI, 0);
+  const transactions = [
+    { id: 'TX-99210', type: 'DEPOSIT', asset: 'USD', amount: '+$10,000.00', status: 'COMPLETED', date: '2024-03-20' },
+    { id: 'TX-99208', type: 'WITHDRAW', asset: 'EUR', amount: '-$2,500.00', status: 'COMPLETED', date: '2024-03-18' },
+    { id: 'TX-99205', type: 'DEPOSIT', asset: 'BTC', amount: '+$500.00', status: 'COMPLETED', date: '2024-03-15' },
+  ];
 
   return `
-    <div class="section-container space-y-8 fade-in">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="section-container space-y-6 md:space-y-10 fade-in px-4 md:px-8 pb-32 lg:pb-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 class="text-2xl md:text-3xl font-black text-white">Institutional Wallet</h1>
-          <p class="text-gray-500 text-xs md:text-sm font-medium mt-1">Manage your institutional liquidity and asset distribution</p>
+          <h1 class="text-2xl md:text-3xl font-black text-white">Capital Management</h1>
+          <p class="text-gray-500 text-[10px] md:text-sm font-medium mt-1 uppercase tracking-widest">Institutional Liquidity · Assets</p>
         </div>
-        <div class="flex gap-3 w-full sm:w-auto">
-          <button onclick="window.handleDeposit()" class="btn-primary flex-1 sm:flex-none px-8">DEPOSIT</button>
-          <button onclick="window.toggleWithdrawModal(true)" class="btn-outline flex-1 sm:flex-none px-8 bg-[#131722]">WITHDRAW</button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div class="lg:col-span-2 space-y-8">
-          <div class="card bg-gradient-to-br from-blue-600 to-blue-800 border-none relative overflow-hidden p-8 md:p-12 shadow-2xl">
-            <div class="absolute top-[-20%] right-[-10%] w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-            <div class="relative z-10 space-y-6">
-              <span class="text-[10px] md:text-xs font-black text-white/60 uppercase tracking-[0.3em]">Account Value</span>
-              <h2 id="main-balance" class="text-4xl md:text-6xl font-black text-white tracking-tighter">$${window.walletState.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
-              <div class="flex items-center gap-6 pt-2">
-                <div class="space-y-1"><p class="text-[9px] font-black text-white/40 uppercase">Equity</p><p class="text-lg font-black text-white">$128,802.50</p></div>
-                <div class="h-8 w-px bg-white/10"></div>
-                <div class="space-y-1"><p class="text-[9px] font-black text-white/40 uppercase">Open P/L</p><p class="text-lg font-black text-white">+$4,210.50</p></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card p-0 overflow-hidden bg-[#131722]/50">
-             <div class="p-6 border-b border-gray-800 flex items-center justify-between">
-                <h3 class="text-xs font-black text-white uppercase tracking-widest">Asset Allocation</h3>
-             </div>
-             <div class="overflow-x-auto">
-                <table class="w-full text-left min-w-[500px]">
-                  <thead>
-                    <tr class="bg-white/5 text-[9px] font-black text-gray-500 uppercase tracking-widest border-b border-gray-800">
-                      <th class="px-8 py-4">Currency</th>
-                      <th class="px-8 py-4 text-right">Available</th>
-                      <th class="px-8 py-4 text-right">USD Value</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-gray-800">
-                    <tr class="table-row">
-                      <td class="px-8 py-5 flex items-center gap-3"><div class="w-8 h-8 rounded bg-gray-800 flex items-center justify-center font-black text-[10px]">US</div><span class="font-black text-white">US Dollar</span></td>
-                      <td class="px-8 py-5 text-right font-bold text-white">87,214.40</td>
-                      <td class="px-8 py-5 text-right font-black text-white">$87,214.40</td>
-                    </tr>
-                  </tbody>
-                </table>
-             </div>
-          </div>
-        </div>
-
-        <div class="card p-0 bg-[#131722]/50 flex flex-col min-h-[400px]">
-           <div class="p-6 border-b border-gray-800"><h3 class="text-xs font-black text-white uppercase tracking-widest">Recent Activity</h3></div>
-           <div id="transaction-history" class="flex-1 overflow-y-auto">
-              <!-- History will be injected here -->
-           </div>
+        <div class="flex items-center gap-3 w-full md:w-auto">
+          <button onclick="window.showToast('Withdrawal panel initialized', 'info')" class="flex-1 md:flex-none btn-outline px-8 py-3 text-[10px] font-black uppercase tracking-widest active:scale-95">Withdraw</button>
+          <button onclick="window.showToast('Deposit panel initialized', 'info')" class="flex-1 md:flex-none btn-primary px-8 py-3 text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95">Deposit</button>
         </div>
       </div>
 
-      <!-- Withdrawal Modal -->
-      <div id="withdraw-modal" class="modal-overlay">
-         <div class="modal-content space-y-8">
-            <div class="flex justify-between items-start">
-               <div>
-                  <h3 class="text-2xl font-black text-white tracking-tighter">Withdraw Funds</h3>
-                  <p class="text-gray-500 text-xs font-medium mt-1">Funds will be sent to your verified node.</p>
-               </div>
-               <button onclick="window.toggleWithdrawModal(false)" class="text-gray-500 hover:text-white transition-colors">✕</button>
+      <!-- Key Balances -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        ${[
+          { label: 'Total Net Worth', value: '$289,341.15', sub: 'Across 12 Assets', color: 'blue' },
+          { label: 'Available Margin', value: '$112,192.00', sub: '85% Liquid', color: 'green' },
+          { label: 'Locked in Trades', value: '$45,400.00', sub: '4 Open Positions', color: 'gray' },
+        ].map(stat => `
+          <div class="card p-6 flex flex-col justify-between gap-4 border-l-4 ${stat.color === 'blue' ? 'border-l-blue-600' : stat.color === 'green' ? 'border-l-green-500' : 'border-l-gray-600'}">
+            <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">${stat.label}</span>
+            <div class="space-y-1">
+              <p class="text-2xl font-black text-white">${stat.value}</p>
+              <p class="text-[10px] font-bold text-gray-600 uppercase tracking-widest">${stat.sub}</p>
             </div>
+          </div>
+        `).join('')}
+      </div>
 
-            <form onsubmit="window.handleWithdrawal(event)" class="space-y-6">
-               <div class="space-y-2">
-                  <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Amount (USD)</label>
-                  <div class="relative group">
-                     <input type="number" name="amount" placeholder="0.00" required class="input-field pl-12 text-xl font-black bg-[#0f1115] border-gray-800 focus:border-blue-500">
-                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+      <div class="flex flex-col xl:flex-row gap-8">
+        <!-- Assets Table -->
+        <div class="flex-1 space-y-6">
+          <div class="card p-0 overflow-hidden bg-[#131722]/50 border-gray-800">
+            <div class="p-6 border-b border-gray-800 flex items-center justify-between">
+              <h3 class="font-black text-white text-sm uppercase tracking-widest">Asset Allocation</h3>
+              <button class="text-[10px] font-black text-blue-500 hover:text-white uppercase">Refresh</button>
+            </div>
+            <div class="overflow-x-auto no-scrollbar">
+              <table class="w-full text-left min-w-[600px]">
+                <thead>
+                  <tr class="bg-white/5 text-[9px] font-black text-gray-500 uppercase tracking-widest border-b border-gray-800">
+                    <th class="px-6 py-4">Asset</th>
+                    <th class="px-6 py-4 text-right">Balance</th>
+                    <th class="px-6 py-4 text-right">USD Value</th>
+                    <th class="px-6 py-4 text-right">24h Change</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800">
+                  ${assets.map(asset => `
+                    <tr class="group hover:bg-white/5 transition-all">
+                      <td class="px-6 py-5">
+                        <div class="flex items-center gap-3">
+                          <span class="text-lg">${asset.icon}</span>
+                          <div>
+                            <p class="font-black text-white text-sm uppercase">${asset.symbol}</p>
+                            <p class="text-[9px] font-bold text-gray-600">${asset.name}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-6 py-5 text-right font-mono text-sm text-gray-400">${asset.balance}</td>
+                      <td class="px-6 py-5 text-right font-black text-white text-sm">${asset.value}</td>
+                      <td class="px-6 py-5 text-right">
+                        <span class="text-[10px] font-black ${asset.change.startsWith('+') ? 'text-green-500' : asset.change === '0.00%' ? 'text-gray-500' : 'text-red-500'}">
+                          ${asset.change}
+                        </span>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="w-full xl:w-96 space-y-6">
+          <div class="flex items-center justify-between px-2">
+            <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Recent Activity</h3>
+            <button class="text-[9px] font-black text-blue-500 uppercase">View All</button>
+          </div>
+          
+          <div class="space-y-3">
+            ${transactions.map(tx => `
+              <div class="card p-4 flex items-center justify-between group hover:border-gray-700">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-lg bg-gray-800 flex items-center justify-center text-sm">
+                    ${tx.type === 'DEPOSIT' ? '↓' : '↑'}
                   </div>
-               </div>
-               <button type="submit" class="btn-primary w-full py-5 btn-glow font-black tracking-widest">WITHDRAW NOW</button>
-            </form>
-         </div>
+                  <div>
+                    <p class="font-black text-white text-xs uppercase">${tx.type}</p>
+                    <p class="text-[9px] font-bold text-gray-600 uppercase tracking-tighter">${tx.date} · ${tx.asset}</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="font-black text-sm ${tx.type === 'DEPOSIT' ? 'text-green-500' : 'text-white'}">${tx.amount}</p>
+                  <p class="text-[8px] font-black text-blue-500 uppercase tracking-tighter">DONE</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Quick Tip -->
+          <div class="card bg-blue-600/5 border-dashed border-blue-600/20 p-5 space-y-2">
+             <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest">Security Tip</p>
+             <p class="text-[11px] text-gray-500 font-medium leading-relaxed">Large withdrawals over $50k may require L2 security verification for institutional compliance.</p>
+          </div>
+        </div>
       </div>
     </div>
   `;

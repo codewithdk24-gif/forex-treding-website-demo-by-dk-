@@ -27,7 +27,10 @@ const initDemoData = () => {
 initDemoData();
 
 // Role-based Access Control Helper
-const getAuthUser = () => JSON.parse(localStorage.getItem('currentUser') || '{}');
+const getAuthUser = () => {
+  const user = localStorage.getItem('currentUser');
+  return user ? JSON.parse(user) : null;
+};
 
 // Routes now return only the CONTENT. The Router wraps them in Layout if needed.
 const routes = {
@@ -36,55 +39,33 @@ const routes = {
   'admin-login': () => AuthPage(),
   dashboard: () => {
     const user = getAuthUser();
-    if (user.role === 'admin') { window.location.hash = 'admin'; return ''; }
+    if (user?.role === 'admin') { window.location.hash = 'admin'; return ''; }
     return DashboardPage();
   },
   markets: () => {
     const user = getAuthUser();
-    if (user.role === 'admin') { window.location.hash = 'admin'; return ''; }
+    if (user?.role === 'admin') { window.location.hash = 'admin'; return ''; }
     return MarketsPage();
   },
   orders: () => {
     const user = getAuthUser();
-    if (user.role === 'admin') { window.location.hash = 'admin'; return ''; }
+    if (user?.role === 'admin') { window.location.hash = 'admin'; return ''; }
     return OrdersPage();
   },
   wallet: () => {
     const user = getAuthUser();
-    if (user.role === 'admin') { window.location.hash = 'admin'; return ''; }
+    if (user?.role === 'admin') { window.location.hash = 'admin'; return ''; }
     return WalletPage();
   },
-  admin: () => {
-    const user = getAuthUser();
-    if (user.role !== 'admin') { window.location.hash = 'dashboard'; return ''; }
-    return AdminPage();
-  },
-  'admin/users': () => {
-    const user = getAuthUser();
-    if (user.role !== 'admin') { window.location.hash = 'dashboard'; return ''; }
-    return AdminPage();
-  },
-  'admin/trades': () => {
-    const user = getAuthUser();
-    if (user.role !== 'admin') { window.location.hash = 'dashboard'; return ''; }
-    return AdminPage();
-  },
-  'admin/transactions': () => {
-    const user = getAuthUser();
-    if (user.role !== 'admin') { window.location.hash = 'dashboard'; return ''; }
-    return AdminPage();
-  },
-  'admin/analytics': () => {
-    const user = getAuthUser();
-    if (user.role !== 'admin') { window.location.hash = 'dashboard'; return ''; }
-    return AdminPage();
-  },
-  'admin/settings': () => {
-    const user = getAuthUser();
-    if (user.role !== 'admin') { window.location.hash = 'dashboard'; return ''; }
-    return AdminPage();
-  }
+  admin: () => AdminPage(),
+  'admin/users': () => AdminPage(),
+  'admin/trades': () => AdminPage(),
+  'admin/transactions': () => AdminPage(),
+  'admin/analytics': () => AdminPage(),
+  'admin/settings': () => AdminPage()
 };
+
+
 
 // Initialize Router
 const router = new Router(routes);
@@ -108,7 +89,7 @@ window.addEventListener('pageLoaded', (e) => {
   // Sync Order Panel visibility on desktop
   const orderPanel = document.getElementById('desktop-order-panel');
   if (orderPanel) {
-    const showOrderPanel = ['dashboard', 'markets'].some(h => page.includes(h));
+    const showOrderPanel = page.includes('dashboard');
     orderPanel.style.display = showOrderPanel ? 'block' : 'none';
   }
 
@@ -166,18 +147,6 @@ window.toggleChartFullscreen = () => {
   }
 };
 
-
-window.toggleTerminal = (isOpen) => {
-  const terminal = document.getElementById('mobile-terminal');
-  if (isOpen) {
-    terminal?.classList.add('active');
-    setTimeout(() => {
-      TradingViewChart('terminal-chart-container', 'FX:EURUSD', 'dark');
-    }, 100);
-  } else {
-    terminal?.classList.remove('active');
-  }
-};
 
 // Global Feedback System
 window.showToast = (message, type = 'success') => {

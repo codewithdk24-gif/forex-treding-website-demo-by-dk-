@@ -18,48 +18,48 @@ export const OrdersPage = () => {
 
   window.switchOrderTab = (tab) => {
     window.activeOrderTab = tab;
-    const app = document.getElementById('app');
-    if (app) app.innerHTML = OrdersPage();
+    const view = document.getElementById('router-view');
+    if (view) view.innerHTML = OrdersPage();
   };
 
   const currentOrders = mockData[window.activeOrderTab] || [];
 
   return `
-    <div class="flex-1 p-4 md:p-6 lg:p-8 space-y-6 md:space-y-8 fade-in">
+    <div class="section-container space-y-6 md:space-y-8 fade-in px-4 md:px-8">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 class="text-2xl md:text-3xl font-black text-white">Institutional Orders</h1>
-          <p class="text-gray-500 text-xs md:text-sm font-medium mt-1">Real-time execution log and trade history</p>
+          <p class="text-gray-500 text-[10px] md:text-sm font-medium mt-1 uppercase tracking-widest">Execution Log · Trade History</p>
         </div>
-        <div class="flex gap-3">
-          <button onclick="window.showToast('Data exported successfully', 'info')" class="btn-primary px-6 py-2.5 text-[10px] md:text-xs font-black uppercase tracking-widest shadow-lg shadow-blue-600/20">EXPORT DATA</button>
-        </div>
+        <button onclick="window.showToast('Data exported successfully', 'info')" class="btn-primary w-full md:w-auto px-6 py-3 text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95">EXPORT DATA</button>
       </div>
 
-      <div class="card p-0 overflow-hidden bg-[#131722]/50">
-        <div class="p-6 border-b border-gray-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-           <div class="flex bg-[#0f1115] rounded-lg p-0.5 border border-gray-800 w-full sm:w-auto">
+      <div class="card p-0 overflow-hidden bg-[#131722]/50 border-0 md:border md:border-gray-800">
+        <div class="p-4 md:p-6 border-b border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+           <div class="flex bg-[#0f1115] rounded-xl p-1 border border-gray-800 w-full sm:w-auto overflow-x-auto no-scrollbar">
               ${['ACTIVE', 'FILLED', 'CANCELLED'].map(tab => `
                 <button onclick="window.switchOrderTab('${tab}')" 
-                        class="flex-1 sm:flex-none px-6 py-1.5 text-[10px] font-black rounded-md transition-all ${window.activeOrderTab === tab ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}">
+                        class="flex-1 sm:flex-none px-6 py-2 text-[10px] font-black rounded-lg transition-all ${window.activeOrderTab === tab ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}">
                   ${tab}
                 </button>
               `).join('')}
            </div>
-           <div class="flex items-center gap-3 w-full sm:w-auto">
-              <input type="text" placeholder="Filter by Ticket ID..." class="input-field py-2 px-4 text-[10px] bg-[#0f1115] border-gray-800 focus:border-blue-500/50">
+           <div class="relative w-full sm:w-64 group">
+              <input type="text" placeholder="Filter Ticket ID..." class="input-field py-2 px-10 text-[10px] bg-[#0f1115] border-gray-800 focus:border-blue-500/50">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 group-focus-within:text-blue-500 transition-colors">🔍</span>
            </div>
         </div>
-        <div class="overflow-x-auto">
+
+        <!-- Desktop Table View -->
+        <div class="hidden lg:block overflow-x-auto">
           <table class="w-full text-left min-w-[800px]">
             <thead>
-              <tr class="bg-white/5 text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest border-b border-gray-800">
+              <tr class="bg-white/5 text-[10px] font-black text-gray-500 uppercase tracking-widest border-b border-gray-800">
                 <th class="px-8 py-4">Execution Time</th>
                 <th class="px-8 py-4">Instrument</th>
                 <th class="px-8 py-4">Action</th>
                 <th class="px-8 py-4 text-right">Size</th>
                 <th class="px-8 py-4 text-right">Entry Price</th>
-                <th class="px-8 py-4 text-right">Current</th>
                 <th class="px-8 py-4 text-right">P/L (USD)</th>
                 <th class="px-8 py-4"></th>
               </tr>
@@ -73,7 +73,6 @@ export const OrdersPage = () => {
                   <td class="px-8 py-5">
                     <div class="flex items-center gap-2">
                       <span class="font-black text-white text-sm">${order.symbol}</span>
-                      <span class="badge bg-gray-800 text-gray-400">INST</span>
                     </div>
                   </td>
                   <td class="px-8 py-5">
@@ -81,30 +80,52 @@ export const OrdersPage = () => {
                   </td>
                   <td class="px-8 py-5 text-right font-bold text-gray-400">${order.size}</td>
                   <td class="px-8 py-5 text-right font-mono text-xs opacity-60">${order.entry}</td>
-                  <td class="px-8 py-5 text-right font-mono text-xs opacity-60">${order.current}</td>
                   <td class="px-8 py-5 text-right font-black ${order.pl.startsWith('+') ? 'text-green-500' : 'text-red-500'}">${order.pl}</td>
                   <td class="px-8 py-5 text-right">
-                    <button onclick="window.showToast('Ticket ${order.id} details requested', 'info')" class="text-xs font-black text-blue-500 hover:text-white transition-colors opacity-0 group-hover:opacity-100 uppercase tracking-tighter">Details</button>
+                    <button onclick="window.showToast('Ticket ${order.id} details', 'info')" class="text-[10px] font-black text-blue-500 hover:text-white transition-colors opacity-0 group-hover:opacity-100 uppercase">Details</button>
                   </td>
                 </tr>
               `).join('') : `
-                <tr>
-                  <td colspan="8" class="px-8 py-12 text-center text-gray-500 font-bold uppercase tracking-widest text-xs opacity-50">No orders found in this category</td>
-                </tr>
+                <tr><td colspan="7" class="px-8 py-12 text-center text-gray-500 font-bold uppercase tracking-widest text-xs">No orders found</td></tr>
               `}
             </tbody>
           </table>
         </div>
-        <div class="p-6 bg-white/[0.02] border-t border-gray-800 flex justify-between items-center">
-           <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Showing ${currentOrders.length} ${window.activeOrderTab.toLowerCase()} orders</p>
-           <div class="flex gap-2">
-              <button class="w-8 h-8 rounded bg-[#0f1115] border border-gray-800 flex items-center justify-center text-gray-500 hover:text-white transition-all cursor-not-allowed">←</button>
-              <button class="w-8 h-8 rounded bg-[#0f1115] border border-gray-800 flex items-center justify-center text-white hover:border-blue-500/50 transition-all">1</button>
-              <button class="w-8 h-8 rounded bg-[#0f1115] border border-gray-800 flex items-center justify-center text-gray-500 hover:text-white transition-all">→</button>
-           </div>
+
+        <!-- Mobile Card View -->
+        <div class="lg:hidden divide-y divide-gray-800">
+           ${currentOrders.length > 0 ? currentOrders.map(order => `
+             <div class="p-4 space-y-4">
+                <div class="flex justify-between items-start">
+                   <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl bg-gray-800 flex items-center justify-center font-black text-xs text-white uppercase">${order.symbol.slice(0,2)}</div>
+                      <div>
+                         <p class="font-black text-white text-sm">${order.symbol}</p>
+                         <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">${order.time}</p>
+                      </div>
+                   </div>
+                   <span class="badge ${order.type === 'BUY' ? 'text-blue-500 bg-blue-500/10' : 'text-red-500 bg-red-500/10'}">${order.type}</span>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                   <div class="p-3 bg-[#0f1115] rounded-xl border border-gray-800">
+                      <p class="text-[9px] text-gray-500 font-black uppercase mb-1">Size</p>
+                      <p class="text-xs font-black text-white">${order.size} Lots</p>
+                   </div>
+                   <div class="p-3 bg-[#0f1115] rounded-xl border border-gray-800">
+                      <p class="text-[9px] text-gray-500 font-black uppercase mb-1">Entry</p>
+                      <p class="text-xs font-black text-white">${order.entry}</p>
+                   </div>
+                </div>
+                <div class="flex justify-between items-center pt-2">
+                   <p class="text-[10px] font-black text-gray-500 uppercase">P/L (USD)</p>
+                   <p class="text-lg font-black ${order.pl.startsWith('+') ? 'text-green-500' : 'text-red-500'}">${order.pl}</p>
+                </div>
+             </div>
+           `).join('') : `
+             <div class="p-8 text-center text-gray-500 font-bold uppercase tracking-widest text-xs opacity-50">No orders found</div>
+           `}
         </div>
       </div>
     </div>
   `;
 };
-
