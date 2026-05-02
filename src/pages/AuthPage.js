@@ -165,7 +165,9 @@ export const AuthPage = () => {
 
 
           <p class="text-center text-xs text-gray-500 font-medium">
-            ${isLogin ? 'Need an account? <a href="javascript:void(0)" onclick="window.toggleAuthMode(\'signup\')" class="text-blue-500 font-bold hover:underline uppercase tracking-widest">Sign Up</a>' : 'Already have an account? <a href="javascript:void(0)" onclick="window.toggleAuthMode(\'login\')" class="text-blue-500 font-bold hover:underline uppercase tracking-widest">Log In</a>'}
+            ${isAdminLogin ? 
+              '<a href="#auth" class="text-blue-500 font-bold hover:underline uppercase tracking-widest">Back to User Terminal</a>' : 
+              (isLogin ? 'Administrator? <a href="#admin-login" class="text-blue-500 font-bold hover:underline uppercase tracking-widest">Admin Command</a>' : 'Already have an account? <a href="javascript:void(0)" onclick="window.toggleAuthMode(\'login\')" class="text-blue-500 font-bold hover:underline uppercase tracking-widest">Log In</a>')}
           </p>
         </div>
       </div>
