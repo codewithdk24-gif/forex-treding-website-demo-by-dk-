@@ -100,13 +100,6 @@ window.addEventListener('pageLoaded', (e) => {
     }
   });
   
-  // Sync Order Panel visibility on desktop
-  const orderPanel = document.getElementById('desktop-order-panel');
-  if (orderPanel) {
-    const showOrderPanel = page.includes('dashboard');
-    orderPanel.style.display = showOrderPanel ? 'block' : 'none';
-  }
-
   if (page === 'dashboard') {
     import('./pages/DashboardPage').then(m => {
        if (m.initDashboard) m.initDashboard();
@@ -118,6 +111,14 @@ window.addEventListener('pageLoaded', (e) => {
       const skeleton = document.getElementById('chart-skeleton');
       if (skeleton) skeleton.classList.add('hidden');
     }, 100);
+  }
+
+  if (page === 'orders') {
+    // DOM is now in the page — safe to render orders
+    if (typeof window.renderOrders === 'function') {
+      window.renderOrders();
+      console.log('Orders:', JSON.parse(localStorage.getItem('demo_orders')));
+    }
   }
 
   if (page === 'landing') {
@@ -191,9 +192,10 @@ window.showToast = (message, type = 'success') => {
   container.appendChild(toast);
   
   setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateX(100%) scale(0.9)';
-    setTimeout(() => toast.remove(), 400);
+    toast.classList.add('fade-out');
+    toast.addEventListener('transitionend', () => {
+      toast.remove();
+    }, { once: true });
   }, 3000);
 };
 
@@ -223,5 +225,41 @@ window.showModal = (title, content) => {
   };
 
   setTimeout(() => overlay.classList.add('active'), 10);
+};
+
+window.showOrderDetails = (id) => {
+  const orders = JSON.parse(localStorage.getItem('demo_orders') || '[]');
+  const order = orders.find(o => o.id === id);
+  if (!order) return;
+  
+  const msg = `
+    <div class="space-y-4 text-left">
+      <div class="flex justify-between border-b border-white/5 pb-2">
+        <span class="text-gray-500 uppercase text-xs font-bold tracking-widest">Ticket ID</span>
+        <span class="font-mono text-sm text-white">${order.id}</span>
+      </div>
+      <div class="flex justify-between border-b border-white/5 pb-2">
+        <span class="text-gray-500 uppercase text-xs font-bold tracking-widest">Time</span>
+        <span class="font-mono text-sm text-white">${order.time}</span>
+      </div>
+      <div class="flex justify-between border-b border-white/5 pb-2">
+        <span class="text-gray-500 uppercase text-xs font-bold tracking-widest">Instrument</span>
+        <span class="font-black text-sm text-white">${order.symbol}</span>
+      </div>
+      <div class="flex justify-between border-b border-white/5 pb-2">
+        <span class="text-gray-500 uppercase text-xs font-bold tracking-widest">Action</span>
+        <span class="font-black text-sm ${order.type === 'BUY' ? 'text-blue-500' : 'text-red-500'}">${order.type}</span>
+      </div>
+      <div class="flex justify-between border-b border-white/5 pb-2">
+        <span class="text-gray-500 uppercase text-xs font-bold tracking-widest">Size</span>
+        <span class="font-black text-sm text-white">${order.size} Lots</span>
+      </div>
+      <div class="flex justify-between border-b border-white/5 pb-2">
+        <span class="text-gray-500 uppercase text-xs font-bold tracking-widest">Status</span>
+        <span class="font-black text-sm ${order.status === 'ACTIVE' ? 'text-green-500' : order.status === 'FILLED' ? 'text-gray-400' : 'text-red-500'}">${order.status}</span>
+      </div>
+    </div>
+  `;
+  window.showModal('Ticket Details', msg);
 };
 
