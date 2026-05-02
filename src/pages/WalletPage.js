@@ -11,6 +11,22 @@ export const WalletPage = () => {
     { id: 'TX-99208', type: 'WITHDRAW', asset: 'EUR', amount: '-$2,500.00', status: 'COMPLETED', date: '2024-03-18' },
     { id: 'TX-99205', type: 'DEPOSIT', asset: 'BTC', amount: '+$500.00', status: 'COMPLETED', date: '2024-03-15' },
   ];
+  // Calculate dynamic balances based on orders
+  const orders = JSON.parse(localStorage.getItem('demo_orders') || '[]');
+  const activeOrders = orders.filter(o => o.status === 'ACTIVE');
+  
+  let marginUsed = 0;
+  let activePnl = 0;
+  activeOrders.forEach(o => {
+     marginUsed += parseFloat(o.size) * 1000; // Fake margin calc (1 lot = $1000)
+     activePnl += parseFloat(o.pl || 0);
+  });
+
+  const baseBalance = 289341.15; // Starting demo balance
+  const totalNetWorth = baseBalance + activePnl;
+  const availableMargin = totalNetWorth - marginUsed;
+  
+  const formatCurrency = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
 
   return `
     <div class="section-container space-y-6 md:space-y-10 fade-in px-4 md:px-8 pb-32 lg:pb-8">
@@ -28,9 +44,9 @@ export const WalletPage = () => {
       <!-- Key Balances -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         ${[
-          { label: 'Total Net Worth', value: '$289,341.15', sub: 'Across 12 Assets', color: 'blue' },
-          { label: 'Available Margin', value: '$112,192.00', sub: '85% Liquid', color: 'green' },
-          { label: 'Locked in Trades', value: '$45,400.00', sub: '4 Open Positions', color: 'gray' },
+          { label: 'Total Net Worth', value: formatCurrency(totalNetWorth), sub: 'Includes Active PnL', color: 'blue' },
+          { label: 'Available Margin', value: formatCurrency(availableMargin), sub: 'Liquid Capital', color: 'green' },
+          { label: 'Locked Margin', value: formatCurrency(marginUsed), sub: `${activeOrders.length} Open Positions`, color: 'gray' },
         ].map(stat => `
           <div class="card p-6 flex flex-col justify-between gap-4 border-l-4 ${stat.color === 'blue' ? 'border-l-blue-600' : stat.color === 'green' ? 'border-l-green-500' : 'border-l-gray-600'}">
             <span class="text-xs font-black text-gray-500 uppercase tracking-widest">${stat.label}</span>

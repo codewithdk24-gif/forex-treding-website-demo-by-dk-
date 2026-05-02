@@ -45,9 +45,109 @@ export const initDashboard = () => {
   };
 
   const executeOrder = () => {
-    closeOrderModal();
-    if (window.showToast) window.showToast('Order Executed Successfully', 'success');
+    const btn = document.querySelector('button[data-action="executeOrder"]');
+    if (btn) {
+      btn.innerText = 'Executing...';
+      btn.classList.add('opacity-75', 'cursor-not-allowed');
+      btn.disabled = true;
+    }
+
+    setTimeout(() => {
+      const symbol = document.getElementById('terminal-symbol')?.innerText || 'EUR/USD';
+      const size = document.getElementById('modal-lot-size')?.innerText || '1.00';
+      const type = document.getElementById('modal-order-type')?.innerText || 'BUY';
+      const entryPrice = document.getElementById('terminal-price')?.innerText || '1.08245';
+      
+      const now = new Date();
+      const timeString = now.getFullYear() + '-' + 
+                         String(now.getMonth()+1).padStart(2, '0') + '-' + 
+                         String(now.getDate()).padStart(2, '0') + ' ' + 
+                         String(now.getHours()).padStart(2, '0') + ':' + 
+                         String(now.getMinutes()).padStart(2, '0') + ':' + 
+                         String(now.getSeconds()).padStart(2, '0');
+
+      const newOrder = {
+        id: 'T-' + Math.floor(10000 + Math.random() * 90000),
+        time: timeString,
+        symbol: symbol,
+        type: type,
+        size: parseFloat(size).toFixed(2),
+        entry: entryPrice,
+        current: entryPrice,
+        pl: 0,
+        status: 'ACTIVE'
+      };
+
+      const existingOrders = JSON.parse(localStorage.getItem('demo_orders') || '[]');
+      existingOrders.unshift(newOrder); // Newest first
+      localStorage.setItem('demo_orders', JSON.stringify(existingOrders));
+
+      if (btn) {
+        btn.innerText = 'Execute Order';
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+        btn.disabled = false;
+      }
+      closeOrderModal();
+      
+      if (window.showToast) {
+        const toastType = type === 'BUY' ? 'success' : 'sell';
+        const msg = `<span class="font-bold text-white">${type} Order Executed</span><br/>
+                     <span class="text-xs text-gray-400">${symbol} • ${parseFloat(size).toFixed(2)} Lot • Ticket ${newOrder.id}</span>`;
+        window.showToast(msg, toastType);
+      }
+      
+      // Update Recent Trades UI if exists
+      if (typeof window.__updateRecentTrades === 'function') {
+         window.__updateRecentTrades();
+      }
+    }, 600); // 600ms simulated execution delay
   };
+
+  window.__updateRecentTrades = () => {
+    const container = document.getElementById('recent-trades-container');
+    if (!container) return;
+    
+    const orders = JSON.parse(localStorage.getItem('demo_orders') || '[]');
+    const recent = orders.slice(0, 3);
+    
+    if (recent.length === 0) {
+      container.innerHTML = `
+        <div class="text-center p-6 space-y-3 border border-white/5 rounded-xl bg-white/[0.02]">
+           <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">No recent trades yet</p>
+           <button class="text-xs font-black text-blue-500 uppercase tracking-widest hover:text-blue-400 transition-colors">Start Trading</button>
+        </div>
+      `;
+      return;
+    }
+    
+    const formatCurrency = (val) => {
+      const num = parseFloat(val);
+      const formatted = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.abs(num));
+      return num >= 0 ? `+$${formatted}` : `-$${formatted}`;
+    };
+
+    container.innerHTML = recent.map(order => {
+      const isProfit = parseFloat(order.pl || 0) >= 0;
+      return `
+        <div class="p-3 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors group cursor-default">
+           <div class="flex justify-between items-start mb-2">
+              <div class="flex items-center gap-2">
+                 <span class="text-[10px] font-black px-1.5 py-0.5 rounded ${order.type === 'BUY' ? 'text-blue-500 bg-blue-500/10' : 'text-red-500 bg-red-500/10'}">${order.type}</span>
+                 <span class="text-xs font-black text-white">${order.symbol}</span>
+              </div>
+              <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">${order.time.split(' ')[1] || order.time}</span>
+           </div>
+           <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-gray-400">${order.size} Lots</span>
+              <span class="text-xs font-black ${isProfit ? 'text-green-500' : 'text-red-500'}">${formatCurrency(order.pl || 0)}</span>
+           </div>
+        </div>
+      `;
+    }).join('');
+  };
+  
+  // Initial render of recent trades
+  window.__updateRecentTrades();
 
   // Event Delegation for Dashboard
   if (!window.__dashboardInit) {
@@ -87,6 +187,15 @@ export const initDashboard = () => {
           p.classList.add('text-white');
        }, 800);
     });
+
+    // Random volatility notifications
+    if (Math.random() > 0.95 && window.showToast) {
+       const assets = ['EUR/USD', 'GBP/USD', 'BTC/USD', 'XAU/USD'];
+       const asset = assets[Math.floor(Math.random() * assets.length)];
+       const msgs = ['High Volatility Detected', 'Liquidity Surge', 'Institutional Block Trade'];
+       const msg = msgs[Math.floor(Math.random() * msgs.length)];
+       window.showToast(`${msg} on ${asset}`, 'info');
+    }
   }, 1500);
   window.__dashboardInterval = priceInterval;
   window.appIntervals.push(priceInterval);
@@ -95,6 +204,21 @@ export const initDashboard = () => {
 export const DashboardPage = () => {
   return `
     <div class="h-[100dvh] bg-[#0f1115] text-white flex flex-col overflow-hidden selection:bg-blue-500/20">
+      
+      <!-- Global Ticker -->
+      <div class="global-ticker-wrap hidden md:flex shrink-0">
+         <div class="global-ticker gap-8 text-[10px] font-black uppercase tracking-widest text-gray-500">
+            ${Array(4).fill().map(() => `
+              <span class="flex items-center gap-2">BTC/USD <span class="text-green-500">94,241.50</span></span>
+              <span class="flex items-center gap-2">EUR/USD <span class="text-red-500">1.0824</span></span>
+              <span class="flex items-center gap-2">GBP/JPY <span class="text-green-500">191.45</span></span>
+              <span class="flex items-center gap-2">XAU/USD <span class="text-green-500">2342.10</span></span>
+              <span class="flex items-center gap-2">ETH/USD <span class="text-red-500">3542.80</span></span>
+              <span class="flex items-center gap-2">NQ100 <span class="text-green-500">18254.25</span></span>
+            `).join('')}
+         </div>
+      </div>
+
       <!-- Top Trading Bar -->
       <nav class="h-14 md:h-16 border-b border-white/[0.05] flex items-center justify-between px-4 md:px-6 shrink-0 bg-[#0f1115]/80 backdrop-blur-md z-50">
         <div class="flex items-center gap-4">
@@ -106,7 +230,10 @@ export const DashboardPage = () => {
               <div>
                  <div class="flex items-center gap-2">
                     <h3 class="font-black text-sm tracking-tight" id="terminal-symbol">EUR/USD</h3>
-                    <span class="text-xs font-black text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded uppercase tracking-widest">Live</span>
+                    <div class="flex items-center gap-1.5 bg-red-500/10 px-1.5 py-0.5 rounded">
+                       <div class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>
+                       <span class="text-[9px] font-black text-red-500 uppercase tracking-widest">Live</span>
+                    </div>
                  </div>
                  <p class="text-xs text-gray-500 font-bold uppercase tracking-[0.2em]">Institutional Terminal v2.4</p>
               </div>
@@ -128,9 +255,9 @@ export const DashboardPage = () => {
       </nav>
 
       <!-- Main Layout -->
-      <main class="flex-1 flex overflow-hidden">
+      <main class="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden pb-[200px] lg:pb-0 relative z-10">
          <!-- Left Side: Chart Area (Expanded) -->
-         <div class="flex-1 relative bg-[#0d0f14]">
+         <div class="h-[50vh] lg:h-full lg:flex-1 relative bg-[#0d0f14] shrink-0 border-b lg:border-b-0 border-white/5">
             <div class="absolute inset-0 w-full h-full flex flex-col items-center justify-center pointer-events-none" id="chart-skeleton">
                <div class="w-16 h-16 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin mb-4"></div>
                <p class="text-xs text-gray-500 font-bold uppercase tracking-widest animate-pulse">Initializing Data Feed...</p>
@@ -141,6 +268,17 @@ export const DashboardPage = () => {
             <div class="lg:hidden absolute top-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/60 backdrop-blur-md rounded-full border border-white/5 flex items-center gap-3 z-20">
                <p class="text-sm font-black tracking-tighter text-white tabular-nums" id="mobile-terminal-price">1.08245</p>
                <span class="text-xs font-black text-green-500">+1.42%</span>
+            </div>
+         </div>
+
+         <!-- Right Side / Below Chart: Recent Trades -->
+         <div class="w-full lg:w-[320px] bg-[#0f1115] lg:border-l border-white/5 shrink-0 flex flex-col">
+            <div class="p-4 border-b border-white/5 flex items-center justify-between sticky top-0 bg-[#0f1115] z-10">
+               <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest">Recent Trades</h3>
+               <button onclick="window.location.hash='#orders'" class="text-[10px] font-bold text-blue-500 uppercase tracking-widest hover:text-blue-400 transition-colors">View All</button>
+            </div>
+            <div id="recent-trades-container" class="p-4 space-y-3 overflow-y-auto no-scrollbar lg:flex-1">
+               <!-- Populated via JS -->
             </div>
          </div>
       </main>

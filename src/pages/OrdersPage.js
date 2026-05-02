@@ -1,28 +1,133 @@
 export const OrdersPage = () => {
   if (window.activeOrderTab === undefined) window.activeOrderTab = 'ACTIVE';
 
-  const mockData = {
-    ACTIVE: [
-      { id: 'T-88210', time: '2024-03-21 14:22:10', symbol: 'EUR/USD', type: 'BUY', size: '1.00', entry: '1.08620', current: '1.08942', pl: '+$322.00' },
-      { id: 'T-88211', time: '2024-03-21 13:10:45', symbol: 'XAU/USD', type: 'BUY', size: '0.10', entry: '2342.10', current: '2338.40', pl: '-$37.00' },
-    ],
-    FILLED: [
-      { id: 'T-88205', time: '2024-03-20 09:12:33', symbol: 'GBP/USD', type: 'SELL', size: '0.50', entry: '1.26540', current: '1.26120', pl: '+$210.00' },
-      { id: 'T-88198', time: '2024-03-19 16:45:12', symbol: 'USD/JPY', type: 'BUY', size: '1.50', entry: '150.250', current: '151.420', pl: '+$840.50' },
-      { id: 'T-88195', time: '2024-03-19 10:30:15', symbol: 'ETH/USD', type: 'BUY', size: '5.00', entry: '3450.00', current: '3520.00', pl: '+$350.00' },
-    ],
-    CANCELLED: [
-      { id: 'T-88188', time: '2024-03-18 11:20:05', symbol: 'BTC/USD', type: 'BUY', size: '0.05', entry: '65200.00', current: '65200.00', pl: '$0.00' },
-    ]
+  const allOrders = JSON.parse(localStorage.getItem('demo_orders') || '[]');
+  const currentOrders = allOrders.filter(o => o.status === window.activeOrderTab);
+
+  window.exportOrderData = () => {
+    const orders = JSON.parse(localStorage.getItem('demo_orders') || '[]');
+    if (orders.length === 0) return window.showToast('No data to export', 'error');
+    
+    const headers = ['Ticket ID', 'Time', 'Instrument', 'Action', 'Size', 'Entry Price', 'Current Price', 'P/L (USD)', 'Status'];
+    const rows = orders.map(o => [o.id, o.time, o.symbol, o.type, o.size, o.entry, o.current, o.pl || 0, o.status]);
+    
+    const csvContent = "data:text/csv;charset=utf-8," 
+        + headers.join(',') + '\n' 
+        + rows.map(e => e.join(",")).join("\n");
+        
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "institutional_orders_export.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.showToast('Data exported successfully', 'success');
   };
 
-  window.switchOrderTab = (tab) => {
-    window.activeOrderTab = tab;
-    const view = document.getElementById('router-view');
-    if (view) view.innerHTML = OrdersPage();
+  window.showOrderDetails = (id) => {
+    const orders = JSON.parse(localStorage.getItem('demo_orders') || '[]');
+    const order = orders.find(o => o.id === id);
+    if (!order) return;
+    
+    const msg = `
+      <div class="space-y-4 text-left">
+        <div class="flex justify-between border-b border-white/5 pb-2">
+          <span class="text-gray-500 uppercase text-xs font-bold tracking-widest">Ticket ID</span>
+          <span class="font-mono text-sm text-white">${order.id}</span>
+        </div>
+        <div class="flex justify-between border-b border-white/5 pb-2">
+          <span class="text-gray-500 uppercase text-xs font-bold tracking-widest">Time</span>
+          <span class="font-mono text-sm text-white">${order.time}</span>
+        </div>
+        <div class="flex justify-between border-b border-white/5 pb-2">
+          <span class="text-gray-500 uppercase text-xs font-bold tracking-widest">Instrument</span>
+          <span class="font-black text-sm text-white">${order.symbol}</span>
+        </div>
+        <div class="flex justify-between border-b border-white/5 pb-2">
+          <span class="text-gray-500 uppercase text-xs font-bold tracking-widest">Action</span>
+          <span class="font-black text-sm ${order.type === 'BUY' ? 'text-blue-500' : 'text-red-500'}">${order.type}</span>
+        </div>
+        <div class="flex justify-between border-b border-white/5 pb-2">
+          <span class="text-gray-500 uppercase text-xs font-bold tracking-widest">Size</span>
+          <span class="font-black text-sm text-white">${order.size} Lots</span>
+        </div>
+        <div class="flex justify-between border-b border-white/5 pb-2">
+          <span class="text-gray-500 uppercase text-xs font-bold tracking-widest">Status</span>
+          <span class="font-black text-sm ${order.status === 'ACTIVE' ? 'text-green-500' : order.status === 'FILLED' ? 'text-gray-400' : 'text-red-500'}">${order.status}</span>
+        </div>
+      </div>
+    `;
+    window.showModal('Ticket Details', msg);
   };
 
-  const currentOrders = mockData[window.activeOrderTab] || [];
+  // PnL Simulation logic (visual only)
+  if (!window.appIntervals) window.appIntervals = [];
+  if (window.__ordersInterval) clearInterval(window.__ordersInterval);
+  
+  if (window.activeOrderTab === 'ACTIVE' && currentOrders.length > 0) {
+    const pnlInterval = setInterval(() => {
+      let ordersUpdated = false;
+      const allStoredOrders = JSON.parse(localStorage.getItem('demo_orders') || '[]');
+      
+      allStoredOrders.forEach(o => {
+         if (o.status === 'ACTIVE') {
+            if (Math.random() > 0.90) { // 10% chance per tick to fill
+               o.status = 'FILLED';
+               ordersUpdated = true;
+               if (window.showToast) window.showToast(`Ticket ${o.id} Filled`, 'success');
+            }
+         }
+      });
+      
+      if (ordersUpdated) {
+         localStorage.setItem('demo_orders', JSON.stringify(allStoredOrders));
+         const view = document.getElementById('router-view');
+         if (view && window.location.hash.includes('orders')) view.innerHTML = OrdersPage();
+         return; // Skip PnL update this tick
+      }
+
+      document.querySelectorAll('.order-pnl').forEach(el => {
+         const currentPl = parseFloat(el.dataset.pl || 0);
+         const change = (Math.random() * 20 - 10); // Random swing
+         const newPl = currentPl + change;
+         el.dataset.pl = newPl;
+         
+         const formatted = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.abs(newPl));
+         const prefix = newPl >= 0 ? '+' : '-';
+         el.innerText = `${prefix}$${formatted}`;
+         
+         el.className = `order-pnl text-right font-black ${newPl >= 0 ? 'text-green-500' : 'text-red-500'} transition-colors duration-300`;
+      });
+
+      document.querySelectorAll('.order-pnl-mobile').forEach(el => {
+         const currentPl = parseFloat(el.dataset.pl || 0);
+         const change = (Math.random() * 20 - 10);
+         const newPl = currentPl + change;
+         el.dataset.pl = newPl;
+         
+         const formatted = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.abs(newPl));
+         const prefix = newPl >= 0 ? '+' : '-';
+         el.innerText = `${prefix}$${formatted}`;
+         
+         el.className = `order-pnl-mobile text-lg font-black ${newPl >= 0 ? 'text-green-500' : 'text-red-500'} transition-colors duration-300`;
+      });
+    }, 2000);
+    window.__ordersInterval = pnlInterval;
+    window.appIntervals.push(pnlInterval);
+  }
+
+  const formatCurrency = (val) => {
+    const num = parseFloat(val);
+    const formatted = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.abs(num));
+    return num >= 0 ? `+$${formatted}` : `-$${formatted}`;
+  };
+
+  const getStatusBadge = (status) => {
+    if (status === 'ACTIVE') return 'text-green-500 bg-green-500/10';
+    if (status === 'FILLED') return 'text-gray-400 bg-gray-500/10';
+    return 'text-red-500 bg-red-500/10';
+  };
 
   return `
     <div class="section-container space-y-6 md:space-y-8 fade-in px-4 md:px-8">
@@ -31,7 +136,7 @@ export const OrdersPage = () => {
           <h1 class="text-2xl md:text-3xl font-black text-white">Institutional Orders</h1>
           <p class="text-gray-500 text-xs md:text-sm font-medium mt-1 uppercase tracking-widest">Execution Log · Trade History</p>
         </div>
-        <button onclick="window.showToast('Data exported successfully', 'info')" class="btn-primary w-full md:w-auto px-6 py-3 text-xs font-black uppercase tracking-widest shadow-lg active:scale-95">EXPORT DATA</button>
+        <button onclick="window.exportOrderData()" class="btn-primary w-full md:w-auto px-6 py-3 text-xs font-black uppercase tracking-widest shadow-lg active:scale-95">EXPORT DATA</button>
       </div>
 
       <div class="card p-0 overflow-hidden bg-[#131722]/50 border-0 md:border md:border-gray-800">
@@ -51,22 +156,22 @@ export const OrdersPage = () => {
         </div>
 
         <!-- Desktop Table View -->
-        <div class="hidden lg:block overflow-x-auto">
+        <div class="hidden lg:block overflow-x-auto max-h-[60vh] overflow-y-auto no-scrollbar relative">
           <table class="w-full text-left min-w-[800px]">
-            <thead>
-              <tr class="bg-white/5 text-xs font-black text-gray-500 uppercase tracking-widest border-b border-gray-800">
+            <thead class="sticky top-0 z-10">
+              <tr class="bg-[#131722] text-xs font-black text-gray-500 uppercase tracking-widest border-b border-gray-800">
                 <th class="px-8 py-4">Execution Time</th>
                 <th class="px-8 py-4">Instrument</th>
                 <th class="px-8 py-4">Action</th>
                 <th class="px-8 py-4 text-right">Size</th>
                 <th class="px-8 py-4 text-right">Entry Price</th>
                 <th class="px-8 py-4 text-right">P/L (USD)</th>
-                <th class="px-8 py-4"></th>
+                <th class="px-8 py-4">Status</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-800">
-              ${currentOrders.length > 0 ? currentOrders.map(order => `
-                <tr class="table-row group">
+              ${currentOrders.length > 0 ? currentOrders.map((order, index) => `
+                <tr onclick="window.showOrderDetails('${order.id}')" class="table-row group hover:bg-white/[0.04] cursor-pointer transition-colors animate-[fadeInUp_0.3s_ease-out] ${index === 0 && window.activeOrderTab === 'ACTIVE' ? 'animate-pulse-glow' : ''}">
                   <td class="px-8 py-5">
                     <span class="text-xs font-mono text-gray-500">${order.time}</span>
                   </td>
@@ -80,16 +185,20 @@ export const OrdersPage = () => {
                   </td>
                   <td class="px-8 py-5 text-right font-bold text-gray-400">${order.size}</td>
                   <td class="px-8 py-5 text-right font-mono text-xs opacity-60">${order.entry}</td>
-                  <td class="px-8 py-5 text-right font-black ${order.pl.startsWith('+') ? 'text-green-500' : 'text-red-500'}">${order.pl}</td>
                   <td class="px-8 py-5 text-right">
-                    <button onclick="window.showToast('Ticket ${order.id} details', 'info')" class="text-xs font-black text-blue-500 hover:text-white transition-colors opacity-0 group-hover:opacity-100 uppercase">Details</button>
+                    <span data-pl="${order.pl || 0}" class="order-pnl font-black ${parseFloat(order.pl || 0) >= 0 ? 'text-green-500' : 'text-red-500'} transition-colors duration-300">
+                      ${formatCurrency(order.pl || 0)}
+                    </span>
+                  </td>
+                  <td class="px-8 py-5 text-right">
+                    <span class="badge ${getStatusBadge(order.status)}">${order.status}</span>
                   </td>
                 </tr>
               `).join('') : `
                 <tr><td colspan="7" class="px-8 py-16 text-center space-y-4">
                   <div class="w-16 h-16 bg-blue-600/10 rounded-full flex items-center justify-center mx-auto mb-2 text-blue-500 text-2xl">📋</div>
                   <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">No orders found</p>
-                  <button onclick="window.location.hash='markets'" class="btn-outline px-6 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl hover:bg-blue-600/10 hover:text-blue-500 hover:border-blue-500/50 transition-all">Go to Markets</button>
+                  <button onclick="window.location.hash='dashboard'" class="btn-outline px-6 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl hover:bg-blue-600/10 hover:text-blue-500 hover:border-blue-500/50 transition-all">Start Trading</button>
                 </td></tr>
               `}
             </tbody>
@@ -98,8 +207,8 @@ export const OrdersPage = () => {
 
         <!-- Mobile Card View -->
         <div class="lg:hidden divide-y divide-gray-800">
-           ${currentOrders.length > 0 ? currentOrders.map(order => `
-             <div class="p-4 space-y-4">
+           ${currentOrders.length > 0 ? currentOrders.map((order, index) => `
+             <div onclick="window.showOrderDetails('${order.id}')" class="p-4 space-y-4 cursor-pointer hover:bg-white/[0.02] transition-colors animate-[fadeInUp_0.3s_ease-out] ${index === 0 && window.activeOrderTab === 'ACTIVE' ? 'animate-pulse-glow' : ''}">
                 <div class="flex justify-between items-start">
                    <div class="flex items-center gap-3">
                       <div class="w-10 h-10 rounded-xl bg-gray-800 flex items-center justify-center font-black text-xs text-white uppercase">${order.symbol.slice(0,2)}</div>
@@ -108,7 +217,10 @@ export const OrdersPage = () => {
                          <p class="text-xs text-gray-500 font-bold uppercase tracking-widest">${order.time}</p>
                       </div>
                    </div>
-                   <span class="badge ${order.type === 'BUY' ? 'text-blue-500 bg-blue-500/10' : 'text-red-500 bg-red-500/10'}">${order.type}</span>
+                   <div class="flex flex-col items-end gap-2">
+                     <span class="badge ${order.type === 'BUY' ? 'text-blue-500 bg-blue-500/10' : 'text-red-500 bg-red-500/10'}">${order.type}</span>
+                     <span class="text-[10px] font-bold uppercase tracking-widest ${getStatusBadge(order.status)} px-2 py-0.5 rounded">${order.status}</span>
+                   </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                    <div class="p-3 bg-[#0f1115] rounded-xl border border-gray-800">
@@ -122,13 +234,14 @@ export const OrdersPage = () => {
                 </div>
                 <div class="flex justify-between items-center pt-2">
                    <p class="text-xs font-black text-gray-500 uppercase">P/L (USD)</p>
-                   <p class="text-lg font-black ${order.pl.startsWith('+') ? 'text-green-500' : 'text-red-500'}">${order.pl}</p>
+                   <p data-pl="${order.pl || 0}" class="order-pnl-mobile text-lg font-black ${parseFloat(order.pl || 0) >= 0 ? 'text-green-500' : 'text-red-500'} transition-colors duration-300">${formatCurrency(order.pl || 0)}</p>
                 </div>
              </div>
+           `).join('') : `
              <div class="p-12 flex flex-col items-center text-center space-y-4">
                 <div class="w-16 h-16 bg-blue-600/10 rounded-full flex items-center justify-center text-blue-500 text-2xl">📋</div>
                 <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">No orders found</p>
-                <button onclick="window.location.hash='markets'" class="btn-outline px-6 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl hover:bg-blue-600/10 hover:text-blue-500 transition-all">Go to Markets</button>
+                <button onclick="window.location.hash='dashboard'" class="btn-outline px-6 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl hover:bg-blue-600/10 hover:text-blue-500 transition-all">Start Trading</button>
              </div>
            `}
         </div>
