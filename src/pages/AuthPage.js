@@ -110,7 +110,7 @@ export const AuthPage = () => {
           </p>
         </div>
 
-        <div class="hidden lg:block text-xs text-gray-600 font-bold uppercase tracking-widest mt-12">
+        <div class="hidden lg:block text-xs text-gray-400 font-bold uppercase tracking-widest mt-12">
           © 2024 ForexPro Institutional Terminal
         </div>
       </div>
@@ -138,21 +138,21 @@ export const AuthPage = () => {
           <form class="space-y-5" onsubmit="window.handleAuth(event)">
             ${!isLogin ? `
               <div class="space-y-2">
-                <label class="text-xs font-black text-gray-600 uppercase tracking-widest pl-1">Full Name</label>
-                <input name="name" type="text" placeholder="John Doe" required class="input-field bg-[#131722] py-4">
+                <label class="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Full Name</label>
+                <input name="name" type="text" placeholder="John Doe" required class="input-field bg-[#131722] py-4 text-base md:text-sm">
               </div>
             ` : ''}
 
             <div class="space-y-2">
-              <label class="text-xs font-black text-gray-600 uppercase tracking-widest pl-1">
+              <label class="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">
                  ${isAdminLogin ? 'Operator ID' : 'Authorized Email'}
               </label>
-              <input name="login_id" type="${isAdminLogin ? 'text' : 'email'}" value="${!isAdminLogin && isLogin ? 'demo@forexpro.com' : ''}" placeholder="${isAdminLogin ? 'Enter ID' : 'Enter Email'}" required autocomplete="new-password" class="input-field bg-[#131722] py-4">
+              <input name="login_id" type="${isAdminLogin ? 'text' : 'email'}" value="${!isAdminLogin && isLogin ? 'demo@forexpro.com' : ''}" placeholder="${isAdminLogin ? 'Enter ID' : 'Enter Email'}" required autocomplete="new-password" class="input-field bg-[#131722] py-4 text-base md:text-sm">
             </div>
 
             <div class="space-y-2">
-              <label class="text-xs font-black text-gray-600 uppercase tracking-widest pl-1">Keyphrase</label>
-              <input name="login_key" type="password" value="${!isAdminLogin && isLogin ? 'demo123' : ''}" placeholder="Enter Password" required autocomplete="new-password" class="input-field bg-[#131722] py-4">
+              <label class="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Keyphrase</label>
+              <input name="login_key" type="password" value="${!isAdminLogin && isLogin ? 'demo123' : ''}" placeholder="Enter Password" required autocomplete="new-password" class="input-field bg-[#131722] py-4 text-base md:text-sm">
             </div>
 
 

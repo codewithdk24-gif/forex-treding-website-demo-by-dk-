@@ -20,8 +20,8 @@ export const WalletPage = () => {
           <p class="text-gray-500 text-xs md:text-sm font-medium mt-1 uppercase tracking-widest">Institutional Liquidity · Assets</p>
         </div>
         <div class="flex items-center gap-3 w-full md:w-auto">
-          <button onclick="window.showToast('Withdrawal panel initialized', 'info')" class="flex-1 md:flex-none btn-outline px-8 py-3 text-xs font-black uppercase tracking-widest active:scale-95">Withdraw</button>
-          <button onclick="window.showToast('Deposit panel initialized', 'info')" class="flex-1 md:flex-none btn-primary px-8 py-3 text-xs font-black uppercase tracking-widest shadow-lg active:scale-95">Deposit</button>
+          <button onclick="window.showModal('Withdraw Funds', 'Select a verified bank account or crypto address to initiate withdrawal. Standard processing time is 1-3 business days.')" class="flex-1 md:flex-none btn-outline px-8 py-3 text-xs font-black uppercase tracking-widest active:scale-95">Withdraw</button>
+          <button onclick="window.showModal('Deposit Funds', 'Choose your preferred deposit method. Crypto deposits are credited after 3 network confirmations. Wire transfers may take up to 24 hours.')" class="flex-1 md:flex-none btn-primary px-8 py-3 text-xs font-black uppercase tracking-widest shadow-lg active:scale-95">Deposit</button>
         </div>
       </div>
 
@@ -36,7 +36,7 @@ export const WalletPage = () => {
             <span class="text-xs font-black text-gray-500 uppercase tracking-widest">${stat.label}</span>
             <div class="space-y-1">
               <p class="text-2xl font-black text-white">${stat.value}</p>
-              <p class="text-xs font-bold text-gray-600 uppercase tracking-widest">${stat.sub}</p>
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">${stat.sub}</p>
             </div>
           </div>
         `).join('')}
@@ -68,7 +68,7 @@ export const WalletPage = () => {
                           <span class="text-lg">${asset.icon}</span>
                           <div>
                             <p class="font-black text-white text-sm uppercase">${asset.symbol}</p>
-                            <p class="text-xs font-bold text-gray-600">${asset.name}</p>
+                            <p class="text-xs font-bold text-gray-400">${asset.name}</p>
                           </div>
                         </div>
                       </td>
@@ -103,7 +103,7 @@ export const WalletPage = () => {
                   </div>
                   <div>
                     <p class="font-black text-white text-xs uppercase">${tx.type}</p>
-                    <p class="text-xs font-bold text-gray-600 uppercase tracking-tighter">${tx.date} · ${tx.asset}</p>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-tighter">${tx.date} · ${tx.asset}</p>
                   </div>
                 </div>
                 <div class="text-right">

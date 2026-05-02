@@ -138,11 +138,11 @@ export const OrderPanel = (isBottomSheet = false) => {
           <div class="grid grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3">
             <div class="space-y-1.5">
               <label class="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">Take Profit</label>
-              <input type="text" placeholder="1.09500" class="input-field py-2 text-xs text-white border-gray-800 bg-[#0f1115] focus:border-blue-500 min-h-0 h-9">
+              <input type="text" placeholder="1.09500" class="input-field py-2 text-base md:text-sm text-white border-gray-800 bg-[#0f1115] focus:border-blue-500 min-h-0 h-9">
             </div>
             <div class="space-y-1.5">
               <label class="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">Stop Loss</label>
-              <input type="text" placeholder="1.08500" class="input-field py-2 text-xs text-white border-gray-800 bg-[#0f1115] focus:border-red-500/30 min-h-0 h-9">
+              <input type="text" placeholder="1.08500" class="input-field py-2 text-base md:text-sm text-white border-gray-800 bg-[#0f1115] focus:border-red-500/30 min-h-0 h-9">
             </div>
           </div>
         </div>

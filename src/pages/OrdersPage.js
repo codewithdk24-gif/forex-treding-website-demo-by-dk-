@@ -45,8 +45,8 @@ export const OrdersPage = () => {
               `).join('')}
            </div>
            <div class="relative w-full sm:w-64 group">
-              <input type="text" placeholder="Filter Ticket ID..." class="input-field py-2 px-10 text-xs bg-[#0f1115] border-gray-800 focus:border-blue-500/50">
-              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 group-focus-within:text-blue-500 transition-colors">🔍</span>
+              <input type="text" placeholder="Filter Ticket ID..." class="input-field py-2 px-10 text-base md:text-sm bg-[#0f1115] border-gray-800 focus:border-blue-500/50">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors">🔍</span>
            </div>
         </div>
 
@@ -86,7 +86,11 @@ export const OrdersPage = () => {
                   </td>
                 </tr>
               `).join('') : `
-                <tr><td colspan="7" class="px-8 py-12 text-center text-gray-500 font-bold uppercase tracking-widest text-xs">No orders found</td></tr>
+                <tr><td colspan="7" class="px-8 py-16 text-center space-y-4">
+                  <div class="w-16 h-16 bg-blue-600/10 rounded-full flex items-center justify-center mx-auto mb-2 text-blue-500 text-2xl">📋</div>
+                  <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">No orders found</p>
+                  <button onclick="window.location.hash='markets'" class="btn-outline px-6 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl hover:bg-blue-600/10 hover:text-blue-500 hover:border-blue-500/50 transition-all">Go to Markets</button>
+                </td></tr>
               `}
             </tbody>
           </table>
@@ -121,8 +125,11 @@ export const OrdersPage = () => {
                    <p class="text-lg font-black ${order.pl.startsWith('+') ? 'text-green-500' : 'text-red-500'}">${order.pl}</p>
                 </div>
              </div>
-           `).join('') : `
-             <div class="p-8 text-center text-gray-500 font-bold uppercase tracking-widest text-xs opacity-50">No orders found</div>
+             <div class="p-12 flex flex-col items-center text-center space-y-4">
+                <div class="w-16 h-16 bg-blue-600/10 rounded-full flex items-center justify-center text-blue-500 text-2xl">📋</div>
+                <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">No orders found</p>
+                <button onclick="window.location.hash='markets'" class="btn-outline px-6 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl hover:bg-blue-600/10 hover:text-blue-500 transition-all">Go to Markets</button>
+             </div>
            `}
         </div>
       </div>

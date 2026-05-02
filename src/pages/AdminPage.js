@@ -94,7 +94,7 @@ export const AdminPage = () => {
                           <div class="w-10 h-10 rounded-xl bg-blue-600/10 flex items-center justify-center font-black text-xs text-blue-500 border border-blue-600/20">${u.name[0]}</div>
                           <div>
                             <p class="font-black text-white text-sm">${u.name}</p>
-                            <p class="text-xs text-gray-600 font-bold uppercase tracking-tight">${u.email}</p>
+                            <p class="text-xs text-gray-400 font-bold uppercase tracking-tight">${u.email}</p>
                           </div>
                         </td>
                         <td class="px-8 py-5 font-black text-white">$${u.balance.toLocaleString()}</td>
@@ -245,7 +245,7 @@ export const AdminPage = () => {
                              <p class="text-xs text-gray-500 font-bold uppercase tracking-tight">Operator: ${log.user}</p>
                           </div>
                        </div>
-                       <span class="text-xs font-bold text-gray-600 uppercase">${log.time}</span>
+                       <span class="text-xs font-bold text-gray-400 uppercase">${log.time}</span>
                     </div>
                   `).join('')}
                </div>
@@ -305,7 +305,7 @@ export const AdminPage = () => {
                          <span class="text-xs font-black ${stat.change.startsWith('+') ? 'text-green-500 bg-green-500/10' : 'text-blue-500 bg-blue-500/10'} px-2 py-0.5 rounded-full">${stat.change}</span>
                       </div>
                       <div>
-                         <p class="text-xs font-black text-gray-600 uppercase tracking-widest">${stat.label}</p>
+                         <p class="text-xs font-black text-gray-400 uppercase tracking-widest">${stat.label}</p>
                          <p class="text-2xl font-black text-white mt-1 group-hover:text-blue-500 transition-colors tracking-tighter">${stat.value}</p>
                       </div>
                    </div>
@@ -395,7 +395,7 @@ export const AdminPage = () => {
                                   <p class="text-xs font-black text-gray-500 uppercase tracking-widest mt-1">${log.u}</p>
                                </div>
                             </div>
-                            <span class="text-xs font-black text-gray-600 uppercase">${log.t}</span>
+                            <span class="text-xs font-black text-gray-400 uppercase">${log.t}</span>
                          </div>
                       `).join('')}
                    </div>

@@ -56,8 +56,8 @@ export const MarketsPage = () => {
                <input type="text" 
                       oninput="window.filterMarkets(this.value)"
                       placeholder="Search symbols (e.g. EUR/USD, BTC)..." 
-                      class="w-full h-14 bg-[#111318] border border-white/5 rounded-2xl px-12 text-sm font-medium focus:border-blue-500/50 focus:outline-none transition-all placeholder:text-gray-700">
-               <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-700 group-focus-within:text-blue-500 transition-colors">
+                      class="w-full h-14 bg-[#111318] border border-white/5 rounded-2xl px-12 text-base md:text-sm font-medium focus:border-blue-500/50 focus:outline-none transition-all placeholder:text-gray-500">
+               <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500 transition-colors">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                </span>
             </div>
@@ -81,7 +81,7 @@ export const MarketsPage = () => {
           const isUp = Math.random() > 0.4;
           const price = (asset.cat === 'Crypto' ? (asset.symbol.startsWith('BTC') ? 64230 : 3420) : (asset.cat === 'Commodities' ? 2342 : 1.08240)).toFixed(5);
           return `
-            <div onclick="window.location.hash = 'dashboard'" 
+            <div onclick="window.activeSymbol = '${asset.symbol}'; window.location.hash = 'dashboard';" 
                  class="market-card group bg-[#111318] border border-white/5 rounded-[2rem] p-6 hover:border-blue-500/30 transition-all duration-500 cursor-pointer relative overflow-hidden" 
                  data-symbol="${asset.symbol}" 
                  data-cat="${asset.cat}">
@@ -93,7 +93,7 @@ export const MarketsPage = () => {
                   </div>
                   <div>
                     <h3 class="font-black text-white text-base tracking-tight">${asset.symbol}</h3>
-                    <p class="text-xs text-gray-600 font-bold uppercase tracking-widest">${asset.type}</p>
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">${asset.type}</p>
                   </div>
                 </div>
                 <div class="text-right">

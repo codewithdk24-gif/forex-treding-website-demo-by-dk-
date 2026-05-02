@@ -14,7 +14,7 @@ export const MobileTerminal = () => {
         <div class="flex flex-col items-center">
           <div class="flex items-center gap-1">
              <span class="text-sm font-black text-white">EUR/USD</span>
-             <span class="text-gray-600">${Icons.chevronDown}</span>
+             <span class="text-gray-400">${Icons.chevronDown}</span>
           </div>
           <span class="text-xs font-bold text-green-500">1.08942 (+0.24%)</span>
         </div>
@@ -45,18 +45,18 @@ export const MobileTerminal = () => {
               <label class="text-xs font-black text-gray-500 uppercase tracking-widest">Lot Size</label>
               <div class="flex items-center bg-[#0f1115] border border-gray-800 rounded-lg p-1">
                  <button class="w-8 h-8 flex items-center justify-center text-gray-500 font-black">-</button>
-                 <input type="number" value="1.00" class="flex-1 bg-transparent text-center font-black text-sm text-white outline-none min-h-0">
+                 <input type="number" value="1.00" class="flex-1 bg-transparent text-center font-black text-base md:text-sm text-white outline-none min-h-0">
                  <button class="w-8 h-8 flex items-center justify-center text-gray-500 font-black">+</button>
               </div>
            </div>
            <div class="flex-1 grid grid-cols-2 gap-2">
               <div class="space-y-1">
                 <label class="text-xs font-black text-gray-500 uppercase tracking-widest">SL</label>
-                <input type="text" placeholder="None" class="w-full bg-[#0f1115] border border-gray-800 rounded-lg py-2 px-2 text-xs font-black text-white outline-none focus:border-red-500/30">
+                <input type="text" placeholder="None" class="w-full bg-[#0f1115] border border-gray-800 rounded-lg py-2 px-2 text-base md:text-sm font-black text-white outline-none focus:border-red-500/30">
               </div>
               <div class="space-y-1">
                 <label class="text-xs font-black text-gray-500 uppercase tracking-widest">TP</label>
-                <input type="text" placeholder="None" class="w-full bg-[#0f1115] border border-gray-800 rounded-lg py-2 px-2 text-xs font-black text-white outline-none focus:border-blue-500/30">
+                <input type="text" placeholder="None" class="w-full bg-[#0f1115] border border-gray-800 rounded-lg py-2 px-2 text-base md:text-sm font-black text-white outline-none focus:border-blue-500/30">
               </div>
            </div>
         </div>

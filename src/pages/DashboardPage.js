@@ -14,8 +14,10 @@ export const initDashboard = () => {
     const profit = (newVal * 640).toFixed(2);
     const risk = (newVal * 360).toFixed(2);
     
-    document.querySelectorAll('[id$="-profit-preview"]').forEach(el => el.innerText = `+$${profit}`);
-    document.querySelectorAll('[id$="-risk-preview"]').forEach(el => el.innerText = `-$${risk}`);
+    const formatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    
+    document.querySelectorAll('[id$="-profit-preview"]').forEach(el => el.innerText = `+$${formatter.format(profit)}`);
+    document.querySelectorAll('[id$="-risk-preview"]').forEach(el => el.innerText = `-$${formatter.format(risk)}`);
   };
 
   const initiateOrder = (type) => {
@@ -159,7 +161,7 @@ export const DashboardPage = () => {
                <div class="text-right space-y-1">
                   <p class="text-xs font-black text-green-500 uppercase tracking-widest" id="mobile-profit-preview">+$320.00 Gain</p>
                   <p class="text-xs font-black text-red-500 uppercase tracking-widest" id="mobile-risk-preview">-$180.00 Risk</p>
-                  <p class="text-[7px] font-bold text-gray-600 uppercase tracking-widest">Spread: 0.2 Pips</p>
+                  <p class="text-[7px] font-bold text-gray-400 uppercase tracking-widest">Spread: 0.2 Pips</p>
                </div>
             </div>
 

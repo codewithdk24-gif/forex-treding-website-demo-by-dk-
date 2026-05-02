@@ -120,7 +120,7 @@ export const LandingPage = () => {
         </div>
         <div class="space-y-4">
            <a href="#auth" onclick="window.toggleLandingMenu(false)" class="btn-primary w-full py-4 text-center text-xs font-black uppercase tracking-widest rounded-2xl">Join Now</a>
-           <p class="text-xs text-gray-700 text-center uppercase tracking-widest italic">Institutional Grade Terminal Node v2.4</p>
+           <p class="text-xs text-gray-500 text-center uppercase tracking-widest italic">Institutional Grade Terminal Node v2.4</p>
         </div>
       </div>
 
@@ -209,7 +209,7 @@ export const LandingPage = () => {
                       </div>
                       <div class="text-right">
                          <p class="text-xs font-black text-green-500 uppercase tracking-widest">+1.42%</p>
-                         <p class="text-xs font-black text-gray-600 uppercase tracking-widest">Spread: 0.2 Pips</p>
+                         <p class="text-xs font-black text-gray-400 uppercase tracking-widest">Spread: 0.2 Pips</p>
                       </div>
                    </div>
                    
@@ -227,7 +227,7 @@ export const LandingPage = () => {
       <!-- Institutional Market Feed (Now below fold) -->
       <section class="lg:hidden border-t border-white/5 py-12 px-6">
          <div class="space-y-6">
-            <p class="text-xs font-black text-gray-600 uppercase tracking-[0.4em] text-center">Institutional Feed</p>
+            <p class="text-xs font-black text-gray-400 uppercase tracking-[0.4em] text-center">Institutional Feed</p>
             <div class="flex justify-between items-center px-4">
                 <div class="space-y-1">
                    <p class="text-xs font-black text-white uppercase tracking-widest">EUR / USD</p>
@@ -283,12 +283,12 @@ export const LandingPage = () => {
                     <div class="flex-1 bg-white/[0.01] rounded-2xl border border-white/5 p-6 relative overflow-hidden flex flex-col justify-between">
                        <div class="flex justify-between items-start">
                           <div>
-                             <p class="text-xs font-black text-gray-600 uppercase tracking-widest mb-1">Market Execution</p>
+                             <p class="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Market Execution</p>
                              <p class="text-4xl font-black text-white tracking-tighter">1.08245</p>
                           </div>
                           <div class="text-right">
                              <p class="text-xs font-black text-green-500">+$420.50</p>
-                             <p class="text-xs font-bold text-gray-700 uppercase tracking-widest">Unrealized P/L</p>
+                             <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Unrealized P/L</p>
                           </div>
                        </div>
                        
@@ -311,7 +311,7 @@ export const LandingPage = () => {
                           </div>
                           <div class="h-10 bg-white/5 rounded-xl border border-white/5 flex items-center px-4 justify-between">
                              <span class="text-xs font-black text-white">0.50</span>
-                             <span class="text-xs font-black text-gray-600 uppercase">Lots</span>
+                             <span class="text-xs font-black text-gray-400 uppercase">Lots</span>
                           </div>
                           <div class="grid grid-cols-2 gap-3">
                              <button class="py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs font-black text-red-500 uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all">Sell</button>
@@ -345,11 +345,11 @@ export const LandingPage = () => {
                 <div class="w-full md:px-10 py-8 md:py-10 text-center space-y-1.5 hover:bg-white/[0.01] transition-colors group">
                   <p class="text-xs font-bold text-blue-500/80 uppercase tracking-[0.2em] group-hover:translate-y-[-2px] transition-transform">${stat.label}</p>
                   <p class="text-4xl font-black text-white tracking-tighter">${stat.value}</p>
-                  <p class="text-xs font-bold text-gray-600 uppercase tracking-widest">${stat.sub}</p>
+                  <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">${stat.sub}</p>
                 </div>
               `).join('')}
            </div>
-           <p class="text-xs text-gray-700 text-center mt-4 font-bold uppercase tracking-widest opacity-40">Simulated demo environment. All metrics are estimated based on historical institutional data node performance.</p>
+           <p class="text-xs text-gray-500 text-center mt-4 font-bold uppercase tracking-widest opacity-40">Simulated demo environment. All metrics are estimated based on historical institutional data node performance.</p>
         </div>
       </section>
 
@@ -371,7 +371,7 @@ export const LandingPage = () => {
                    ${item.icon}
                 </div>
                 <h3 class="text-xs font-black text-white uppercase tracking-widest">${item.title}</h3>
-                <p class="text-[7px] text-gray-600 font-bold uppercase tracking-widest">${item.desc}</p>
+                <p class="text-[7px] text-gray-400 font-bold uppercase tracking-widest">${item.desc}</p>
              </div>
            `).join('')}
         </div>
@@ -399,7 +399,7 @@ export const LandingPage = () => {
                 </div>
                 <div class="space-y-2">
                    <h3 class="text-sm font-black text-white uppercase tracking-widest">${item.title}</h3>
-                   <p class="text-xs text-gray-600 font-medium leading-relaxed">${item.desc}</p>
+                   <p class="text-xs text-gray-400 font-medium leading-relaxed">${item.desc}</p>
                 </div>
              </div>
            `).join('')}
@@ -452,11 +452,11 @@ export const LandingPage = () => {
             { q: 'Is it beginner friendly?', a: 'Precision-engineered interface designed for evolving professional traders.' }
           ].map((faq, i) => `
             <div id="faq-card-${i}" class="faq-card glass-card rounded-2xl overflow-hidden border border-white/[0.03] transition-all duration-300">
-              <button onclick="window.toggleFAQ(${i})" class="w-full p-6 text-left flex justify-between items-center hover:bg-white/[0.01] transition-colors">
+              <button onclick="window.toggleFAQ(${i})" class="w-full min-h-[48px] p-6 text-left flex justify-between items-center hover:bg-white/[0.01] transition-colors focus:outline-none">
                 <span class="text-xs font-black text-white uppercase tracking-widest transition-colors">${faq.q}</span>
                 <span id="faq-icon-${i}" class="faq-icon transition-transform duration-300 text-blue-500 text-xs">▼</span>
               </button>
-              <div id="faq-${i}" class="faq-content ${i === 0 ? 'show' : ''} px-6 pb-6 text-xs text-gray-600 leading-relaxed font-medium">
+              <div id="faq-${i}" class="faq-content ${i === 0 ? 'show' : ''} px-6 pb-6 text-xs text-gray-400 leading-relaxed font-medium">
                 ${faq.a}
               </div>
             </div>
@@ -469,7 +469,7 @@ export const LandingPage = () => {
         <div class="max-w-4xl mx-auto space-y-6 relative z-10">
           <p class="text-xs font-black text-blue-500 uppercase tracking-[0.5em] animate-pulse">Institutional Hub Active</p>
           <h2 class="text-3xl md:text-7xl font-black tracking-tighter text-white leading-none uppercase">Join the <span class="text-blue-500">Elite.</span></h2>
-          <p class="text-xs md:text-lg text-gray-600 font-bold uppercase tracking-widest max-w-sm mx-auto">High-speed execution 24/7 globally.</p>
+          <p class="text-xs md:text-lg text-gray-400 font-bold uppercase tracking-widest max-w-sm mx-auto">High-speed execution 24/7 globally.</p>
           <div class="pt-4">
              <a href="#auth" class="btn-primary w-full md:w-auto shine-effect px-12 py-5 text-xs font-black uppercase tracking-widest rounded-2xl">Launch Live Account</a>
           </div>
@@ -485,12 +485,12 @@ export const LandingPage = () => {
                 <div class="w-6 h-6 bg-blue-600 rounded flex items-center justify-center text-white font-black text-xs">FX</div>
                 <span class="text-lg font-black tracking-tight text-white uppercase">Forex<span class="text-blue-500">Pro</span></span>
               </div>
-              <p class="text-xs text-gray-700 font-bold uppercase tracking-wider leading-relaxed">Institutional trading terminal infrastructure.</p>
+              <p class="text-xs text-gray-500 font-bold uppercase tracking-wider leading-relaxed">Institutional trading terminal infrastructure.</p>
             </div>
             
             <div class="space-y-4">
               <h4 class="text-xs font-black text-white uppercase tracking-widest">Markets</h4>
-              <ul class="space-y-2 text-xs text-gray-600 font-bold uppercase tracking-widest">
+              <ul class="space-y-2 text-xs text-gray-400 font-bold uppercase tracking-widest">
                 <li><a href="#markets" class="hover:text-white transition-all">EUR/USD Pair</a></li>
                 <li><a href="#markets" class="hover:text-white transition-all">Commodities</a></li>
               </ul>
@@ -498,7 +498,7 @@ export const LandingPage = () => {
 
             <div class="space-y-4">
               <h4 class="text-xs font-black text-white uppercase tracking-widest">Legal</h4>
-              <ul class="space-y-2 text-xs text-gray-600 font-bold uppercase tracking-widest">
+              <ul class="space-y-2 text-xs text-gray-400 font-bold uppercase tracking-widest">
                 <li><a href="javascript:void(0)" onclick="window.openPrivacy()" class="hover:text-white transition-all">Privacy</a></li>
                 <li><a href="javascript:void(0)" onclick="window.openTerms()" class="hover:text-white transition-all">Terms</a></li>
               </ul>

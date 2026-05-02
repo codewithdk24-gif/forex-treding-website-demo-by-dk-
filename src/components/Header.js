@@ -15,8 +15,8 @@ export const Header = () => {
         <div class="relative hidden xl:block group">
            <input type="text" 
                   onkeydown="if(event.key === 'Enter') { window.showToast('Searching for assets...', 'info'); window.location.hash = 'markets'; }"
-                  placeholder="Search symbols..." class="w-64 bg-[#131722] border border-gray-800 rounded-xl py-2 px-10 text-xs font-black uppercase tracking-widest placeholder:text-gray-600 focus:border-blue-500/50 transition-all">
-           <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 group-focus-within:text-blue-500 transition-colors">🔍</span>
+                  placeholder="Search symbols..." class="w-64 bg-[#131722] border border-gray-800 rounded-xl py-2 px-10 text-base md:text-sm font-black uppercase tracking-widest placeholder:text-gray-400 focus:border-blue-500/50 transition-all">
+           <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors">🔍</span>
         </div>
 
         ${user.role === 'admin' ? `

@@ -86,6 +86,20 @@ window.addEventListener('pageLoaded', (e) => {
 
   const page = e.detail.page;
   
+  // Sidebar Active State Sync
+  document.querySelectorAll('aside nav a').forEach(a => {
+    const href = a.getAttribute('href');
+    if (href === '#' + page) {
+      a.classList.add('bg-blue-600/10', 'text-blue-500', 'shadow-sm');
+      a.classList.remove('text-gray-400', 'hover:bg-white/[0.03]', 'hover:text-white');
+    } else {
+      a.classList.remove('bg-blue-600/10', 'text-blue-500', 'shadow-sm');
+      if (!a.classList.contains('text-gray-500')) {
+         a.classList.add('text-gray-400', 'hover:bg-white/[0.03]', 'hover:text-white');
+      }
+    }
+  });
+  
   // Sync Order Panel visibility on desktop
   const orderPanel = document.getElementById('desktop-order-panel');
   if (orderPanel) {

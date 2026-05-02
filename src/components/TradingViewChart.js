@@ -2,6 +2,16 @@ export const TradingViewChart = (containerId, symbol = 'FX:EURUSD', theme = 'dar
   const container = document.getElementById(containerId);
   if (!container) return;
 
+  // Format symbol for TradingView
+  let tvSymbol = symbol;
+  if (tvSymbol.includes('/')) {
+    if (tvSymbol.startsWith('BTC') || tvSymbol.startsWith('ETH') || tvSymbol.startsWith('SOL') || tvSymbol.startsWith('BNB')) {
+      tvSymbol = 'BINANCE:' + tvSymbol.replace('/', '');
+    } else {
+      tvSymbol = 'FX:' + tvSymbol.replace('/', '');
+    }
+  }
+
   // Clear container
   container.innerHTML = '';
 
@@ -13,7 +23,7 @@ export const TradingViewChart = (containerId, symbol = 'FX:EURUSD', theme = 'dar
       new TradingView.widget({
         "width": "100%",
         "height": "100%",
-        "symbol": symbol,
+        "symbol": tvSymbol,
         "interval": "1",
         "timezone": "Etc/UTC",
         "theme": theme,
