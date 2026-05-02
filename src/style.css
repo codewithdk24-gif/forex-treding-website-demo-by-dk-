@@ -156,9 +156,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
-  min-height: 100vh;
+  min-height: 100dvh;
   -webkit-tap-highlight-color: transparent;
-  padding-bottom: 80px; /* Spacer for Mobile Sticky CTA */
+  padding-bottom: max(80px, env(safe-area-inset-bottom)); /* Spacer for Mobile Sticky CTA */
 }
 
 @media (min-width: 1024px) {
@@ -591,7 +591,7 @@ body {
   inset: 0 !important;
   z-index: 1000 !important;
   background: #0f1115 !important;
-  height: 100vh !important;
+  height: 100dvh !important;
   width: 100vw !important;
 }
 

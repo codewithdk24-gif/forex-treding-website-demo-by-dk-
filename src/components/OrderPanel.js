@@ -35,25 +35,25 @@ export const OrderPanel = (isBottomSheet = false) => {
       <div class="space-y-4">
         <div class="flex justify-between items-center p-4 bg-white/5 rounded-xl border border-white/5">
           <div>
-            <p class="text-[10px] font-black text-gray-500 uppercase">Instrument</p>
+            <p class="text-xs font-black text-gray-500 uppercase">Instrument</p>
             <p class="text-lg font-black text-white">${symbol}</p>
           </div>
           <div class="text-right">
-            <p class="text-[10px] font-black text-gray-500 uppercase">Action</p>
+            <p class="text-xs font-black text-gray-500 uppercase">Action</p>
             <p class="text-lg font-black ${type === 'BUY' ? 'text-green-500' : 'text-red-500'}">${type}</p>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div class="p-4 bg-white/5 rounded-xl border border-white/5">
-            <p class="text-[10px] font-black text-gray-500 uppercase">Size</p>
+            <p class="text-xs font-black text-gray-500 uppercase">Size</p>
             <p class="text-lg font-black text-white">${lots.toFixed(2)} Lots</p>
           </div>
           <div class="p-4 bg-white/5 rounded-xl border border-white/5">
-            <p class="text-[10px] font-black text-gray-500 uppercase">Margin</p>
+            <p class="text-xs font-black text-gray-500 uppercase">Margin</p>
             <p class="text-lg font-black text-white">$450.00</p>
           </div>
         </div>
-        <p class="text-[10px] text-gray-500 text-center uppercase font-bold">Execution is near-instant with institutional routing.</p>
+        <p class="text-xs text-gray-500 text-center uppercase font-bold">Execution is near-instant with institutional routing.</p>
         <button onclick="window.confirmTradeExecution()" class="w-full ${type === 'BUY' ? 'btn-success' : 'btn-danger'} py-4 font-black uppercase tracking-widest mt-4">Confirm Execution</button>
       </div>
     `);
@@ -77,7 +77,7 @@ export const OrderPanel = (isBottomSheet = false) => {
             <h3 class="text-sm font-black tracking-tight text-white uppercase">Execution</h3>
             <div class="flex items-center gap-1 mt-0.5">
               <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-              <p class="text-[8px] font-bold text-gray-500 uppercase tracking-widest">${window.orderState.symbol}</p>
+              <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">${window.orderState.symbol}</p>
             </div>
           </div>
           <div class="text-right">
@@ -88,11 +88,11 @@ export const OrderPanel = (isBottomSheet = false) => {
         <div class="grid grid-cols-2 gap-2 mt-2 pt-2.5 border-t border-white/5">
            <div>
               <p class="text-[7px] font-black text-gray-500 uppercase mb-0">Margin</p>
-              <p class="text-[10px] font-black text-blue-500">92.4%</p>
+              <p class="text-xs font-black text-blue-500">92.4%</p>
            </div>
            <div class="text-right">
               <p class="text-[7px] font-black text-gray-500 uppercase mb-0">Avail. Bal</p>
-              <p class="text-[10px] font-black text-green-500">$12,400</p>
+              <p class="text-xs font-black text-green-500">$12,400</p>
            </div>
         </div>
       </div>
@@ -101,11 +101,11 @@ export const OrderPanel = (isBottomSheet = false) => {
       <div class="flex-1 ${isBottomSheet ? 'p-0' : 'p-5'} space-y-5">
         <!-- Execution Type -->
         <div class="space-y-2">
-          <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest pl-1">Order Type</label>
+          <label class="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">Order Type</label>
           <div class="flex bg-[#0f1115] border border-gray-800 rounded-xl p-1">
-            <button class="flex-1 py-1.5 text-[10px] font-black rounded-lg bg-[#131722] text-white shadow-sm border border-gray-800">Market</button>
-            <button class="flex-1 py-1.5 text-[10px] font-bold text-gray-500 hover:text-white transition-colors">Limit</button>
-            <button class="flex-1 py-1.5 text-[10px] font-bold text-gray-500 hover:text-white transition-colors">Stop</button>
+            <button class="flex-1 py-1.5 text-xs font-black rounded-lg bg-[#131722] text-white shadow-sm border border-gray-800">Market</button>
+            <button class="flex-1 py-1.5 text-xs font-bold text-gray-500 hover:text-white transition-colors">Limit</button>
+            <button class="flex-1 py-1.5 text-xs font-bold text-gray-500 hover:text-white transition-colors">Stop</button>
           </div>
         </div>
 
@@ -120,28 +120,28 @@ export const OrderPanel = (isBottomSheet = false) => {
         <!-- Parameters -->
         <div class="space-y-4">
           <div class="space-y-2">
-            <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest pl-1">Position Size</label>
+            <label class="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">Position Size</label>
             <div class="relative group">
               <input type="number" 
                      oninput="window.orderState.lots = parseFloat(this.value) || 0"
                      value="${window.orderState.lots}" step="0.01" class="input-field py-3 pr-16 text-lg font-black text-white bg-[#0f1115] min-h-0 h-11">
-              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-gray-500 group-focus-within:text-blue-500 transition-colors">LOTS</span>
+              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-gray-500 group-focus-within:text-blue-500 transition-colors">LOTS</span>
             </div>
             <div class="grid grid-cols-4 gap-1.5">
               ${[0.01, 0.1, 0.5, 1.0].map(val => `
                 <button onclick="window.orderState.lots = ${val}; window.setOrderDirection(window.orderState.type)" 
-                        class="py-1.5 text-[9px] font-black rounded-lg bg-[#0f1115] border border-gray-800 hover:border-blue-500/50 hover:text-blue-500 transition-all text-gray-500">${val}</button>
+                        class="py-1.5 text-xs font-black rounded-lg bg-[#0f1115] border border-gray-800 hover:border-blue-500/50 hover:text-blue-500 transition-all text-gray-500">${val}</button>
               `).join('')}
             </div>
           </div>
 
           <div class="grid grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3">
             <div class="space-y-1.5">
-              <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest pl-1">Take Profit</label>
+              <label class="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">Take Profit</label>
               <input type="text" placeholder="1.09500" class="input-field py-2 text-xs text-white border-gray-800 bg-[#0f1115] focus:border-blue-500 min-h-0 h-9">
             </div>
             <div class="space-y-1.5">
-              <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest pl-1">Stop Loss</label>
+              <label class="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">Stop Loss</label>
               <input type="text" placeholder="1.08500" class="input-field py-2 text-xs text-white border-gray-800 bg-[#0f1115] focus:border-red-500/30 min-h-0 h-9">
             </div>
           </div>
@@ -149,11 +149,11 @@ export const OrderPanel = (isBottomSheet = false) => {
 
         <!-- Summary -->
         <div class="card p-3 bg-[#0f1115]/50 border-dashed border-gray-800 space-y-1.5">
-          <div class="flex justify-between text-[9px] font-bold">
+          <div class="flex justify-between text-xs font-bold">
             <span class="text-gray-500 uppercase tracking-wider">Margin Req.</span>
             <span class="text-white font-black">$450.00</span>
           </div>
-          <div class="flex justify-between text-[9px] font-bold">
+          <div class="flex justify-between text-xs font-bold">
             <span class="text-gray-500 uppercase tracking-wider">Pip Value</span>
             <span class="text-blue-500 font-black">$10.00</span>
           </div>
@@ -165,7 +165,7 @@ export const OrderPanel = (isBottomSheet = false) => {
                 class="${isBuy ? 'btn-success' : 'btn-danger'} w-full py-4 text-xs font-black tracking-widest uppercase shadow-xl active:scale-[0.98] min-h-0 h-14">
           Execute ${window.orderState.type}
         </button>
-        <p class="text-[8px] text-gray-500/50 text-center mt-3 font-bold uppercase tracking-tighter leading-tight">
+        <p class="text-xs text-gray-500/50 text-center mt-3 font-bold uppercase tracking-tighter leading-tight">
           Utilizes $450.00 of margin.
         </p>
       </div>

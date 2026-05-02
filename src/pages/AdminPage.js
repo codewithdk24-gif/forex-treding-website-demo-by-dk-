@@ -80,7 +80,7 @@ export const AdminPage = () => {
               <div class="overflow-x-auto">
                 <table class="w-full text-left min-w-[800px]">
                   <thead>
-                    <tr class="bg-white/5 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] border-b border-gray-800">
+                    <tr class="bg-white/5 text-xs font-black text-gray-500 uppercase tracking-[0.2em] border-b border-gray-800">
                       <th class="px-8 py-5">Operator</th>
                       <th class="px-8 py-5">Equity</th>
                       <th class="px-8 py-5">Status</th>
@@ -94,7 +94,7 @@ export const AdminPage = () => {
                           <div class="w-10 h-10 rounded-xl bg-blue-600/10 flex items-center justify-center font-black text-xs text-blue-500 border border-blue-600/20">${u.name[0]}</div>
                           <div>
                             <p class="font-black text-white text-sm">${u.name}</p>
-                            <p class="text-[10px] text-gray-600 font-bold uppercase tracking-tight">${u.email}</p>
+                            <p class="text-xs text-gray-600 font-bold uppercase tracking-tight">${u.email}</p>
                           </div>
                         </td>
                         <td class="px-8 py-5 font-black text-white">$${u.balance.toLocaleString()}</td>
@@ -104,7 +104,7 @@ export const AdminPage = () => {
                           </span>
                         </td>
                         <td class="px-8 py-5 text-right">
-                          <button onclick="window.adminAction('toggleUser', '${u.email}')" class="text-[9px] font-black ${u.status === 'active' ? 'text-red-500' : 'text-green-500'} border border-gray-800 px-4 py-2 rounded-lg hover:bg-white hover:text-black transition-all">
+                          <button onclick="window.adminAction('toggleUser', '${u.email}')" class="text-xs font-black ${u.status === 'active' ? 'text-red-500' : 'text-green-500'} border border-gray-800 px-4 py-2 rounded-lg hover:bg-white hover:text-black transition-all">
                              ${u.status === 'active' ? 'SUSPEND' : 'ACTIVATE'}
                           </button>
                         </td>
@@ -124,7 +124,7 @@ export const AdminPage = () => {
               <div class="overflow-x-auto">
                 <table class="w-full text-left min-w-[800px]">
                   <thead>
-                    <tr class="bg-white/5 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] border-b border-gray-800">
+                    <tr class="bg-white/5 text-xs font-black text-gray-500 uppercase tracking-[0.2em] border-b border-gray-800">
                       <th class="px-8 py-5">Order ID</th>
                       <th class="px-8 py-5">Asset</th>
                       <th class="px-8 py-5">Type</th>
@@ -140,7 +140,7 @@ export const AdminPage = () => {
                         <td class="px-8 py-5"><span class="badge ${t.type === 'BUY' ? 'bg-blue-600/10 text-blue-500' : 'bg-red-500/10 text-red-500'}">${t.type}</span></td>
                         <td class="px-8 py-5 font-black ${t.pl > 0 ? 'text-green-500' : 'text-red-500'}">${t.pl > 0 ? '+' : ''}$${t.pl.toLocaleString()}</td>
                         <td class="px-8 py-5 text-right">
-                          <button onclick="window.adminAction('closeTrade', '${t.id}')" class="text-[9px] font-black text-red-500 border border-red-500/10 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition-all">FORCE CLOSE</button>
+                          <button onclick="window.adminAction('closeTrade', '${t.id}')" class="text-xs font-black text-red-500 border border-red-500/10 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition-all">FORCE CLOSE</button>
                         </td>
                       </tr>
                     `).join('')}
@@ -158,7 +158,7 @@ export const AdminPage = () => {
               <div class="overflow-x-auto">
                 <table class="w-full text-left min-w-[800px]">
                   <thead>
-                    <tr class="bg-white/5 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] border-b border-gray-800">
+                    <tr class="bg-white/5 text-xs font-black text-gray-500 uppercase tracking-[0.2em] border-b border-gray-800">
                       <th class="px-8 py-5">Operator</th>
                       <th class="px-8 py-5">Type</th>
                       <th class="px-8 py-5">Amount</th>
@@ -170,7 +170,7 @@ export const AdminPage = () => {
                     ${getTransactions().map(tx => `
                       <tr class="hover:bg-white/[0.02] transition-all">
                         <td class="px-8 py-5 font-black text-white text-sm">${tx.name}</td>
-                        <td class="px-8 py-5 font-black text-gray-500 text-[10px] uppercase">${tx.type}</td>
+                        <td class="px-8 py-5 font-black text-gray-500 text-xs uppercase">${tx.type}</td>
                         <td class="px-8 py-5 font-black text-white">${tx.amount}</td>
                         <td class="px-8 py-5">
                           <span class="badge ${tx.status === 'completed' ? 'bg-green-500/10 text-green-500' : (tx.status === 'pending' ? 'bg-blue-600/10 text-blue-500' : 'bg-red-500/10 text-red-500')}">
@@ -178,7 +178,7 @@ export const AdminPage = () => {
                           </span>
                         </td>
                         <td class="px-8 py-5 text-right">
-                          ${tx.status === 'pending' ? `<button onclick="window.adminAction('approveTx', '${tx.amount}')" class="text-[9px] font-black text-green-500 border border-green-500/20 px-4 py-2 rounded-lg hover:bg-green-500 hover:text-white transition-all">APPROVE</button>` : '—'}
+                          ${tx.status === 'pending' ? `<button onclick="window.adminAction('approveTx', '${tx.amount}')" class="text-xs font-black text-green-500 border border-green-500/20 px-4 py-2 rounded-lg hover:bg-green-500 hover:text-white transition-all">APPROVE</button>` : '—'}
                         </td>
                       </tr>
                     `).join('')}
@@ -201,7 +201,7 @@ export const AdminPage = () => {
                 </div>
                 <div class="flex bg-[#131722] p-1.5 rounded-2xl border border-white/5 shadow-inner">
                    ${['Today', '7D', '30D', '1Y'].map(f => `
-                      <button onclick="window.setAnalyticsFilter('${f}')" class="px-5 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${filter === f ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}">${f}</button>
+                      <button onclick="window.setAnalyticsFilter('${f}')" class="px-5 py-2 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${filter === f ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}">${f}</button>
                    `).join('')}
                 </div>
              </div>
@@ -213,19 +213,19 @@ export const AdminPage = () => {
                   { label: 'Risk Exposure', value: '68%', change: 'MODERATE', color: 'yellow' },
                 ].map(kpi => `
                    <div class="card p-8 bg-gradient-to-br from-[#1a1f2e] to-transparent border-gray-800 hover:border-blue-500/20 transition-all hover:scale-[1.02] cursor-default group">
-                      <div class="flex justify-between items-center mb-4"><span class="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">${kpi.label}</span><span class="text-[9px] font-black ${kpi.change.startsWith('+') ? 'text-green-500 bg-green-500/10' : 'text-yellow-500 bg-yellow-500/10'} px-2 py-0.5 rounded-full">${kpi.change}</span></div>
+                      <div class="flex justify-between items-center mb-4"><span class="text-xs font-black text-gray-500 uppercase tracking-[0.2em]">${kpi.label}</span><span class="text-xs font-black ${kpi.change.startsWith('+') ? 'text-green-500 bg-green-500/10' : 'text-yellow-500 bg-yellow-500/10'} px-2 py-0.5 rounded-full">${kpi.change}</span></div>
                       <p class="text-4xl font-black text-white tracking-tighter group-hover:text-blue-500 transition-colors">${kpi.value}</p>
                    </div>
                 `).join('')}
              </div>
              <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2 card p-8 bg-[#131722]/40 backdrop-blur-md relative overflow-hidden">
-                   <div class="flex justify-between items-center mb-10"><h3 class="text-xs font-black text-white uppercase tracking-[0.3em]">Revenue Growth Path</h3><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-600 shadow-glow"></span><span class="text-[10px] font-black text-gray-500">REAL-TIME SYNC</span></div></div>
+                   <div class="flex justify-between items-center mb-10"><h3 class="text-xs font-black text-white uppercase tracking-[0.3em]">Revenue Growth Path</h3><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-600 shadow-glow"></span><span class="text-xs font-black text-gray-500">REAL-TIME SYNC</span></div></div>
                    <div class="h-64 w-full relative"><svg class="w-full h-full" viewBox="0 0 1000 300" preserveAspectRatio="none"><defs><linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:rgba(37, 99, 235, 0.2)" /><stop offset="100%" style="stop-color:rgba(37, 99, 235, 0)" /></linearGradient></defs><path d="M0,250 Q100,220 200,240 T400,180 T600,210 T800,120 T1000,150 L1000,300 L0,300 Z" fill="url(#grad)" /><path d="M0,250 Q100,220 200,240 T400,180 T600,210 T800,120 T1000,150" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round" class="line-draw" /></svg></div>
                 </div>
                 <div class="card p-8 bg-[#131722]/40 backdrop-blur-md space-y-8">
                    <h3 class="text-xs font-black text-white uppercase tracking-[0.3em]">Market Velocity</h3>
-                   <div class="space-y-6">${[{ asset: 'EUR/USD', vol: '42%', p: 85, color: 'blue' },{ asset: 'XAU/USD', vol: '28%', p: 65, color: 'yellow' },{ asset: 'BTC/USD', vol: '15%', p: 45, color: 'purple' }].map(item => `<div class="space-y-2"><div class="flex justify-between items-center"><span class="text-[10px] font-black text-white">${item.asset}</span><span class="text-[9px] font-black text-gray-500">${item.vol} Volume</span></div><div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-${item.color}-600 rounded-full" style="width: ${item.p}%"></div></div></div>`).join('')}</div>
+                   <div class="space-y-6">${[{ asset: 'EUR/USD', vol: '42%', p: 85, color: 'blue' },{ asset: 'XAU/USD', vol: '28%', p: 65, color: 'yellow' },{ asset: 'BTC/USD', vol: '15%', p: 45, color: 'purple' }].map(item => `<div class="space-y-2"><div class="flex justify-between items-center"><span class="text-xs font-black text-white">${item.asset}</span><span class="text-xs font-black text-gray-500">${item.vol} Volume</span></div><div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-${item.color}-600 rounded-full" style="width: ${item.p}%"></div></div></div>`).join('')}</div>
                 </div>
              </div>
           </div>
@@ -242,10 +242,10 @@ export const AdminPage = () => {
                           <div class="w-2 h-2 rounded-full ${log.type === 'security' ? 'bg-red-500' : 'bg-blue-600'}"></div>
                           <div>
                              <p class="text-sm font-black text-white">${log.event}</p>
-                             <p class="text-[10px] text-gray-500 font-bold uppercase tracking-tight">Operator: ${log.user}</p>
+                             <p class="text-xs text-gray-500 font-bold uppercase tracking-tight">Operator: ${log.user}</p>
                           </div>
                        </div>
-                       <span class="text-[10px] font-bold text-gray-600 uppercase">${log.time}</span>
+                       <span class="text-xs font-bold text-gray-600 uppercase">${log.time}</span>
                     </div>
                   `).join('')}
                </div>
@@ -259,16 +259,16 @@ export const AdminPage = () => {
             <div class="card p-8 space-y-10">
                <div class="space-y-6">
                   <div class="flex items-center justify-between">
-                     <div><p class="text-sm font-black text-white">Platform Operations</p><p class="text-[10px] text-gray-500 font-medium">Emergency shutdown for all market nodes.</p></div>
+                     <div><p class="text-sm font-black text-white">Platform Operations</p><p class="text-xs text-gray-500 font-medium">Emergency shutdown for all market nodes.</p></div>
                      <button class="w-12 h-6 bg-blue-600 rounded-full relative shadow-lg shadow-blue-600/30"><div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div></button>
                   </div>
                   <div class="flex items-center justify-between">
-                     <div><p class="text-sm font-black text-white">Maintenance Mode</p><p class="text-[10px] text-gray-500 font-medium">Restrict user access to terminals.</p></div>
+                     <div><p class="text-sm font-black text-white">Maintenance Mode</p><p class="text-xs text-gray-500 font-medium">Restrict user access to terminals.</p></div>
                      <button class="w-12 h-6 bg-gray-800 rounded-full relative"><div class="absolute left-1 top-1 w-4 h-4 bg-gray-600 rounded-full"></div></button>
                   </div>
                </div>
                <div class="space-y-4">
-                  <div class="flex justify-between items-center"><p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Market Spread Multiplier</p><span class="text-xs font-black text-blue-500">1.5x</span></div>
+                  <div class="flex justify-between items-center"><p class="text-xs font-black text-gray-500 uppercase tracking-widest">Market Spread Multiplier</p><span class="text-xs font-black text-blue-500">1.5x</span></div>
                   <div class="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden"><div class="h-full bg-blue-600 w-1/3"></div></div>
                </div>
                <button onclick="window.adminAction('save', '')" class="btn-primary w-full py-5 btn-glow font-black tracking-widest">SAVE SYSTEM CONFIG</button>
@@ -287,7 +287,7 @@ export const AdminPage = () => {
                 
                 <div class="flex items-center gap-3 bg-red-500/5 border border-red-500/10 px-4 py-2 rounded-2xl">
                    <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                   <p class="text-[10px] font-black text-red-500 uppercase tracking-widest">High Risk: Institutional Exposure Active</p>
+                   <p class="text-xs font-black text-red-500 uppercase tracking-widest">High Risk: Institutional Exposure Active</p>
                 </div>
              </div>
 
@@ -302,10 +302,10 @@ export const AdminPage = () => {
                    <div class="card p-6 border-gray-800 hover:border-blue-500/20 transition-all group cursor-default">
                       <div class="flex justify-between items-start mb-4">
                          <span class="text-xl">${stat.icon}</span>
-                         <span class="text-[8px] font-black ${stat.change.startsWith('+') ? 'text-green-500 bg-green-500/10' : 'text-blue-500 bg-blue-500/10'} px-2 py-0.5 rounded-full">${stat.change}</span>
+                         <span class="text-xs font-black ${stat.change.startsWith('+') ? 'text-green-500 bg-green-500/10' : 'text-blue-500 bg-blue-500/10'} px-2 py-0.5 rounded-full">${stat.change}</span>
                       </div>
                       <div>
-                         <p class="text-[10px] font-black text-gray-600 uppercase tracking-widest">${stat.label}</p>
+                         <p class="text-xs font-black text-gray-600 uppercase tracking-widest">${stat.label}</p>
                          <p class="text-2xl font-black text-white mt-1 group-hover:text-blue-500 transition-colors tracking-tighter">${stat.value}</p>
                       </div>
                    </div>
@@ -318,7 +318,7 @@ export const AdminPage = () => {
                    <div class="card p-8 bg-gradient-to-br from-blue-600/20 via-[#131722] to-transparent border-blue-600/10 relative overflow-hidden">
                       <div class="absolute top-[-20%] right-[-10%] w-64 h-64 bg-blue-600/10 rounded-full blur-[80px]"></div>
                       <div class="relative z-10 space-y-6">
-                         <h3 class="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em]">Node Status</h3>
+                         <h3 class="text-xs font-black text-blue-500 uppercase tracking-[0.4em]">Node Status</h3>
                          <h2 class="text-3xl font-black text-white leading-tight tracking-tighter">Institutional <br> Liquidity Active</h2>
                          <p class="text-xs text-gray-400 font-medium">All sub-systems synced with <br> Global feeds at <span class="text-white">0.4ms</span>.</p>
                       </div>
@@ -326,11 +326,11 @@ export const AdminPage = () => {
                    
                    <!-- Quick Actions Panel -->
                    <div class="card p-8 space-y-4 bg-[#131722]/50 border-gray-800">
-                      <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Emergency Operations</h3>
-                      <button onclick="window.adminAction('systemAction', 'Trading Suspension')" class="w-full py-3 px-4 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Suspend Trading</button>
-                      <button onclick="window.adminAction('systemAction', 'System Reboot')" class="w-full py-3 px-4 bg-blue-600/10 hover:bg-blue-600 text-blue-500 hover:text-white border border-blue-600/20 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Restart System</button>
+                      <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Emergency Operations</h3>
+                      <button onclick="window.adminAction('systemAction', 'Trading Suspension')" class="w-full py-3 px-4 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded-xl text-xs font-black uppercase tracking-widest transition-all">Suspend Trading</button>
+                      <button onclick="window.adminAction('systemAction', 'System Reboot')" class="w-full py-3 px-4 bg-blue-600/10 hover:bg-blue-600 text-blue-500 hover:text-white border border-blue-600/20 rounded-xl text-xs font-black uppercase tracking-widest transition-all">Restart System</button>
                       <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
-                         <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Maintenance Mode</span>
+                         <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Maintenance Mode</span>
                          <div class="w-10 h-5 bg-gray-800 rounded-full relative"><div class="absolute left-1 top-1 w-3 h-3 bg-gray-600 rounded-full"></div></div>
                       </div>
                    </div>
@@ -338,7 +338,7 @@ export const AdminPage = () => {
 
                 <!-- System Health Monitor -->
                 <div class="card p-8 space-y-6 bg-[#131722]/40 backdrop-blur-md border-gray-800">
-                   <h3 class="text-[10px] font-black text-white uppercase tracking-[0.3em]">Network Health</h3>
+                   <h3 class="text-xs font-black text-white uppercase tracking-[0.3em]">Network Health</h3>
                    <div class="space-y-5">
                       ${[
                         { label: 'Server Load', p: 42, color: 'blue' },
@@ -346,13 +346,13 @@ export const AdminPage = () => {
                         { label: 'API Latency', p: 12, color: 'red' },
                       ].map(h => `
                          <div class="space-y-2">
-                            <div class="flex justify-between items-center"><span class="text-[10px] font-black text-gray-500 uppercase">${h.label}</span><span class="text-[10px] font-black text-white">${h.p}%</span></div>
+                            <div class="flex justify-between items-center"><span class="text-xs font-black text-gray-500 uppercase">${h.label}</span><span class="text-xs font-black text-white">${h.p}%</span></div>
                             <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden"><div class="h-full bg-${h.color}-600 rounded-full" style="width: ${h.p}%"></div></div>
                          </div>
                       `).join('')}
                    </div>
                    <div class="pt-4 border-t border-white/5 flex items-center justify-between">
-                      <span class="text-[10px] font-black text-gray-500 uppercase">Uptime Chain</span>
+                      <span class="text-xs font-black text-gray-500 uppercase">Uptime Chain</span>
                       <div class="flex gap-1">
                          ${[1,1,1,1,1,0.5].map(v => `<div class="w-1 h-3 bg-green-500 rounded-full" style="opacity: ${v}"></div>`).join('')}
                       </div>
@@ -366,7 +366,7 @@ export const AdminPage = () => {
                 <div class="card p-10 space-y-6">
                    <div class="flex justify-between items-center">
                       <h3 class="text-xs font-black text-white uppercase tracking-widest">Activity Distribution</h3>
-                      <span class="text-[9px] font-black text-blue-500 uppercase">Hourly View</span>
+                      <span class="text-xs font-black text-blue-500 uppercase">Hourly View</span>
                    </div>
                    <div class="flex items-end gap-2 h-32">
                       ${[20, 40, 30, 70, 50, 90, 60, 100, 80, 40, 60, 30].map(h => `<div class="flex-1 bg-blue-600/20 rounded-t-lg hover:bg-blue-600 transition-all" style="height: ${h}%"></div>`).join('')}
@@ -392,10 +392,10 @@ export const AdminPage = () => {
                                <div class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-lg">${log.icon}</div>
                                <div>
                                   <p class="text-sm font-black text-white group-hover:text-blue-500 transition-colors">${log.ev}</p>
-                                  <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mt-1">${log.u}</p>
+                                  <p class="text-xs font-black text-gray-500 uppercase tracking-widest mt-1">${log.u}</p>
                                </div>
                             </div>
-                            <span class="text-[9px] font-black text-gray-600 uppercase">${log.t}</span>
+                            <span class="text-xs font-black text-gray-600 uppercase">${log.t}</span>
                          </div>
                       `).join('')}
                    </div>

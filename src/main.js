@@ -94,8 +94,15 @@ window.addEventListener('pageLoaded', (e) => {
   }
 
   if (page === 'dashboard') {
+    import('./pages/DashboardPage').then(m => {
+       if (m.initDashboard) m.initDashboard();
+    });
     setTimeout(() => {
       TradingViewChart('tv-chart-container', 'FX:EURUSD', 'dark');
+      
+      // Hide skeleton when chart starts loading
+      const skeleton = document.getElementById('chart-skeleton');
+      if (skeleton) skeleton.classList.add('hidden');
     }, 100);
   }
 

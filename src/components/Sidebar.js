@@ -78,7 +78,7 @@ export const Sidebar = (isMobile = false) => {
           </div>
           <div class="${isMobile ? 'block' : 'hidden xl:block'} min-w-0">
             <p class="text-sm font-black text-white truncate">${user.name || (isAdmin ? 'Platform Admin' : 'Trader')}</p>
-            <p class="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] truncate">${user.role || 'User'}</p>
+            <p class="text-xs font-black text-blue-500 uppercase tracking-[0.2em] truncate">${user.role || 'User'}</p>
           </div>
         </div>
         

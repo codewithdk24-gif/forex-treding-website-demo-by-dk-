@@ -31,7 +31,7 @@ export const AuthPage = () => {
     }
 
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<div class="loading-spinner"></div>';
+    submitBtn.innerHTML = '<div class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mx-auto"></div>';
 
     await new Promise(resolve => setTimeout(resolve, 1500));
 
@@ -110,7 +110,7 @@ export const AuthPage = () => {
           </p>
         </div>
 
-        <div class="hidden lg:block text-[10px] text-gray-600 font-bold uppercase tracking-widest mt-12">
+        <div class="hidden lg:block text-xs text-gray-600 font-bold uppercase tracking-widest mt-12">
           © 2024 ForexPro Institutional Terminal
         </div>
       </div>
@@ -121,8 +121,8 @@ export const AuthPage = () => {
           <!-- Mode Toggle (Only for User Auth) -->
           ${!isAdminLogin ? `
             <div class="flex bg-[#131722] p-1.5 rounded-2xl border border-white/5 shadow-inner">
-               <button onclick="window.toggleAuthMode('login')" class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${isLogin ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}">LOGIN</button>
-               <button onclick="window.toggleAuthMode('signup')" class="flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${!isLogin ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}">SIGNUP</button>
+               <button onclick="window.toggleAuthMode('login')" class="flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${isLogin ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}">LOGIN</button>
+               <button onclick="window.toggleAuthMode('signup')" class="flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${!isLogin ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}">SIGNUP</button>
             </div>
           ` : ''}
 
@@ -130,7 +130,7 @@ export const AuthPage = () => {
             <h2 class="text-2xl lg:text-4xl font-black tracking-tighter text-white">
                ${isAdminLogin ? 'Admin Command' : (isLogin ? 'Login to Terminal' : 'Create Account')}
             </h2>
-            <p class="text-gray-500 text-[10px] lg:text-sm font-medium uppercase tracking-[0.2em]">
+            <p class="text-gray-500 text-xs lg:text-sm font-medium uppercase tracking-[0.2em]">
                ${isAdminLogin ? 'Secure root authentication' : (isLogin ? 'Access your dashboard' : 'Institutional registration')}
             </p>
           </div>
@@ -138,21 +138,21 @@ export const AuthPage = () => {
           <form class="space-y-5" onsubmit="window.handleAuth(event)">
             ${!isLogin ? `
               <div class="space-y-2">
-                <label class="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Full Name</label>
+                <label class="text-xs font-black text-gray-600 uppercase tracking-widest pl-1">Full Name</label>
                 <input name="name" type="text" placeholder="John Doe" required class="input-field bg-[#131722] py-4">
               </div>
             ` : ''}
 
             <div class="space-y-2">
-              <label class="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">
+              <label class="text-xs font-black text-gray-600 uppercase tracking-widest pl-1">
                  ${isAdminLogin ? 'Operator ID' : 'Authorized Email'}
               </label>
-              <input name="login_id" type="${isAdminLogin ? 'text' : 'email'}" value="" placeholder="${isAdminLogin ? 'Enter ID' : 'Enter Email'}" required autocomplete="new-password" class="input-field bg-[#131722] py-4">
+              <input name="login_id" type="${isAdminLogin ? 'text' : 'email'}" value="${!isAdminLogin && isLogin ? 'demo@forexpro.com' : ''}" placeholder="${isAdminLogin ? 'Enter ID' : 'Enter Email'}" required autocomplete="new-password" class="input-field bg-[#131722] py-4">
             </div>
 
             <div class="space-y-2">
-              <label class="text-[10px] font-black text-gray-600 uppercase tracking-widest pl-1">Keyphrase</label>
-              <input name="login_key" type="password" value="" placeholder="Enter Password" required autocomplete="new-password" class="input-field bg-[#131722] py-4">
+              <label class="text-xs font-black text-gray-600 uppercase tracking-widest pl-1">Keyphrase</label>
+              <input name="login_key" type="password" value="${!isAdminLogin && isLogin ? 'demo123' : ''}" placeholder="Enter Password" required autocomplete="new-password" class="input-field bg-[#131722] py-4">
             </div>
 
 
@@ -161,23 +161,11 @@ export const AuthPage = () => {
             <button type="submit" class="btn-primary w-full py-5 text-sm btn-glow active:scale-95 transition-all">
               ${isAdminLogin ? 'VERIFY ROOT ACCESS' : (isLogin ? 'ENTER TERMINAL' : 'CREATE ACCOUNT')}
             </button>
-
-            ${isLogin && !isAdminLogin ? `
-               <div class="p-4 bg-blue-500/5 border border-blue-500/10 rounded-2xl space-y-2 mt-8">
-                  <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest">Demo Access Credentials</p>
-                  <div class="flex flex-col gap-1">
-                     <p class="text-[10px] text-gray-500 font-bold">Email: <span class="text-white">demo@forexpro.com</span></p>
-                     <p class="text-[10px] text-gray-500 font-bold">Password: <span class="text-white">demo123</span></p>
-                  </div>
-               </div>
-            ` : ''}
           </form>
 
 
           <p class="text-center text-xs text-gray-500 font-medium">
-            ${isAdminLogin ? 
-              '<a href="#auth" class="text-blue-500 font-bold hover:underline uppercase tracking-widest">Back to User Terminal</a>' : 
-              (isLogin ? 'Administrator? <a href="#admin-login" class="text-blue-500 font-bold hover:underline uppercase tracking-widest">Admin Command</a>' : 'Already have an account? <a href="javascript:void(0)" onclick="window.toggleAuthMode(\'login\')" class="text-blue-500 font-bold hover:underline uppercase tracking-widest">Log In</a>')}
+            ${isLogin ? 'Need an account? <a href="javascript:void(0)" onclick="window.toggleAuthMode(\'signup\')" class="text-blue-500 font-bold hover:underline uppercase tracking-widest">Sign Up</a>' : 'Already have an account? <a href="javascript:void(0)" onclick="window.toggleAuthMode(\'login\')" class="text-blue-500 font-bold hover:underline uppercase tracking-widest">Log In</a>'}
           </p>
         </div>
       </div>

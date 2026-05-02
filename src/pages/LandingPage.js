@@ -78,13 +78,13 @@ export const LandingPage = () => {
         </div>
         
         <div class="hidden lg:flex items-center gap-10">
-          <a href="#markets-page" class="text-[10px] font-bold tracking-widest text-gray-400 hover:text-white transition-all uppercase">Markets</a>
-          <a href="#orders-page" class="text-[10px] font-bold tracking-widest text-gray-400 hover:text-white transition-all uppercase">Execution</a>
-          <a href="#pricing-section" class="text-[10px] font-bold tracking-widest text-gray-400 hover:text-white transition-all uppercase">Pricing</a>
+          <a href="#markets-page" class="text-xs font-bold tracking-widest text-gray-400 hover:text-white transition-all uppercase">Markets</a>
+          <a href="#orders-page" class="text-xs font-bold tracking-widest text-gray-400 hover:text-white transition-all uppercase">Execution</a>
+          <a href="#pricing-section" class="text-xs font-bold tracking-widest text-gray-400 hover:text-white transition-all uppercase">Pricing</a>
         </div>
 
         <div class="flex items-center gap-4">
-          <a href="#auth" class="btn-primary py-1.5 px-4 text-[8px] md:text-[10px] font-black uppercase tracking-widest rounded-lg h-8 md:h-10 w-auto">Join Now</a>
+          <a href="#auth" class="btn-primary py-1.5 px-4 text-xs md:text-xs font-black uppercase tracking-widest rounded-lg h-8 md:h-10 w-auto">Join Now</a>
 
           <button onclick="window.toggleLandingMenu(true)" class="lg:hidden p-2 text-gray-400 hover:text-white transition-colors">
             ${Icons.menu}
@@ -119,8 +119,8 @@ export const LandingPage = () => {
            </div>
         </div>
         <div class="space-y-4">
-           <a href="#auth" onclick="window.toggleLandingMenu(false)" class="btn-primary w-full py-4 text-center text-[10px] font-black uppercase tracking-widest rounded-2xl">Join Now</a>
-           <p class="text-[9px] text-gray-700 text-center uppercase tracking-widest italic">Institutional Grade Terminal Node v2.4</p>
+           <a href="#auth" onclick="window.toggleLandingMenu(false)" class="btn-primary w-full py-4 text-center text-xs font-black uppercase tracking-widest rounded-2xl">Join Now</a>
+           <p class="text-xs text-gray-700 text-center uppercase tracking-widest italic">Institutional Grade Terminal Node v2.4</p>
         </div>
       </div>
 
@@ -135,15 +135,15 @@ export const LandingPage = () => {
             <div class="flex flex-wrap justify-center lg:justify-start items-center gap-3 md:gap-6 opacity-60">
                <div class="flex items-center gap-2">
                   <span class="w-1 h-1 rounded-full bg-blue-500"></span>
-                  <span class="text-[9px] font-black uppercase tracking-widest text-white">0.01% Slippage</span>
+                  <span class="text-xs font-black uppercase tracking-widest text-white">0.01% Slippage</span>
                </div>
                <div class="flex items-center gap-2">
                   <span class="w-1 h-1 rounded-full bg-blue-500"></span>
-                  <span class="text-[9px] font-black uppercase tracking-widest text-white">0.4ms Execution</span>
+                  <span class="text-xs font-black uppercase tracking-widest text-white">0.4ms Execution</span>
                </div>
                <div class="flex items-center gap-2">
                   <span class="w-1 h-1 rounded-full bg-blue-500"></span>
-                  <span class="text-[9px] font-black uppercase tracking-widest text-white">99.99% Uptime</span>
+                  <span class="text-xs font-black uppercase tracking-widest text-white">99.99% Uptime</span>
                </div>
             </div>
 
@@ -157,8 +157,8 @@ export const LandingPage = () => {
             </div>
 
             <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
-              <a href="#auth" class="btn-primary w-full sm:w-auto px-8 py-3.5 text-[10px] font-black uppercase tracking-widest rounded-xl">Join Now</a>
-              <a href="#dashboard" class="w-full sm:w-auto px-8 py-3.5 text-[10px] font-black text-gray-500 hover:text-white uppercase tracking-widest rounded-xl border border-white/5 hover:bg-white/5 transition-all">Explore Demo</a>
+              <a href="#auth" class="btn-primary w-full sm:w-auto px-8 py-3.5 text-xs font-black uppercase tracking-widest rounded-xl">Join Now</a>
+              <a href="#dashboard" class="w-full sm:w-auto px-8 py-3.5 text-xs font-black text-gray-500 hover:text-white uppercase tracking-widest rounded-xl border border-white/5 hover:bg-white/5 transition-all">Explore Demo</a>
             </div>
 
             <!-- Mobile Mini Terminal Card (Visual Filler) -->
@@ -167,9 +167,9 @@ export const LandingPage = () => {
                   <div class="flex justify-between items-center mb-6">
                      <div class="flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                        <p class="text-[8px] font-black text-white uppercase tracking-widest">EUR / USD</p>
+                        <p class="text-xs font-black text-white uppercase tracking-widest">EUR / USD</p>
                      </div>
-                     <p class="text-[8px] font-black text-green-500 uppercase tracking-widest">+1.42%</p>
+                     <p class="text-xs font-black text-green-500 uppercase tracking-widest">+1.42%</p>
                   </div>
                   <div class="flex justify-between items-end mb-4">
                      <p class="text-3xl font-black text-white tracking-tighter">1.08245</p>
@@ -197,19 +197,19 @@ export const LandingPage = () => {
                    </div>
                    <div class="px-3 py-1 bg-green-500/10 rounded-full flex items-center gap-2">
                       <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                      <span class="text-[9px] font-black text-green-500 uppercase tracking-widest">Live Execution</span>
+                      <span class="text-xs font-black text-green-500 uppercase tracking-widest">Live Execution</span>
                    </div>
                 </div>
                 
                 <div class="space-y-8">
                    <div class="flex justify-between items-end">
                       <div>
-                         <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">EUR / USD</p>
+                         <p class="text-xs font-black text-gray-500 uppercase tracking-widest mb-1">EUR / USD</p>
                          <p class="text-5xl font-black text-white tracking-tighter">1.08245</p>
                       </div>
                       <div class="text-right">
-                         <p class="text-[10px] font-black text-green-500 uppercase tracking-widest">+1.42%</p>
-                         <p class="text-[9px] font-black text-gray-600 uppercase tracking-widest">Spread: 0.2 Pips</p>
+                         <p class="text-xs font-black text-green-500 uppercase tracking-widest">+1.42%</p>
+                         <p class="text-xs font-black text-gray-600 uppercase tracking-widest">Spread: 0.2 Pips</p>
                       </div>
                    </div>
                    
@@ -227,19 +227,19 @@ export const LandingPage = () => {
       <!-- Institutional Market Feed (Now below fold) -->
       <section class="lg:hidden border-t border-white/5 py-12 px-6">
          <div class="space-y-6">
-            <p class="text-[9px] font-black text-gray-600 uppercase tracking-[0.4em] text-center">Institutional Feed</p>
+            <p class="text-xs font-black text-gray-600 uppercase tracking-[0.4em] text-center">Institutional Feed</p>
             <div class="flex justify-between items-center px-4">
                 <div class="space-y-1">
-                   <p class="text-[9px] font-black text-white uppercase tracking-widest">EUR / USD</p>
-                   <p class="text-[11px] font-black text-green-500 animate-pulse">1.08245</p>
+                   <p class="text-xs font-black text-white uppercase tracking-widest">EUR / USD</p>
+                   <p class="text-xs font-black text-green-500 animate-pulse">1.08245</p>
                 </div>
                 <div class="space-y-1 text-center">
-                   <p class="text-[9px] font-black text-white uppercase tracking-widest">GBP / USD</p>
-                   <p class="text-[11px] font-black text-blue-500 animate-pulse">1.26410</p>
+                   <p class="text-xs font-black text-white uppercase tracking-widest">GBP / USD</p>
+                   <p class="text-xs font-black text-blue-500 animate-pulse">1.26410</p>
                 </div>
                 <div class="space-y-1 text-right">
-                   <p class="text-[9px] font-black text-white uppercase tracking-widest">USD / JPY</p>
-                   <p class="text-[11px] font-black text-red-500 animate-pulse">150.42</p>
+                   <p class="text-xs font-black text-white uppercase tracking-widest">USD / JPY</p>
+                   <p class="text-xs font-black text-red-500 animate-pulse">150.42</p>
                 </div>
              </div>
              <div class="flex justify-center items-center gap-6 opacity-20 grayscale pt-4 border-t border-white/[0.03]">
@@ -266,11 +266,11 @@ export const LandingPage = () => {
                  <div class="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-white/[0.02]">
                     <div class="flex items-center gap-3">
                        <span class="w-2 h-2 rounded-full bg-green-500"></span>
-                       <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Institutional Feed</span>
+                       <span class="text-xs font-black text-gray-500 uppercase tracking-widest">Institutional Feed</span>
                     </div>
                     <div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
-                       <span class="text-[10px] font-black text-white uppercase tracking-widest">EUR / USD</span>
-                       <span class="text-[8px] font-bold text-green-500 uppercase tracking-widest bg-green-500/10 px-2 py-0.5 rounded">Live</span>
+                       <span class="text-xs font-black text-white uppercase tracking-widest">EUR / USD</span>
+                       <span class="text-xs font-bold text-green-500 uppercase tracking-widest bg-green-500/10 px-2 py-0.5 rounded">Live</span>
                     </div>
                     <div class="text-gray-500 group-hover:text-white transition-colors">
                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
@@ -283,12 +283,12 @@ export const LandingPage = () => {
                     <div class="flex-1 bg-white/[0.01] rounded-2xl border border-white/5 p-6 relative overflow-hidden flex flex-col justify-between">
                        <div class="flex justify-between items-start">
                           <div>
-                             <p class="text-[10px] font-black text-gray-600 uppercase tracking-widest mb-1">Market Execution</p>
+                             <p class="text-xs font-black text-gray-600 uppercase tracking-widest mb-1">Market Execution</p>
                              <p class="text-4xl font-black text-white tracking-tighter">1.08245</p>
                           </div>
                           <div class="text-right">
                              <p class="text-xs font-black text-green-500">+$420.50</p>
-                             <p class="text-[8px] font-bold text-gray-700 uppercase tracking-widest">Unrealized P/L</p>
+                             <p class="text-xs font-bold text-gray-700 uppercase tracking-widest">Unrealized P/L</p>
                           </div>
                        </div>
                        
@@ -305,23 +305,23 @@ export const LandingPage = () => {
                     <!-- Side Controls (Compact) -->
                     <div class="w-full md:w-64 space-y-4">
                        <div class="p-5 bg-white/[0.02] rounded-2xl border border-white/5 space-y-4">
-                          <div class="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-gray-500">
+                          <div class="flex justify-between items-center text-xs font-black uppercase tracking-widest text-gray-500">
                              <span>Order Entry</span>
                              <span class="text-blue-500">Market</span>
                           </div>
                           <div class="h-10 bg-white/5 rounded-xl border border-white/5 flex items-center px-4 justify-between">
                              <span class="text-xs font-black text-white">0.50</span>
-                             <span class="text-[8px] font-black text-gray-600 uppercase">Lots</span>
+                             <span class="text-xs font-black text-gray-600 uppercase">Lots</span>
                           </div>
                           <div class="grid grid-cols-2 gap-3">
-                             <button class="py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-[9px] font-black text-red-500 uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all">Sell</button>
-                             <button class="py-3 bg-green-500/10 border border-green-500/20 rounded-xl text-[9px] font-black text-green-500 uppercase tracking-widest hover:bg-green-500 hover:text-white transition-all">Buy</button>
+                             <button class="py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-xs font-black text-red-500 uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all">Sell</button>
+                             <button class="py-3 bg-green-500/10 border border-green-500/20 rounded-xl text-xs font-black text-green-500 uppercase tracking-widest hover:bg-green-500 hover:text-white transition-all">Buy</button>
                           </div>
                        </div>
                        
                        <div class="p-5 bg-blue-600/5 rounded-2xl border border-blue-600/10">
-                          <p class="text-[8px] font-black text-blue-500 uppercase tracking-widest mb-2">Platform Node</p>
-                          <p class="text-[10px] font-black text-white leading-relaxed uppercase tracking-wider">L4 Liquidity Engine Active</p>
+                          <p class="text-xs font-black text-blue-500 uppercase tracking-widest mb-2">Platform Node</p>
+                          <p class="text-xs font-black text-white leading-relaxed uppercase tracking-wider">L4 Liquidity Engine Active</p>
                        </div>
                     </div>
                  </div>
@@ -343,13 +343,13 @@ export const LandingPage = () => {
                 { label: 'Latency Speed', value: '0.4ms', sub: 'Est. Execution' }
               ].map(stat => `
                 <div class="w-full md:px-10 py-8 md:py-10 text-center space-y-1.5 hover:bg-white/[0.01] transition-colors group">
-                  <p class="text-[9px] font-bold text-blue-500/80 uppercase tracking-[0.2em] group-hover:translate-y-[-2px] transition-transform">${stat.label}</p>
+                  <p class="text-xs font-bold text-blue-500/80 uppercase tracking-[0.2em] group-hover:translate-y-[-2px] transition-transform">${stat.label}</p>
                   <p class="text-4xl font-black text-white tracking-tighter">${stat.value}</p>
-                  <p class="text-[9px] font-bold text-gray-600 uppercase tracking-widest">${stat.sub}</p>
+                  <p class="text-xs font-bold text-gray-600 uppercase tracking-widest">${stat.sub}</p>
                 </div>
               `).join('')}
            </div>
-           <p class="text-[8px] text-gray-700 text-center mt-4 font-bold uppercase tracking-widest opacity-40">Simulated demo environment. All metrics are estimated based on historical institutional data node performance.</p>
+           <p class="text-xs text-gray-700 text-center mt-4 font-bold uppercase tracking-widest opacity-40">Simulated demo environment. All metrics are estimated based on historical institutional data node performance.</p>
         </div>
       </section>
 
@@ -357,7 +357,7 @@ export const LandingPage = () => {
       <section id="orders-page" class="max-w-7xl mx-auto px-6 py-12 reveal">
         <div class="text-center mb-10 space-y-3">
           <h2 class="text-2xl md:text-5xl font-black tracking-tight text-white uppercase">Trusted <span class="text-blue-500">Infrastructure.</span></h2>
-          <p class="text-gray-500 text-[8px] font-black uppercase tracking-[0.3em]">Institutional Grade Reliability</p>
+          <p class="text-gray-500 text-xs font-black uppercase tracking-[0.3em]">Institutional Grade Reliability</p>
         </div>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
            ${[
@@ -370,7 +370,7 @@ export const LandingPage = () => {
                 <div class="w-10 h-10 bg-blue-600/5 rounded-xl flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
                    ${item.icon}
                 </div>
-                <h3 class="text-[9px] font-black text-white uppercase tracking-widest">${item.title}</h3>
+                <h3 class="text-xs font-black text-white uppercase tracking-widest">${item.title}</h3>
                 <p class="text-[7px] text-gray-600 font-bold uppercase tracking-widest">${item.desc}</p>
              </div>
            `).join('')}
@@ -384,7 +384,7 @@ export const LandingPage = () => {
 
         <div class="text-center space-y-4">
           <h2 class="text-3xl md:text-5xl font-black tracking-tight text-white uppercase">Platform <span class="text-blue-500">Infrastructure.</span></h2>
-          <p class="text-gray-500 text-[10px] font-black uppercase tracking-[0.4em]">Built for high-frequency precision.</p>
+          <p class="text-gray-500 text-xs font-black uppercase tracking-[0.4em]">Built for high-frequency precision.</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
            ${[
@@ -399,7 +399,7 @@ export const LandingPage = () => {
                 </div>
                 <div class="space-y-2">
                    <h3 class="text-sm font-black text-white uppercase tracking-widest">${item.title}</h3>
-                   <p class="text-[11px] text-gray-600 font-medium leading-relaxed">${item.desc}</p>
+                   <p class="text-xs text-gray-600 font-medium leading-relaxed">${item.desc}</p>
                 </div>
              </div>
            `).join('')}
@@ -413,7 +413,7 @@ export const LandingPage = () => {
           <div class="flex-1 space-y-8 text-center lg:text-left">
             <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-green-500/5 border border-green-500/10 rounded-full">
                <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
-               <span class="text-[9px] font-black text-green-500 uppercase tracking-widest">Safety Protocol Active</span>
+               <span class="text-xs font-black text-green-500 uppercase tracking-widest">Safety Protocol Active</span>
             </div>
             <h2 class="text-4xl md:text-7xl font-black tracking-tighter text-white leading-none">Capital <br> <span class="text-green-500">Fortification.</span></h2>
             <p class="text-gray-500 text-sm md:text-lg font-medium leading-relaxed max-w-xl mx-auto lg:mx-0">Multi-layer verification nodes and military-grade encryption to safeguard global assets.</p>
@@ -423,7 +423,7 @@ export const LandingPage = () => {
                    <div class="w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                      ${Icons.check}
                    </div>
-                   <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest group-hover:text-green-500 transition-colors">${item}</span>
+                   <span class="text-xs font-black text-gray-500 uppercase tracking-widest group-hover:text-green-500 transition-colors">${item}</span>
                  </div>
                `).join('')}
             </div>
@@ -443,7 +443,7 @@ export const LandingPage = () => {
       <section class="section-container py-24 px-6 max-w-3xl mx-auto space-y-12 reveal">
         <div class="text-center space-y-4">
           <h2 class="text-2xl md:text-5xl font-black text-white uppercase tracking-tighter">Inquiries.</h2>
-          <p class="text-[9px] font-black text-gray-500 uppercase tracking-[0.4em]">Clarifying the infrastructure.</p>
+          <p class="text-xs font-black text-gray-500 uppercase tracking-[0.4em]">Clarifying the infrastructure.</p>
         </div>
         <div class="space-y-4">
           ${[
@@ -453,10 +453,10 @@ export const LandingPage = () => {
           ].map((faq, i) => `
             <div id="faq-card-${i}" class="faq-card glass-card rounded-2xl overflow-hidden border border-white/[0.03] transition-all duration-300">
               <button onclick="window.toggleFAQ(${i})" class="w-full p-6 text-left flex justify-between items-center hover:bg-white/[0.01] transition-colors">
-                <span class="text-[11px] font-black text-white uppercase tracking-widest transition-colors">${faq.q}</span>
-                <span id="faq-icon-${i}" class="faq-icon transition-transform duration-300 text-blue-500 text-[10px]">▼</span>
+                <span class="text-xs font-black text-white uppercase tracking-widest transition-colors">${faq.q}</span>
+                <span id="faq-icon-${i}" class="faq-icon transition-transform duration-300 text-blue-500 text-xs">▼</span>
               </button>
-              <div id="faq-${i}" class="faq-content ${i === 0 ? 'show' : ''} px-6 pb-6 text-[11px] text-gray-600 leading-relaxed font-medium">
+              <div id="faq-${i}" class="faq-content ${i === 0 ? 'show' : ''} px-6 pb-6 text-xs text-gray-600 leading-relaxed font-medium">
                 ${faq.a}
               </div>
             </div>
@@ -467,11 +467,11 @@ export const LandingPage = () => {
       <!-- Final Elite CTA -->
       <section id="cta" class="wave-bg py-16 md:py-32 px-6 text-center reveal">
         <div class="max-w-4xl mx-auto space-y-6 relative z-10">
-          <p class="text-[9px] font-black text-blue-500 uppercase tracking-[0.5em] animate-pulse">Institutional Hub Active</p>
+          <p class="text-xs font-black text-blue-500 uppercase tracking-[0.5em] animate-pulse">Institutional Hub Active</p>
           <h2 class="text-3xl md:text-7xl font-black tracking-tighter text-white leading-none uppercase">Join the <span class="text-blue-500">Elite.</span></h2>
-          <p class="text-[10px] md:text-lg text-gray-600 font-bold uppercase tracking-widest max-w-sm mx-auto">High-speed execution 24/7 globally.</p>
+          <p class="text-xs md:text-lg text-gray-600 font-bold uppercase tracking-widest max-w-sm mx-auto">High-speed execution 24/7 globally.</p>
           <div class="pt-4">
-             <a href="#auth" class="btn-primary w-full md:w-auto shine-effect px-12 py-5 text-[11px] font-black uppercase tracking-widest rounded-2xl">Launch Live Account</a>
+             <a href="#auth" class="btn-primary w-full md:w-auto shine-effect px-12 py-5 text-xs font-black uppercase tracking-widest rounded-2xl">Launch Live Account</a>
           </div>
         </div>
       </section>
@@ -485,37 +485,37 @@ export const LandingPage = () => {
                 <div class="w-6 h-6 bg-blue-600 rounded flex items-center justify-center text-white font-black text-xs">FX</div>
                 <span class="text-lg font-black tracking-tight text-white uppercase">Forex<span class="text-blue-500">Pro</span></span>
               </div>
-              <p class="text-[9px] text-gray-700 font-bold uppercase tracking-wider leading-relaxed">Institutional trading terminal infrastructure.</p>
+              <p class="text-xs text-gray-700 font-bold uppercase tracking-wider leading-relaxed">Institutional trading terminal infrastructure.</p>
             </div>
             
             <div class="space-y-4">
-              <h4 class="text-[9px] font-black text-white uppercase tracking-widest">Markets</h4>
-              <ul class="space-y-2 text-[9px] text-gray-600 font-bold uppercase tracking-widest">
+              <h4 class="text-xs font-black text-white uppercase tracking-widest">Markets</h4>
+              <ul class="space-y-2 text-xs text-gray-600 font-bold uppercase tracking-widest">
                 <li><a href="#markets" class="hover:text-white transition-all">EUR/USD Pair</a></li>
                 <li><a href="#markets" class="hover:text-white transition-all">Commodities</a></li>
               </ul>
             </div>
 
             <div class="space-y-4">
-              <h4 class="text-[9px] font-black text-white uppercase tracking-widest">Legal</h4>
-              <ul class="space-y-2 text-[9px] text-gray-600 font-bold uppercase tracking-widest">
+              <h4 class="text-xs font-black text-white uppercase tracking-widest">Legal</h4>
+              <ul class="space-y-2 text-xs text-gray-600 font-bold uppercase tracking-widest">
                 <li><a href="javascript:void(0)" onclick="window.openPrivacy()" class="hover:text-white transition-all">Privacy</a></li>
                 <li><a href="javascript:void(0)" onclick="window.openTerms()" class="hover:text-white transition-all">Terms</a></li>
               </ul>
             </div>
 
             <div class="space-y-4">
-              <h4 class="text-[9px] font-black text-white uppercase tracking-widest">Hub Status</h4>
+              <h4 class="text-xs font-black text-white uppercase tracking-widest">Hub Status</h4>
               <div class="flex gap-2.5 items-center">
                  <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                 <span class="text-[9px] font-black text-green-500 uppercase tracking-widest">Operational</span>
+                 <span class="text-xs font-black text-green-500 uppercase tracking-widest">Operational</span>
               </div>
-              <p class="text-[8px] text-gray-800 font-bold uppercase tracking-widest">Simulated platform.</p>
+              <p class="text-xs text-gray-800 font-bold uppercase tracking-widest">Simulated platform.</p>
             </div>
           </div>
           <div class="mt-10 pt-8 border-t border-white/[0.02] flex flex-col md:flex-row justify-between gap-4">
-            <p class="text-[8px] text-gray-800 font-bold uppercase tracking-widest">&copy; 2024 ForexPro Institutional.</p>
-            <p class="text-[8px] text-gray-800 font-bold uppercase tracking-widest italic">Trading involves risk.</p>
+            <p class="text-xs text-gray-800 font-bold uppercase tracking-widest">&copy; 2024 ForexPro Institutional.</p>
+            <p class="text-xs text-gray-800 font-bold uppercase tracking-widest italic">Trading involves risk.</p>
           </div>
         </div>
       </footer>
@@ -529,14 +529,14 @@ window.openPrivacy = () => {
       <p class="text-white font-bold">Your privacy is our priority.</p>
       <p>This Privacy Policy describes how ForexPro collects, uses, and protects your personal information in our demo environment.</p>
       <div class="space-y-2">
-         <h4 class="text-blue-500 font-black uppercase tracking-widest text-[10px]">Data Collection</h4>
+         <h4 class="text-blue-500 font-black uppercase tracking-widest text-xs">Data Collection</h4>
          <p>We collect simulated trade data and basic profile information to enhance your terminal experience.</p>
       </div>
       <div class="space-y-2">
-         <h4 class="text-blue-500 font-black uppercase tracking-widest text-[10px]">Security</h4>
+         <h4 class="text-blue-500 font-black uppercase tracking-widest text-xs">Security</h4>
          <p>All data is encrypted using institutional-grade AES-256 protocols within our simulated nodes.</p>
       </div>
-      <p class="italic text-[10px]">Note: This is a demo platform. No real financial data is required or stored.</p>
+      <p class="italic text-xs">Note: This is a demo platform. No real financial data is required or stored.</p>
     </div>
   `);
 };
@@ -547,15 +547,15 @@ window.openTerms = () => {
     <div class="space-y-6 text-gray-400 text-xs font-medium leading-relaxed">
       <p class="text-white font-bold">Standard Institutional Terms</p>
       <div class="space-y-2">
-         <h4 class="text-blue-500 font-black uppercase tracking-widest text-[10px]">1. Usage Agreement</h4>
+         <h4 class="text-blue-500 font-black uppercase tracking-widest text-xs">1. Usage Agreement</h4>
          <p>By accessing the ForexPro terminal, you agree to use the platform for educational and demonstration purposes only.</p>
       </div>
       <div class="space-y-2">
-         <h4 class="text-blue-500 font-black uppercase tracking-widest text-[10px]">2. Simulated Trading</h4>
+         <h4 class="text-blue-500 font-black uppercase tracking-widest text-xs">2. Simulated Trading</h4>
          <p>All trades, balances, and market movements are simulated. No actual financial liability or gain is incurred.</p>
       </div>
       <div class="space-y-2">
-         <h4 class="text-blue-500 font-black uppercase tracking-widest text-[10px]">3. Account Access</h4>
+         <h4 class="text-blue-500 font-black uppercase tracking-widest text-xs">3. Account Access</h4>
          <p>Demo accounts are temporary and may be reset periodically for node maintenance.</p>
       </div>
     </div>
@@ -566,11 +566,11 @@ window.openRisk = () => {
   window.showModal('Risk Disclaimer', `
     <div class="space-y-6 text-gray-400 text-xs font-medium leading-relaxed">
       <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
-         <h4 class="text-red-500 font-black uppercase tracking-widest text-[10px] mb-2">High Risk Warning</h4>
+         <h4 class="text-red-500 font-black uppercase tracking-widest text-xs mb-2">High Risk Warning</h4>
          <p class="text-red-500/80">Trading foreign exchange on margin carries a high level of risk and may not be suitable for all investors.</p>
       </div>
       <p>The high degree of leverage can work against you as well as for you. Before deciding to trade foreign exchange, you should carefully consider your investment objectives, level of experience, and risk appetite.</p>
-      <p class="text-white font-bold uppercase tracking-widest text-[10px]">Simulation Notice</p>
+      <p class="text-white font-bold uppercase tracking-widest text-xs">Simulation Notice</p>
       <p>ForexPro is a demo platform. The virtual trading environment aims to replicate institutional execution but does not involve real capital.</p>
     </div>
   `);

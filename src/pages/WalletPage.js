@@ -17,11 +17,11 @@ export const WalletPage = () => {
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 class="text-2xl md:text-3xl font-black text-white">Capital Management</h1>
-          <p class="text-gray-500 text-[10px] md:text-sm font-medium mt-1 uppercase tracking-widest">Institutional Liquidity · Assets</p>
+          <p class="text-gray-500 text-xs md:text-sm font-medium mt-1 uppercase tracking-widest">Institutional Liquidity · Assets</p>
         </div>
         <div class="flex items-center gap-3 w-full md:w-auto">
-          <button onclick="window.showToast('Withdrawal panel initialized', 'info')" class="flex-1 md:flex-none btn-outline px-8 py-3 text-[10px] font-black uppercase tracking-widest active:scale-95">Withdraw</button>
-          <button onclick="window.showToast('Deposit panel initialized', 'info')" class="flex-1 md:flex-none btn-primary px-8 py-3 text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95">Deposit</button>
+          <button onclick="window.showToast('Withdrawal panel initialized', 'info')" class="flex-1 md:flex-none btn-outline px-8 py-3 text-xs font-black uppercase tracking-widest active:scale-95">Withdraw</button>
+          <button onclick="window.showToast('Deposit panel initialized', 'info')" class="flex-1 md:flex-none btn-primary px-8 py-3 text-xs font-black uppercase tracking-widest shadow-lg active:scale-95">Deposit</button>
         </div>
       </div>
 
@@ -33,10 +33,10 @@ export const WalletPage = () => {
           { label: 'Locked in Trades', value: '$45,400.00', sub: '4 Open Positions', color: 'gray' },
         ].map(stat => `
           <div class="card p-6 flex flex-col justify-between gap-4 border-l-4 ${stat.color === 'blue' ? 'border-l-blue-600' : stat.color === 'green' ? 'border-l-green-500' : 'border-l-gray-600'}">
-            <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest">${stat.label}</span>
+            <span class="text-xs font-black text-gray-500 uppercase tracking-widest">${stat.label}</span>
             <div class="space-y-1">
               <p class="text-2xl font-black text-white">${stat.value}</p>
-              <p class="text-[10px] font-bold text-gray-600 uppercase tracking-widest">${stat.sub}</p>
+              <p class="text-xs font-bold text-gray-600 uppercase tracking-widest">${stat.sub}</p>
             </div>
           </div>
         `).join('')}
@@ -48,12 +48,12 @@ export const WalletPage = () => {
           <div class="card p-0 overflow-hidden bg-[#131722]/50 border-gray-800">
             <div class="p-6 border-b border-gray-800 flex items-center justify-between">
               <h3 class="font-black text-white text-sm uppercase tracking-widest">Asset Allocation</h3>
-              <button class="text-[10px] font-black text-blue-500 hover:text-white uppercase">Refresh</button>
+              <button class="text-xs font-black text-blue-500 hover:text-white uppercase">Refresh</button>
             </div>
             <div class="overflow-x-auto no-scrollbar">
               <table class="w-full text-left min-w-[600px]">
                 <thead>
-                  <tr class="bg-white/5 text-[9px] font-black text-gray-500 uppercase tracking-widest border-b border-gray-800">
+                  <tr class="bg-white/5 text-xs font-black text-gray-500 uppercase tracking-widest border-b border-gray-800">
                     <th class="px-6 py-4">Asset</th>
                     <th class="px-6 py-4 text-right">Balance</th>
                     <th class="px-6 py-4 text-right">USD Value</th>
@@ -68,14 +68,14 @@ export const WalletPage = () => {
                           <span class="text-lg">${asset.icon}</span>
                           <div>
                             <p class="font-black text-white text-sm uppercase">${asset.symbol}</p>
-                            <p class="text-[9px] font-bold text-gray-600">${asset.name}</p>
+                            <p class="text-xs font-bold text-gray-600">${asset.name}</p>
                           </div>
                         </div>
                       </td>
                       <td class="px-6 py-5 text-right font-mono text-sm text-gray-400">${asset.balance}</td>
                       <td class="px-6 py-5 text-right font-black text-white text-sm">${asset.value}</td>
                       <td class="px-6 py-5 text-right">
-                        <span class="text-[10px] font-black ${asset.change.startsWith('+') ? 'text-green-500' : asset.change === '0.00%' ? 'text-gray-500' : 'text-red-500'}">
+                        <span class="text-xs font-black ${asset.change.startsWith('+') ? 'text-green-500' : asset.change === '0.00%' ? 'text-gray-500' : 'text-red-500'}">
                           ${asset.change}
                         </span>
                       </td>
@@ -90,8 +90,8 @@ export const WalletPage = () => {
         <!-- Recent Transactions -->
         <div class="w-full xl:w-96 space-y-6">
           <div class="flex items-center justify-between px-2">
-            <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Recent Activity</h3>
-            <button class="text-[9px] font-black text-blue-500 uppercase">View All</button>
+            <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest">Recent Activity</h3>
+            <button class="text-xs font-black text-blue-500 uppercase">View All</button>
           </div>
           
           <div class="space-y-3">
@@ -103,12 +103,12 @@ export const WalletPage = () => {
                   </div>
                   <div>
                     <p class="font-black text-white text-xs uppercase">${tx.type}</p>
-                    <p class="text-[9px] font-bold text-gray-600 uppercase tracking-tighter">${tx.date} · ${tx.asset}</p>
+                    <p class="text-xs font-bold text-gray-600 uppercase tracking-tighter">${tx.date} · ${tx.asset}</p>
                   </div>
                 </div>
                 <div class="text-right">
                   <p class="font-black text-sm ${tx.type === 'DEPOSIT' ? 'text-green-500' : 'text-white'}">${tx.amount}</p>
-                  <p class="text-[8px] font-black text-blue-500 uppercase tracking-tighter">DONE</p>
+                  <p class="text-xs font-black text-blue-500 uppercase tracking-tighter">DONE</p>
                 </div>
               </div>
             `).join('')}
@@ -116,8 +116,8 @@ export const WalletPage = () => {
 
           <!-- Quick Tip -->
           <div class="card bg-blue-600/5 border-dashed border-blue-600/20 p-5 space-y-2">
-             <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest">Security Tip</p>
-             <p class="text-[11px] text-gray-500 font-medium leading-relaxed">Large withdrawals over $50k may require L2 security verification for institutional compliance.</p>
+             <p class="text-xs font-black text-blue-500 uppercase tracking-widest">Security Tip</p>
+             <p class="text-xs text-gray-500 font-medium leading-relaxed">Large withdrawals over $50k may require L2 security verification for institutional compliance.</p>
           </div>
         </div>
       </div>

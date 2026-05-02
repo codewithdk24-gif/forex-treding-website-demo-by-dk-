@@ -16,7 +16,7 @@ export const MobileTerminal = () => {
              <span class="text-sm font-black text-white">EUR/USD</span>
              <span class="text-gray-600">${Icons.chevronDown}</span>
           </div>
-          <span class="text-[10px] font-bold text-green-500">1.08942 (+0.24%)</span>
+          <span class="text-xs font-bold text-green-500">1.08942 (+0.24%)</span>
         </div>
         <div class="w-10"></div> <!-- Spacer for balance -->
       </div>
@@ -32,9 +32,9 @@ export const MobileTerminal = () => {
 
         <!-- Terminal Tabs -->
         <div class="h-12 border-y border-gray-800 flex items-center bg-[#131722]/50 shrink-0">
-           <button class="flex-1 h-full text-[10px] font-black text-blue-500 border-b-2 border-blue-500 bg-blue-500/5">POSITIONS</button>
-           <button class="flex-1 h-full text-[10px] font-black text-gray-500">ORDERS</button>
-           <button class="flex-1 h-full text-[10px] font-black text-gray-500">HISTORY</button>
+           <button class="flex-1 h-full text-xs font-black text-blue-500 border-b-2 border-blue-500 bg-blue-500/5">POSITIONS</button>
+           <button class="flex-1 h-full text-xs font-black text-gray-500">ORDERS</button>
+           <button class="flex-1 h-full text-xs font-black text-gray-500">HISTORY</button>
         </div>
       </div>
 
@@ -42,7 +42,7 @@ export const MobileTerminal = () => {
       <div class="terminal-footer">
         <div class="flex items-center justify-between gap-4">
            <div class="flex-1 space-y-1">
-              <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Lot Size</label>
+              <label class="text-xs font-black text-gray-500 uppercase tracking-widest">Lot Size</label>
               <div class="flex items-center bg-[#0f1115] border border-gray-800 rounded-lg p-1">
                  <button class="w-8 h-8 flex items-center justify-center text-gray-500 font-black">-</button>
                  <input type="number" value="1.00" class="flex-1 bg-transparent text-center font-black text-sm text-white outline-none min-h-0">
@@ -51,12 +51,12 @@ export const MobileTerminal = () => {
            </div>
            <div class="flex-1 grid grid-cols-2 gap-2">
               <div class="space-y-1">
-                <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest">SL</label>
-                <input type="text" placeholder="None" class="w-full bg-[#0f1115] border border-gray-800 rounded-lg py-2 px-2 text-[10px] font-black text-white outline-none focus:border-red-500/30">
+                <label class="text-xs font-black text-gray-500 uppercase tracking-widest">SL</label>
+                <input type="text" placeholder="None" class="w-full bg-[#0f1115] border border-gray-800 rounded-lg py-2 px-2 text-xs font-black text-white outline-none focus:border-red-500/30">
               </div>
               <div class="space-y-1">
-                <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest">TP</label>
-                <input type="text" placeholder="None" class="w-full bg-[#0f1115] border border-gray-800 rounded-lg py-2 px-2 text-[10px] font-black text-white outline-none focus:border-blue-500/30">
+                <label class="text-xs font-black text-gray-500 uppercase tracking-widest">TP</label>
+                <input type="text" placeholder="None" class="w-full bg-[#0f1115] border border-gray-800 rounded-lg py-2 px-2 text-xs font-black text-white outline-none focus:border-blue-500/30">
               </div>
            </div>
         </div>
@@ -64,11 +64,11 @@ export const MobileTerminal = () => {
         <div class="grid grid-cols-2 gap-4 pt-2">
            <button class="btn-primary min-h-[56px] shadow-lg shadow-blue-600/30 font-black text-base flex flex-col gap-0 leading-tight">
               <span>BUY</span>
-              <span class="text-[9px] font-bold opacity-60">1.08942</span>
+              <span class="text-xs font-bold opacity-60">1.08942</span>
            </button>
            <button class="btn-outline min-h-[56px] border-red-500/30 text-red-500 font-black text-base flex flex-col gap-0 leading-tight hover:bg-red-500/5 active:bg-red-500/10 active:border-red-500/50">
               <span>SELL</span>
-              <span class="text-[9px] font-bold opacity-60">1.08940</span>
+              <span class="text-xs font-bold opacity-60">1.08940</span>
            </button>
         </div>
       </div>

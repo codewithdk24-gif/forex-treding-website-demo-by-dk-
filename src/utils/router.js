@@ -10,6 +10,12 @@ export class Router {
   async handleRoute() {
     const hash = window.location.hash.slice(1) || 'landing';
     
+    // Clear global intervals to prevent memory leaks across route changes
+    if (window.appIntervals) {
+      window.appIntervals.forEach(clearInterval);
+    }
+    window.appIntervals = [];
+
     // If the hash is not a defined route but is an element ID, let the browser handle it (scrolling)
     if (!this.routes[hash] && document.getElementById(hash)) {
       return;

@@ -50,7 +50,7 @@ export const MarketsPage = () => {
         <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
           <div class="space-y-4 flex-1">
             <h1 class="text-3xl md:text-5xl font-black text-white uppercase tracking-tight">Market <span class="text-blue-500">Explorer.</span></h1>
-            <p class="text-gray-500 text-[10px] md:text-sm font-medium uppercase tracking-[0.3em]">Explore 500+ Institutional Grade Assets</p>
+            <p class="text-gray-500 text-xs md:text-sm font-medium uppercase tracking-[0.3em]">Explore 500+ Institutional Grade Assets</p>
             
             <div class="relative group max-w-2xl">
                <input type="text" 
@@ -67,7 +67,7 @@ export const MarketsPage = () => {
           <div class="flex bg-[#111318] rounded-2xl p-1 border border-white/5 overflow-x-auto no-scrollbar shrink-0">
             ${categories.map(cat => `
               <button onclick="window.switchMarketCat('${cat}')" 
-                      class="px-8 py-3 text-[10px] font-black rounded-xl transition-all whitespace-nowrap ${cat === window.activeMarketCat ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-gray-500 hover:text-white'}">
+                      class="px-8 py-3 text-xs font-black rounded-xl transition-all whitespace-nowrap ${cat === window.activeMarketCat ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-gray-500 hover:text-white'}">
                 ${cat.toUpperCase()}
               </button>
             `).join('')}
@@ -93,12 +93,12 @@ export const MarketsPage = () => {
                   </div>
                   <div>
                     <h3 class="font-black text-white text-base tracking-tight">${asset.symbol}</h3>
-                    <p class="text-[9px] text-gray-600 font-bold uppercase tracking-widest">${asset.type}</p>
+                    <p class="text-xs text-gray-600 font-bold uppercase tracking-widest">${asset.type}</p>
                   </div>
                 </div>
                 <div class="text-right">
                   <p class="text-sm font-black text-white tabular-nums">${price}</p>
-                  <p class="text-[10px] font-black ${isUp ? 'text-green-500' : 'text-red-500'}">
+                  <p class="text-xs font-black ${isUp ? 'text-green-500' : 'text-red-500'}">
                     ${isUp ? '+' : '-'}${(Math.random() * 2).toFixed(2)}%
                   </p>
                 </div>
@@ -110,7 +110,7 @@ export const MarketsPage = () => {
                        <path d="M0,${isUp ? 30 : 10} Q25,${isUp ? 20 : 30} 50,${isUp ? 35 : 5} T100,${isUp ? 10 : 35}" stroke="${isUp ? '#22c55e' : '#ef4444'}" stroke-width="2" fill="none"></path>
                     </svg>
                  </div>
-                 <button class="px-5 py-2 bg-white/5 rounded-xl text-[9px] font-black text-gray-400 group-hover:bg-blue-600 group-hover:text-white transition-all">TRADE</button>
+                 <button class="px-5 py-2 bg-white/5 rounded-xl text-xs font-black text-gray-400 group-hover:bg-blue-600 group-hover:text-white transition-all">TRADE</button>
               </div>
             </div>
           `;
