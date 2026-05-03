@@ -1,177 +1,258 @@
-export const OrderPanel = (isBottomSheet = false) => {
-  // Initialize state if not present
-  if (window.orderState === undefined) {
-    window.orderState = {
-      type: 'BUY',
-      symbol: 'EUR/USD',
-      lots: 1.00
-    };
-  }
+'use client';
 
-  window.setOrderDirection = (dir) => {
-    window.orderState.type = dir;
-    // Force re-render of components that use this
-    const desktopPanel = document.getElementById('desktop-order-panel');
-    if (desktopPanel) {
-      desktopPanel.innerHTML = OrderPanel(false);
-    }
-    
-    const sheetContent = document.querySelector('#trade-bottom-sheet > div:last-child');
-    if (sheetContent) {
-      sheetContent.innerHTML = OrderPanel(true);
-    }
-    
-    // Update mobile terminal button if it exists
-    const mobileExecBtn = document.querySelector('#mobile-terminal-execute');
-    if (mobileExecBtn) {
-      mobileExecBtn.className = dir === 'BUY' ? 'btn-success w-full py-4' : 'btn-danger w-full py-4';
-      mobileExecBtn.innerText = `EXECUTE ${dir}`;
+import React, { useState, useEffect } from 'react';
+import { useTradeStore } from '../store/useTradeStore';
+
+export default function OrderPanel() {
+  const [lotSize, setLotSize] = useState(0.50);
+  const [takeProfit, setTakeProfit] = useState('');
+  const [stopLoss, setStopLoss] = useState('');
+  const [limitPrice, setLimitPrice] = useState('');
+  const [executionType, setExecutionType] = useState('MARKET'); // MARKET or LIMIT
+  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [orderSide, setOrderSide] = useState('BUY'); // BUY or SELL
+  const [currentPrice, setCurrentPrice] = useState(1.08245);
+  const [priceDirection, setPriceDirection] = useState(null);
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [flash, setFlash] = useState(null);
+  
+  const { executeTrade, updateEngineState, trades } = useTradeStore();
+
+  useEffect(() => {
+    const priceInterval = setInterval(() => {
+      const rand = (Math.random() * 0.00004 - 0.00002);
+      const nextPrice = parseFloat((currentPrice + rand).toFixed(5));
+      
+      setPriceDirection(nextPrice > currentPrice ? 'up' : 'down');
+      setCurrentPrice(nextPrice);
+      updateEngineState('EUR/USD', nextPrice);
+
+      setTimeout(() => setPriceDirection(null), 800);
+    }, 1500);
+
+    return () => clearInterval(priceInterval);
+  }, [currentPrice, updateEngineState]);
+
+  const increaseLot = () => setLotSize(prev => Math.min(parseFloat((prev + 0.1).toFixed(2)), 10));
+  const decreaseLot = () => setLotSize(prev => Math.max(parseFloat((prev - 0.1).toFixed(2)), 0.1));
+
+  const initiateOrder = (side) => {
+    setOrderSide(side);
+    setIsModalOpen(true);
+  };
+
+  const playSuccessSound = () => {
+    try {
+      const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
+      audio.volume = 0.4;
+      audio.play().catch(() => {});
+    } catch (e) {}
+  };
+
+  const executeOrder = async () => {
+    try {
+      setIsExecuting(true);
+      await new Promise(resolve => setTimeout(resolve, 600));
+
+      const symbol = 'EUR/USD';
+      const entryPrice = executionType === 'LIMIT' ? parseFloat(limitPrice) : currentPrice;
+      
+      const newTrade = {
+        id: 'T-' + Math.floor(100000 + Math.random() * 900000),
+        time: new Date().toISOString(),
+        symbol: symbol,
+        type: orderSide,
+        execution: executionType,
+        size: lotSize,
+        entry: entryPrice,
+        tp: parseFloat(takeProfit) || 0,
+        sl: parseFloat(stopLoss) || 0,
+        current: entryPrice.toFixed(5),
+        pl: "0.00",
+        status: 'ACTIVE'
+      };
+
+      executeTrade(newTrade);
+
+      setFlash(orderSide);
+      setTimeout(() => setFlash(null), 800);
+      playSuccessSound();
+
+      setIsExecuting(false);
+      setIsModalOpen(false);
+      setTakeProfit('');
+      setStopLoss('');
+      setLimitPrice('');
+    } catch (error) {
+      alert(error.message);
+      setIsExecuting(false);
+      setIsModalOpen(false);
     }
   };
 
-  window.executeTrade = () => {
-    const { type, symbol, lots } = window.orderState;
-    window.showModal('Confirm Trade', `
-      <div class="space-y-4">
-        <div class="flex justify-between items-center p-4 bg-white/5 rounded-xl border border-white/5">
-          <div>
-            <p class="text-xs font-black text-gray-500 uppercase">Instrument</p>
-            <p class="text-lg font-black text-white">${symbol}</p>
-          </div>
-          <div class="text-right">
-            <p class="text-xs font-black text-gray-500 uppercase">Action</p>
-            <p class="text-lg font-black ${type === 'BUY' ? 'text-green-500' : 'text-red-500'}">${type}</p>
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div class="p-4 bg-white/5 rounded-xl border border-white/5">
-            <p class="text-xs font-black text-gray-500 uppercase">Size</p>
-            <p class="text-lg font-black text-white">${lots.toFixed(2)} Lots</p>
-          </div>
-          <div class="p-4 bg-white/5 rounded-xl border border-white/5">
-            <p class="text-xs font-black text-gray-500 uppercase">Margin</p>
-            <p class="text-lg font-black text-white">$450.00</p>
-          </div>
-        </div>
-        <p class="text-xs text-gray-500 text-center uppercase font-bold">Execution is near-instant with institutional routing.</p>
-        <button onclick="window.confirmTradeExecution()" class="w-full ${type === 'BUY' ? 'btn-success' : 'btn-danger'} py-4 font-black uppercase tracking-widest mt-4">Confirm Execution</button>
-      </div>
-    `);
-  };
+  const formatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const profitPreview = (lotSize * 640).toFixed(2);
+  const riskPreview = (lotSize * 360).toFixed(2);
 
-  window.confirmTradeExecution = () => {
-    const overlay = document.querySelector('.modal-overlay');
-    if (overlay) overlay.classList.remove('active');
-    window.toggleBottomSheet(false);
-    window.showToast('Order executed successfully', 'success');
-  };
+  const activeCount = trades.filter(t => t.status === 'ACTIVE').length;
 
-  const isBuy = window.orderState.type === 'BUY';
+  return (
+    <>
+      {flash && (
+        <div className={`fixed inset-0 pointer-events-none z-[150] animate-flash-${flash.toLowerCase()}`}></div>
+      )}
 
-  return `
-    <div class="${isBottomSheet ? 'w-full' : 'w-full xl:w-80 border-l border-gray-800 h-full bg-[#131722]/50 backdrop-blur-sm'} flex flex-col transition-colors duration-300">
-      ${!isBottomSheet ? `
-      <div class="p-5 border-b border-gray-800 bg-white/[0.02]">
-        <div class="flex justify-between items-start mb-4">
-          <div>
-            <h3 class="text-sm font-black tracking-tight text-white uppercase">Execution</h3>
-            <div class="flex items-center gap-1 mt-0.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-              <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">${window.orderState.symbol}</p>
-            </div>
-          </div>
-          <div class="text-right">
-             <p class="text-[7px] font-black text-gray-500 uppercase mb-0">Equity</p>
-             <p class="text-xs font-black text-white">$124,592</p>
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-2 mt-2 pt-2.5 border-t border-white/5">
-           <div>
-              <p class="text-[7px] font-black text-gray-500 uppercase mb-0">Margin</p>
-              <p class="text-xs font-black text-blue-500">92.4%</p>
+      <div className="flex w-full h-full flex-col shrink-0 overflow-y-auto relative no-scrollbar fade-in">
+        
+        {/* Market / Limit Toggles */}
+        <div className="px-6 pt-5 pb-4 border-b border-white/5">
+           <div className="flex justify-between items-center mb-3">
+              <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Order Execution</p>
+              <div className="flex items-center gap-2">
+                 <div className={`w-1.5 h-1.5 rounded-full ${activeCount >= 5 ? 'bg-red-500' : 'bg-green-500'}`}></div>
+                 <span className="text-[9px] font-black text-gray-500 uppercase">{activeCount}/5 Active</span>
+              </div>
            </div>
-           <div class="text-right">
-              <p class="text-[7px] font-black text-gray-500 uppercase mb-0">Avail. Bal</p>
-              <p class="text-xs font-black text-green-500">$12,400</p>
+           <div className="flex bg-white/5 rounded-xl p-1 gap-1">
+              <button 
+                onClick={() => setExecutionType('MARKET')}
+                className={`flex-1 py-1.5 text-[10px] font-black rounded-lg uppercase tracking-widest transition-all ${executionType === 'MARKET' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
+              >
+                Market
+              </button>
+              <button 
+                onClick={() => setExecutionType('LIMIT')}
+                className={`flex-1 py-1.5 text-[10px] font-black rounded-lg uppercase tracking-widest transition-all ${executionType === 'LIMIT' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
+              >
+                Limit
+              </button>
            </div>
         </div>
+
+        {/* Conditional Limit Price Input */}
+        {executionType === 'LIMIT' && (
+           <div className="px-6 py-4 border-b border-white/5 animate-in slide-in-from-top-2 duration-300">
+              <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Limit Entry Price</p>
+              <input 
+                type="number" 
+                value={limitPrice}
+                onChange={(e) => setLimitPrice(e.target.value)}
+                placeholder="Enter entry price..." 
+                className="w-full bg-white/5 border border-blue-500/20 rounded-xl px-4 py-3 text-sm font-mono text-blue-400 focus:outline-none focus:border-blue-500/50" 
+              />
+           </div>
+        )}
+
+        {/* Premium Lot Control */}
+        <div className="px-6 py-4 border-b border-white/5 space-y-3">
+           <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Position Size (Lots)</p>
+           <div className="lot-control">
+              <button onClick={decreaseLot} className="lot-btn">−</button>
+              <div className="lot-value tabular-nums">{lotSize.toFixed(2)}</div>
+              <button onClick={increaseLot} className="lot-btn">+</button>
+           </div>
+           <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
+              <span className="text-green-500">+${formatter.format(profitPreview)} Gain</span>
+              <span className="text-red-500">−${formatter.format(riskPreview)} Risk</span>
+           </div>
+        </div>
+
+        {/* TP / SL Inputs */}
+        <div className="px-6 py-4 border-b border-white/5 space-y-3">
+           <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Take Profit / Stop Loss</p>
+           <div className="grid grid-cols-2 gap-2">
+              <div>
+                 <p className="text-[9px] text-gray-600 font-bold mb-1">Take Profit</p>
+                 <input 
+                   type="number" 
+                   value={takeProfit}
+                   onChange={(e) => setTakeProfit(e.target.value)}
+                   placeholder="0.00000" 
+                   className="w-full bg-white/5 border border-green-500/20 rounded-lg px-3 py-2 text-xs font-mono text-green-400 focus:outline-none focus:border-green-500/50" 
+                 />
+              </div>
+              <div>
+                 <p className="text-[9px] text-gray-600 font-bold mb-1">Stop Loss</p>
+                 <input 
+                   type="number" 
+                   value={stopLoss}
+                   onChange={(e) => setStopLoss(e.target.value)}
+                   placeholder="0.00000" 
+                   className="w-full bg-white/5 border border-red-500/20 rounded-lg px-3 py-2 text-xs font-mono text-red-400 focus:outline-none focus:border-red-500/50" 
+                 />
+              </div>
+           </div>
+        </div>
+
+        {/* Live Price Monitor */}
+        <div className="px-6 py-4 flex flex-col items-center justify-center gap-1 border-b border-white/5 bg-white/[0.02]">
+           <p className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em]">Live Market Rate</p>
+           <p className={`text-2xl font-black tabular-nums transition-all duration-300 ${priceDirection === 'up' ? 'text-green-500 scale-105' : priceDirection === 'down' ? 'text-red-500 scale-105' : 'text-white'}`}>
+              {currentPrice.toFixed(5)}
+           </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="px-6 py-5 mt-auto space-y-3">
+           <button onClick={() => initiateOrder('BUY')}
+              disabled={activeCount >= 5}
+              className={`w-full py-4 rounded-xl font-black text-sm tracking-widest text-white shadow-lg transition-all uppercase btn-success ${activeCount >= 5 ? 'bg-gray-800 cursor-not-allowed opacity-50' : 'bg-green-600 hover:bg-green-500 active:scale-[0.98]'}`}>
+              {activeCount >= 5 ? 'Risk Limit Reached' : `Buy ${executionType}`}
+           </button>
+           <button onClick={() => initiateOrder('SELL')}
+              disabled={activeCount >= 5}
+              className={`w-full py-4 rounded-xl font-black text-sm tracking-widest text-white shadow-lg transition-all uppercase btn-danger ${activeCount >= 5 ? 'bg-gray-800 cursor-not-allowed opacity-50' : 'bg-red-600 hover:bg-red-500 active:scale-[0.98]'}`}>
+              {activeCount >= 5 ? 'Risk Limit Reached' : `Sell ${executionType}`}
+           </button>
+        </div>
       </div>
-      ` : ''}
 
-      <div class="flex-1 ${isBottomSheet ? 'p-0' : 'p-5'} space-y-5">
-        <!-- Execution Type -->
-        <div class="space-y-2">
-          <label class="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">Order Type</label>
-          <div class="flex bg-[#0f1115] border border-gray-800 rounded-xl p-1">
-            <button class="flex-1 py-1.5 text-xs font-black rounded-lg bg-[#131722] text-white shadow-sm border border-gray-800">Market</button>
-            <button class="flex-1 py-1.5 text-xs font-bold text-gray-500 hover:text-white transition-colors">Limit</button>
-            <button class="flex-1 py-1.5 text-xs font-bold text-gray-500 hover:text-white transition-colors">Stop</button>
-          </div>
+      {/* Confirmation Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-xl bg-black/60">
+           <div className={`w-full max-w-sm bg-[#161923] border border-white/10 rounded-[2.5rem] p-8 shadow-2xl transition-all duration-300 animate-in fade-in zoom-in duration-300`}>
+              <div className="text-center space-y-6">
+                 <div className="w-16 h-16 bg-blue-600/10 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                    {isExecuting ? (
+                       <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                       <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    )}
+                 </div>
+                 <h2 className="text-xl font-black uppercase tracking-tight text-white">
+                    {isExecuting ? 'Processing Order...' : `Confirm ${orderSide} ${executionType}`}
+                 </h2>
+                 
+                 <div className="space-y-3 py-4 border-y border-white/5">
+                    <div className="flex justify-between items-center">
+                       <span className="text-xs font-black text-gray-500 uppercase tracking-widest">Type</span>
+                       <span className="text-xs font-black text-white">{executionType} {orderSide}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                       <span className="text-xs font-black text-gray-500 uppercase tracking-widest">Entry</span>
+                       <span className="text-xs font-black text-blue-500">{executionType === 'LIMIT' ? limitPrice : 'Market'}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                       <span className="text-xs font-black text-gray-500 uppercase tracking-widest">Size</span>
+                       <span className="text-xs font-black text-white">{lotSize.toFixed(2)} Lots</span>
+                    </div>
+                 </div>
+
+                 <div className="flex flex-col gap-3">
+                    <button 
+                      onClick={executeOrder} 
+                      disabled={isExecuting}
+                      className="btn-primary w-full py-4 text-xs shadow-xl shadow-blue-600/20 transition-all font-black uppercase tracking-widest bg-blue-600 text-white rounded-xl active:scale-95 disabled:opacity-50"
+                    >
+                      {isExecuting ? 'Transmitting...' : 'Execute Order'}
+                    </button>
+                    <button disabled={isExecuting} onClick={() => setIsModalOpen(false)} className="w-full h-12 bg-transparent text-gray-500 font-bold text-xs uppercase tracking-widest hover:text-white transition-colors">Cancel</button>
+                 </div>
+              </div>
+           </div>
         </div>
-
-        <!-- Position Direction -->
-        <div class="grid ${isBottomSheet ? 'grid-cols-1 gap-2' : 'grid-cols-2 gap-2'}">
-          <button onclick="window.setOrderDirection('BUY')" 
-                  class="py-3 rounded-xl font-black text-xs tracking-widest transition-all hover:scale-[1.01] active:scale-95 ${isBuy ? 'border-2 border-green-500 bg-green-500/10 text-green-500 shadow-lg shadow-green-500/10' : 'border border-gray-800 bg-[#0f1115] text-gray-500'}">BUY</button>
-          <button onclick="window.setOrderDirection('SELL')" 
-                  class="py-3 rounded-xl font-black text-xs tracking-widest transition-all hover:scale-[1.01] active:scale-95 ${!isBuy ? 'border-2 border-red-500 bg-red-500/10 text-red-500 shadow-lg shadow-red-500/10' : 'border border-gray-800 bg-[#0f1115] text-gray-500'}">SELL</button>
-        </div>
-
-        <!-- Parameters -->
-        <div class="space-y-4">
-          <div class="space-y-2">
-            <label class="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">Position Size</label>
-            <div class="relative group">
-              <input type="number" 
-                     oninput="window.orderState.lots = parseFloat(this.value) || 0"
-                     value="${window.orderState.lots}" step="0.01" class="input-field py-3 pr-16 text-lg font-black text-white bg-[#0f1115] min-h-0 h-11">
-              <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-black text-gray-500 group-focus-within:text-blue-500 transition-colors">LOTS</span>
-            </div>
-            <div class="grid grid-cols-4 gap-1.5">
-              ${[0.01, 0.1, 0.5, 1.0].map(val => `
-                <button onclick="window.orderState.lots = ${val}; window.setOrderDirection(window.orderState.type)" 
-                        class="py-1.5 text-xs font-black rounded-lg bg-[#0f1115] border border-gray-800 hover:border-blue-500/50 hover:text-blue-500 transition-all text-gray-500">${val}</button>
-              `).join('')}
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3">
-            <div class="space-y-1.5">
-              <label class="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">Take Profit</label>
-              <input type="text" placeholder="1.09500" class="input-field py-2 text-base md:text-sm text-white border-gray-800 bg-[#0f1115] focus:border-blue-500 min-h-0 h-9">
-            </div>
-            <div class="space-y-1.5">
-              <label class="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">Stop Loss</label>
-              <input type="text" placeholder="1.08500" class="input-field py-2 text-base md:text-sm text-white border-gray-800 bg-[#0f1115] focus:border-red-500/30 min-h-0 h-9">
-            </div>
-          </div>
-        </div>
-
-        <!-- Summary -->
-        <div class="card p-3 bg-[#0f1115]/50 border-dashed border-gray-800 space-y-1.5">
-          <div class="flex justify-between text-xs font-bold">
-            <span class="text-gray-500 uppercase tracking-wider">Margin Req.</span>
-            <span class="text-white font-black">$450.00</span>
-          </div>
-          <div class="flex justify-between text-xs font-bold">
-            <span class="text-gray-500 uppercase tracking-wider">Pip Value</span>
-            <span class="text-blue-500 font-black">$10.00</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="${isBottomSheet ? 'pt-4' : 'p-5 border-t border-gray-800 bg-[#131722]'}">
-        <button onclick="window.executeTrade()" 
-                class="${isBuy ? 'btn-success' : 'btn-danger'} w-full py-4 text-xs font-black tracking-widest uppercase shadow-xl active:scale-[0.98] min-h-0 h-14">
-          Execute ${window.orderState.type}
-        </button>
-        <p class="text-xs text-gray-500/50 text-center mt-3 font-bold uppercase tracking-tighter leading-tight">
-          Utilizes $450.00 of margin.
-        </p>
-      </div>
-    </div>
-
-  `;
-};
-
-
+      )}
+    </>
+  );
+}

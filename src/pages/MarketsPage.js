@@ -1,7 +1,14 @@
-export const MarketsPage = () => {
-  const categories = ['All', 'Majors', 'Crypto', 'Commodities'];
-  if (window.activeMarketCat === undefined) window.activeMarketCat = 'All';
+'use client';
 
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function MarketsPage() {
+  const router = useRouter();
+  const [activeCat, setActiveCat] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  const categories = ['All', 'Majors', 'Crypto', 'Commodities'];
   const marketAssets = [
     { symbol: 'EUR/USD', cat: 'Majors', type: 'Forex · Major Pair' },
     { symbol: 'GBP/USD', cat: 'Majors', type: 'Forex · Major Pair' },
@@ -17,105 +24,88 @@ export const MarketsPage = () => {
     { symbol: 'SILVER', cat: 'Commodities', type: 'Commodity · Silver' },
   ];
 
-  window.switchMarketCat = (cat) => {
-    window.activeMarketCat = cat;
-    const view = document.getElementById('router-view');
-    if (view) view.innerHTML = MarketsPage();
-  };
+  const filteredAssets = marketAssets.filter(asset => {
+    const matchesCat = activeCat === 'All' || asset.cat === activeCat;
+    const matchesSearch = asset.symbol.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCat && matchesSearch;
+  });
 
-  window.filterMarkets = (query) => {
-    const cards = document.querySelectorAll('.market-card');
-    cards.forEach(card => {
-      const symbol = card.dataset.symbol.toLowerCase();
-      const matchesSearch = symbol.includes(query.toLowerCase());
-      const matchesCat = window.activeMarketCat === 'All' || card.dataset.cat === window.activeMarketCat;
-      
-      if (matchesSearch && matchesCat) {
-        card.style.display = 'block';
-        card.classList.add('fade-in');
-      } else {
-        card.style.display = 'none';
-      }
-    });
-  };
-
-  const filteredAssets = window.activeMarketCat === 'All' 
-    ? marketAssets 
-    : marketAssets.filter(a => a.cat === window.activeMarketCat);
-
-  return `
-    <div class="section-container space-y-8 fade-in px-4 md:px-8 pb-12">
-      <!-- Minimal Header & Search -->
-      <div class="pt-4 space-y-8">
-        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-          <div class="space-y-4 flex-1">
-            <h1 class="text-3xl md:text-5xl font-black text-white uppercase tracking-tight">Market <span class="text-blue-500">Explorer.</span></h1>
-            <p class="text-gray-500 text-xs md:text-sm font-medium uppercase tracking-[0.3em]">Explore 500+ Institutional Grade Assets</p>
+  return (
+    <div className="section-container space-y-8 fade-in px-4 md:px-8 pb-12">
+      <div className="pt-4 space-y-8">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+          <div className="space-y-4 flex-1">
+            <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight">Market <span className="text-blue-500">Explorer.</span></h1>
+            <p className="text-gray-500 text-xs md:text-sm font-medium uppercase tracking-[0.3em]">Explore 500+ Institutional Grade Assets</p>
             
-            <div class="relative group max-w-2xl">
-               <input type="text" 
-                      oninput="window.filterMarkets(this.value)"
-                      placeholder="Search symbols (e.g. EUR/USD, BTC)..." 
-                      class="w-full h-14 bg-[#111318] border border-white/5 rounded-2xl px-12 text-base md:text-sm font-medium focus:border-blue-500/50 focus:outline-none transition-all placeholder:text-gray-500">
-               <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500 transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <div className="relative group max-w-2xl">
+               <input 
+                 type="text" 
+                 value={searchQuery}
+                 onChange={(e) => setSearchQuery(e.target.value)}
+                 placeholder="Search symbols (e.g. EUR/USD, BTC)..." 
+                 className="w-full h-14 bg-[#111318] border border-white/5 rounded-2xl px-12 text-base md:text-sm font-medium focus:border-blue-500/50 focus:outline-none transition-all placeholder:text-gray-500" 
+               />
+               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500 transition-colors">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                </span>
             </div>
           </div>
 
-          <!-- Category Tabs -->
-          <div class="flex bg-[#111318] rounded-2xl p-1 border border-white/5 overflow-x-auto no-scrollbar shrink-0">
-            ${categories.map(cat => `
-              <button onclick="window.switchMarketCat('${cat}')" 
-                      class="px-8 py-3 text-xs font-black rounded-xl transition-all whitespace-nowrap ${cat === window.activeMarketCat ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-gray-500 hover:text-white'}">
-                ${cat.toUpperCase()}
+          <div className="flex bg-[#111318] rounded-2xl p-1 border border-white/5 overflow-x-auto no-scrollbar shrink-0">
+            {categories.map(cat => (
+              <button 
+                key={cat}
+                onClick={() => setActiveCat(cat)} 
+                className={`px-8 py-3 text-xs font-black rounded-xl transition-all whitespace-nowrap ${cat === activeCat ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-gray-500 hover:text-white'}`}
+              >
+                {cat.toUpperCase()}
               </button>
-            `).join('')}
+            ))}
           </div>
         </div>
       </div>
 
-      <!-- Assets Grid -->
-      <div id="markets-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
-        ${filteredAssets.map((asset, i) => {
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
+        {filteredAssets.map((asset, i) => {
           const isUp = Math.random() > 0.4;
           const price = (asset.cat === 'Crypto' ? (asset.symbol.startsWith('BTC') ? 64230 : 3420) : (asset.cat === 'Commodities' ? 2342 : 1.08240)).toFixed(5);
-          return `
-            <div onclick="window.activeSymbol = '${asset.symbol}'; window.location.hash = 'dashboard';" 
-                 class="market-card group bg-[#111318] border border-white/5 rounded-[2rem] p-6 hover:border-blue-500/30 transition-all duration-500 cursor-pointer relative overflow-hidden" 
-                 data-symbol="${asset.symbol}" 
-                 data-cat="${asset.cat}">
-              
-              <div class="flex justify-between items-start mb-8">
-                <div class="flex items-center gap-4">
-                  <div class="w-12 h-12 rounded-2xl bg-blue-600/5 border border-white/5 flex items-center justify-center font-black text-xs text-blue-500 shadow-inner group-hover:bg-blue-600 group-hover:text-white transition-all duration-500">
-                    ${asset.symbol.split('/')[0].slice(0, 2)}
+          return (
+            <div 
+              key={asset.symbol}
+              onClick={() => router.push('/dashboard')} 
+              className="market-card group bg-[#111318] border border-white/5 rounded-[2rem] p-6 hover:border-blue-500/30 transition-all duration-500 cursor-pointer relative overflow-hidden"
+            >
+              <div className="flex justify-between items-start mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-600/5 border border-white/5 flex items-center justify-center font-black text-xs text-blue-500 shadow-inner group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 uppercase">
+                    {asset.symbol.slice(0, 2)}
                   </div>
                   <div>
-                    <h3 class="font-black text-white text-base tracking-tight">${asset.symbol}</h3>
-                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">${asset.type}</p>
+                    <h3 className="font-black text-white text-base tracking-tight uppercase">{asset.symbol}</h3>
+                    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">{asset.type}</p>
                   </div>
                 </div>
-                <div class="text-right">
-                  <p class="text-sm font-black text-white tabular-nums">${price}</p>
-                  <p class="text-xs font-black ${isUp ? 'text-green-500' : 'text-red-500'}">
-                    ${isUp ? '+' : '-'}${(Math.random() * 2).toFixed(2)}%
+                <div className="text-right">
+                  <p className="text-sm font-black text-white tabular-nums">{price}</p>
+                  <p className={`text-xs font-black ${isUp ? 'text-green-500' : 'text-red-500'}`}>
+                    {isUp ? '+' : '-'}{(Math.random() * 2).toFixed(2)}%
                   </p>
                 </div>
               </div>
               
-              <div class="flex items-center justify-between gap-4">
-                 <div class="flex-1 h-8 opacity-20">
-                    <svg class="w-full h-full" viewBox="0 0 100 40" preserveAspectRatio="none">
-                       <path d="M0,${isUp ? 30 : 10} Q25,${isUp ? 20 : 30} 50,${isUp ? 35 : 5} T100,${isUp ? 10 : 35}" stroke="${isUp ? '#22c55e' : '#ef4444'}" stroke-width="2" fill="none"></path>
+              <div className="flex items-center justify-between gap-4">
+                 <div className="flex-1 h-8 opacity-20">
+                    <svg className="w-full h-full" viewBox="0 0 100 40" preserveAspectRatio="none">
+                       <path d={`M0,${isUp ? 30 : 10} Q25,${isUp ? 20 : 30} 50,${isUp ? 35 : 5} T100,${isUp ? 10 : 35}`} stroke={isUp ? '#22c55e' : '#ef4444'} strokeWidth="2" fill="none"></path>
                     </svg>
                  </div>
-                 <button class="px-5 py-2 bg-white/5 rounded-xl text-xs font-black text-gray-400 group-hover:bg-blue-600 group-hover:text-white transition-all">TRADE</button>
+                 <button className="px-5 py-2 bg-white/5 rounded-xl text-xs font-black text-gray-400 group-hover:bg-blue-600 group-hover:text-white transition-all uppercase">Trade</button>
               </div>
             </div>
-          `;
-        }).join('')}
+          );
+        })}
       </div>
     </div>
-  `;
-};
+  );
+}

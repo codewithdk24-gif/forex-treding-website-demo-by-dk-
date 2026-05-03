@@ -1,142 +1,153 @@
-export const WalletPage = () => {
-  const assets = [
-    { name: 'US Dollar', symbol: 'USD', balance: '124,592.00', value: '$124,592.00', change: '0.00%', icon: '💵' },
-    { name: 'Euro', symbol: 'EUR', balance: '42,105.50', value: '$45,892.20', change: '+0.45%', icon: '💶' },
-    { name: 'Bitcoin', symbol: 'BTC', balance: '1.45023', value: '$94,264.95', change: '+2.10%', icon: '₿' },
-    { name: 'Gold', symbol: 'XAU', balance: '10.50', value: '$24,592.00', change: '-0.15%', icon: '🥇' },
-  ];
+'use client';
 
-  const transactions = [
-    { id: 'TX-99210', type: 'DEPOSIT', asset: 'USD', amount: '+$10,000.00', status: 'COMPLETED', date: '2024-03-20' },
-    { id: 'TX-99208', type: 'WITHDRAW', asset: 'EUR', amount: '-$2,500.00', status: 'COMPLETED', date: '2024-03-18' },
-    { id: 'TX-99205', type: 'DEPOSIT', asset: 'BTC', amount: '+$500.00', status: 'COMPLETED', date: '2024-03-15' },
-  ];
-  // Calculate dynamic balances based on orders
-  const orders = JSON.parse(localStorage.getItem('demo_orders') || '[]');
-  const activeOrders = orders.filter(o => o.status === 'ACTIVE');
+import React from 'react';
+import { useTradeStore } from '../store/useTradeStore';
+
+export default function WalletPage() {
+  const { balance, trades, activityLogs, showNotification } = useTradeStore();
   
+  const activeOrders = trades.filter(o => o.status === 'ACTIVE');
+  const closedOrders = trades.filter(o => o.status === 'CLOSED');
+  
+  // Real-time Equity & Margin Calc
   let marginUsed = 0;
   let activePnl = 0;
   activeOrders.forEach(o => {
-     marginUsed += parseFloat(o.size) * 1000; // Fake margin calc (1 lot = $1000)
+     marginUsed += parseFloat(o.size) * 1000; 
      activePnl += parseFloat(o.pl || 0);
   });
 
-  const baseBalance = 289341.15; // Starting demo balance
-  const totalNetWorth = baseBalance + activePnl;
-  const availableMargin = totalNetWorth - marginUsed;
+  const equity = balance + activePnl;
+  const freeMargin = balance - marginUsed; 
   
+  // Performance Analytics
+  const totalTrades = closedOrders.length;
+  const winningTrades = closedOrders.filter(o => o.result === 'PROFIT').length;
+  const winRate = totalTrades > 0 ? ((winningTrades / totalTrades) * 100).toFixed(1) : '0.0';
+  
+  const totalProfit = closedOrders.reduce((acc, o) => acc + (parseFloat(o.pl) > 0 ? parseFloat(o.pl) : 0), 0);
+  const totalLoss = Math.abs(closedOrders.reduce((acc, o) => acc + (parseFloat(o.pl) < 0 ? parseFloat(o.pl) : 0), 0));
+
   const formatCurrency = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
 
-  return `
-    <div class="section-container space-y-6 md:space-y-10 fade-in px-4 md:px-8 pb-32 lg:pb-8">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-          <h1 class="text-2xl md:text-3xl font-black text-white">Capital Management</h1>
-          <p class="text-gray-500 text-xs md:text-sm font-medium mt-1 uppercase tracking-widest">Institutional Liquidity · Assets</p>
+  const stats = [
+    { label: 'Total Equity', value: formatCurrency(equity), sub: 'Balance + Live PnL', color: 'blue', glow: activePnl >= 0 ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)' },
+    { label: 'Wallet Balance', value: formatCurrency(balance), sub: 'Settled Capital', color: 'gray' },
+    { label: 'Free Margin', value: formatCurrency(freeMargin), sub: 'Available to Trade', color: 'green' },
+  ];
+
+  const handleComingSoon = (feature) => {
+    showNotification({
+      type: 'INFO',
+      message: `${feature} Coming Soon`
+    });
+  };
+
+  return (
+    <div className="section-container space-y-8 md:space-y-12 fade-in px-4 md:px-8 pb-32 lg:pb-12 max-w-[1600px] mx-auto">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+        <div className="space-y-1">
+          <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter">Financial <span className="text-blue-500">Summary.</span></h1>
+          <p className="text-gray-500 text-xs md:text-sm font-medium uppercase tracking-[0.3em]">Institutional Liquidity Hub</p>
         </div>
-        <div class="flex items-center gap-3 w-full md:w-auto">
-          <button onclick="window.showModal('Withdraw Funds', 'Select a verified bank account or crypto address to initiate withdrawal. Standard processing time is 1-3 business days.')" class="flex-1 md:flex-none btn-outline px-8 py-3 text-xs font-black uppercase tracking-widest active:scale-95">Withdraw</button>
-          <button onclick="window.showModal('Deposit Funds', 'Choose your preferred deposit method. Crypto deposits are credited after 3 network confirmations. Wire transfers may take up to 24 hours.')" class="flex-1 md:flex-none btn-primary px-8 py-3 text-xs font-black uppercase tracking-widest shadow-lg active:scale-95">Deposit</button>
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <button onClick={() => handleComingSoon('Withdraw')} className="flex-1 md:flex-none px-10 py-4 bg-[#111318] border border-white/5 rounded-2xl text-xs font-black uppercase tracking-widest text-gray-400 hover:text-white transition-all">Withdraw</button>
+          <button onClick={() => handleComingSoon('Deposit')} className="flex-1 md:flex-none px-10 py-4 bg-blue-600 rounded-2xl text-xs font-black uppercase tracking-widest text-white shadow-xl shadow-blue-600/20 active:scale-95 transition-all">Deposit</button>
         </div>
       </div>
 
-      <!-- Key Balances -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        ${[
-          { label: 'Total Net Worth', value: formatCurrency(totalNetWorth), sub: 'Includes Active PnL', color: 'blue' },
-          { label: 'Available Margin', value: formatCurrency(availableMargin), sub: 'Liquid Capital', color: 'green' },
-          { label: 'Locked Margin', value: formatCurrency(marginUsed), sub: `${activeOrders.length} Open Positions`, color: 'gray' },
-        ].map(stat => `
-          <div class="card p-6 flex flex-col justify-between gap-4 border-l-4 ${stat.color === 'blue' ? 'border-l-blue-600' : stat.color === 'green' ? 'border-l-green-500' : 'border-l-gray-600'}">
-            <span class="text-xs font-black text-gray-500 uppercase tracking-widest">${stat.label}</span>
-            <div class="space-y-1">
-              <p class="text-2xl font-black text-white">${stat.value}</p>
-              <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">${stat.sub}</p>
+      {/* Institutional Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {stats.map((stat, idx) => (
+          <div key={idx} className="card p-8 bg-[#111318] border-white/5 relative overflow-hidden group">
+            <div className="absolute inset-0 opacity-20 pointer-events-none transition-all duration-700 group-hover:opacity-30" style={{ background: `radial-gradient(circle at top right, ${stat.glow || 'transparent'}, transparent 70%)` }}></div>
+            <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4">{stat.label}</p>
+            <div className="space-y-1">
+              <p className="text-3xl font-black text-white tabular-nums tracking-tight">{stat.value}</p>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{stat.sub}</p>
             </div>
           </div>
-        `).join('')}
+        ))}
       </div>
 
-      <div class="flex flex-col xl:flex-row gap-8">
-        <!-- Assets Table -->
-        <div class="flex-1 space-y-6">
-          <div class="card p-0 overflow-hidden bg-[#131722]/50 border-gray-800">
-            <div class="p-6 border-b border-gray-800 flex items-center justify-between">
-              <h3 class="font-black text-white text-sm uppercase tracking-widest">Asset Allocation</h3>
-              <button class="text-xs font-black text-blue-500 hover:text-white uppercase">Refresh</button>
-            </div>
-            <div class="overflow-x-auto no-scrollbar">
-              <table class="w-full text-left min-w-[600px]">
-                <thead>
-                  <tr class="bg-white/5 text-xs font-black text-gray-500 uppercase tracking-widest border-b border-gray-800">
-                    <th class="px-6 py-4">Asset</th>
-                    <th class="px-6 py-4 text-right">Balance</th>
-                    <th class="px-6 py-4 text-right">USD Value</th>
-                    <th class="px-6 py-4 text-right">24h Change</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-800">
-                  ${assets.map(asset => `
-                    <tr class="group hover:bg-white/5 transition-all">
-                      <td class="px-6 py-5">
-                        <div class="flex items-center gap-3">
-                          <span class="text-lg">${asset.icon}</span>
-                          <div>
-                            <p class="font-black text-white text-sm uppercase">${asset.symbol}</p>
-                            <p class="text-xs font-bold text-gray-400">${asset.name}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="px-6 py-5 text-right font-mono text-sm text-gray-400">${asset.balance}</td>
-                      <td class="px-6 py-5 text-right font-black text-white text-sm">${asset.value}</td>
-                      <td class="px-6 py-5 text-right">
-                        <span class="text-xs font-black ${asset.change.startsWith('+') ? 'text-green-500' : asset.change === '0.00%' ? 'text-gray-500' : 'text-red-500'}">
-                          ${asset.change}
-                        </span>
-                      </td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- Recent Transactions -->
-        <div class="w-full xl:w-96 space-y-6">
-          <div class="flex items-center justify-between px-2">
-            <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest">Recent Activity</h3>
-            <button class="text-xs font-black text-blue-500 uppercase">View All</button>
-          </div>
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-10">
+        
+        {/* Left Column: Analytics */}
+        <div className="xl:col-span-2 space-y-10">
           
-          <div class="space-y-3">
-            ${transactions.map(tx => `
-              <div class="card p-4 flex items-center justify-between group hover:border-gray-700">
-                <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-lg bg-gray-800 flex items-center justify-center text-sm">
-                    ${tx.type === 'DEPOSIT' ? '↓' : '↑'}
-                  </div>
-                  <div>
-                    <p class="font-black text-white text-xs uppercase">${tx.type}</p>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-tighter">${tx.date} · ${tx.asset}</p>
-                  </div>
+          {/* Performance Summary */}
+          <div className="space-y-6">
+             <h3 className="text-xs font-black text-gray-500 uppercase tracking-[0.3em] px-2">Performance Analytics</h3>
+             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="p-6 bg-[#111318] border border-white/5 rounded-[2rem]">
+                   <p className="text-[9px] font-black text-gray-500 uppercase mb-2">Total Trades</p>
+                   <p className="text-xl font-black text-white">{totalTrades}</p>
                 </div>
-                <div class="text-right">
-                  <p class="font-black text-sm ${tx.type === 'DEPOSIT' ? 'text-green-500' : 'text-white'}">${tx.amount}</p>
-                  <p class="text-xs font-black text-blue-500 uppercase tracking-tighter">DONE</p>
+                <div className="p-6 bg-[#111318] border border-white/5 rounded-[2rem]">
+                   <p className="text-[9px] font-black text-gray-500 uppercase mb-2">Win Rate</p>
+                   <p className="text-xl font-black text-green-500">{winRate}%</p>
                 </div>
-              </div>
-            `).join('')}
+                <div className="p-6 bg-[#111318] border border-white/5 rounded-[2rem]">
+                   <p className="text-[9px] font-black text-gray-500 uppercase mb-2">Gross Profit</p>
+                   <p className="text-xl font-black text-green-500">${totalProfit.toFixed(2)}</p>
+                </div>
+                <div className="p-6 bg-[#111318] border border-white/5 rounded-[2rem]">
+                   <p className="text-[9px] font-black text-gray-500 uppercase mb-2">Gross Loss</p>
+                   <p className="text-xl font-black text-red-500">${totalLoss.toFixed(2)}</p>
+                </div>
+             </div>
           </div>
 
-          <!-- Quick Tip -->
-          <div class="card bg-blue-600/5 border-dashed border-blue-600/20 p-5 space-y-2">
-             <p class="text-xs font-black text-blue-500 uppercase tracking-widest">Security Tip</p>
-             <p class="text-xs text-gray-500 font-medium leading-relaxed">Large withdrawals over $50k may require L2 security verification for institutional compliance.</p>
+          {/* Activity Feed */}
+          <div className="space-y-6">
+            <h3 className="text-xs font-black text-gray-500 uppercase tracking-[0.3em] px-2">Institutional Activity Feed</h3>
+            <div className="space-y-2">
+              {activityLogs.length > 0 ? activityLogs.map((log) => (
+                <div key={log.id} className="flex items-center justify-between p-4 bg-[#111318]/50 border border-white/5 rounded-2xl group hover:border-blue-500/20 transition-all">
+                  <div className="flex items-center gap-4">
+                    <div className="w-2 h-2 rounded-full bg-blue-500/40 group-hover:bg-blue-500 transition-colors"></div>
+                    <p className="text-xs font-bold text-gray-400 group-hover:text-white transition-colors">{log.msg}</p>
+                  </div>
+                  <span className="text-[10px] font-mono text-gray-600">{log.time}</span>
+                </div>
+              )) : (
+                <div className="p-10 text-center border border-dashed border-white/5 rounded-[2rem]">
+                   <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest">No Recent Activity Detected</p>
+                </div>
+              )}
+            </div>
           </div>
+
         </div>
+
+        {/* Right Column: Mini Info */}
+        <div className="space-y-8">
+           <div className="card bg-[#111318] border-white/5 p-8 rounded-[2.5rem] space-y-6">
+              <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Margin Summary</h3>
+              <div className="space-y-4">
+                 <div className="flex justify-between items-end">
+                    <p className="text-xs font-bold text-gray-400">Margin Used</p>
+                    <p className="text-sm font-black text-white">{formatCurrency(marginUsed)}</p>
+                 </div>
+                 <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-full bg-blue-600 transition-all duration-1000" style={{ width: `${Math.min(100, (marginUsed / (balance || 1)) * 100)}%` }}></div>
+                 </div>
+                 <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-tighter">
+                    <span className="text-gray-600">Usage Level</span>
+                    <span className={marginUsed / (balance || 1) > 0.8 ? 'text-red-500' : 'text-blue-500'}>{((marginUsed / (balance || 1)) * 100).toFixed(1)}%</span>
+                 </div>
+              </div>
+           </div>
+
+           <div className="bg-blue-600/5 border border-dashed border-blue-600/20 p-8 rounded-[2.5rem] space-y-4">
+              <p className="text-xs font-black text-blue-500 uppercase tracking-widest">Institutional Alert</p>
+              <p className="text-xs text-gray-500 font-medium leading-relaxed">
+                 Your equity includes unrealized PnL. Margin calls occur if free margin falls below 20% of your initial capital.
+              </p>
+           </div>
+        </div>
+
       </div>
     </div>
-  `;
-};
+  );
+}

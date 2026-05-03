@@ -1,270 +1,181 @@
-export const OrdersPage = () => {
-  if (window.activeOrderTab === undefined) window.activeOrderTab = 'ACTIVE';
+'use client';
 
-  const allOrders = JSON.parse(localStorage.getItem('demo_orders') || '[]');
-  const currentOrders = allOrders.filter(o => o.status === window.activeOrderTab);
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useTradeStore } from '../store/useTradeStore';
 
-  window.exportOrderData = () => {
-    const orders = JSON.parse(localStorage.getItem('demo_orders') || '[]');
-    if (orders.length === 0) return window.showToast('No data to export', 'error');
-    
-    const headers = ['Ticket ID', 'Time', 'Instrument', 'Action', 'Size', 'Entry Price', 'Current Price', 'P/L (USD)', 'Status'];
-    const rows = orders.map(o => [o.id, o.time, o.symbol, o.type, o.size, o.entry, o.current, o.pl || 0, o.status]);
-    
-    const csvContent = "data:text/csv;charset=utf-8," 
-        + headers.join(',') + '\n' 
-        + rows.map(e => e.join(",")).join("\n");
-        
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "institutional_orders_export.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.showToast('Data exported successfully', 'success');
-  };
+export default function OrdersPage() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState('ACTIVE');
+  const { trades, closeTrade } = useTradeStore();
 
-
-
-  // PnL Simulation logic (visual only)
-  if (!window.appIntervals) window.appIntervals = [];
-  if (window.__ordersInterval) clearInterval(window.__ordersInterval);
+  const activeTrades = trades.filter(o => o.status === 'ACTIVE');
+  const closedTrades = trades.filter(o => o.status === 'CLOSED');
   
-  if (window.activeOrderTab === 'ACTIVE' && currentOrders.length > 0) {
-    const pnlInterval = setInterval(() => {
-      let ordersUpdated = false;
-      const allStoredOrders = JSON.parse(localStorage.getItem('demo_orders') || '[]');
-      
-      allStoredOrders.forEach(o => {
-         if (o.status === 'ACTIVE') {
-            if (Math.random() > 0.90) { // 10% chance per tick to fill
-               o.status = 'FILLED';
-               ordersUpdated = true;
-               if (window.showToast) window.showToast(`Ticket ${o.id} Filled`, 'success');
-            }
-         }
-      });
-      
-      if (ordersUpdated) {
-         localStorage.setItem('demo_orders', JSON.stringify(allStoredOrders));
-         const view = document.getElementById('router-view');
-         if (view && window.location.hash.includes('orders')) view.innerHTML = OrdersPage();
-         return; // Skip PnL update this tick
-      }
+  const currentOrders = activeTab === 'ACTIVE' ? activeTrades : closedTrades;
 
-      document.querySelectorAll('.order-pnl').forEach(el => {
-         const currentPl = parseFloat(el.dataset.pl || 0);
-         const change = (Math.random() * 20 - 10); // Random swing
-         const newPl = currentPl + change;
-         el.dataset.pl = newPl;
-         
-         const formatted = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.abs(newPl));
-         const prefix = newPl >= 0 ? '+' : '-';
-         el.innerText = `${prefix}$${formatted}`;
-         
-         el.className = `order-pnl text-right font-black ${newPl >= 0 ? 'text-green-500' : 'text-red-500'} transition-colors duration-300`;
-      });
-
-      document.querySelectorAll('.order-pnl-mobile').forEach(el => {
-         const currentPl = parseFloat(el.dataset.pl || 0);
-         const change = (Math.random() * 20 - 10);
-         const newPl = currentPl + change;
-         el.dataset.pl = newPl;
-         
-         const formatted = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.abs(newPl));
-         const prefix = newPl >= 0 ? '+' : '-';
-         el.innerText = `${prefix}$${formatted}`;
-         
-         el.className = `order-pnl-mobile text-lg font-black ${newPl >= 0 ? 'text-green-500' : 'text-red-500'} transition-colors duration-300`;
-      });
-    }, 2000);
-    window.__ordersInterval = pnlInterval;
-    window.appIntervals.push(pnlInterval);
-  }
-
-  window.renderOrders = () => {
-    console.log("RENDER CALLED");
-    const tbody = document.getElementById('desktop-orders-tbody');
-    const mobileList = document.getElementById('mobile-orders-list');
-    
-    if (!tbody || !mobileList) {
-      console.log("RENDER ABORTED: DOM targets not found");
-      return;
-    }
-
-    const all = JSON.parse(localStorage.getItem('demo_orders') || '[]')
-      .filter(order => order && order.symbol && order.type && order.status);
-    const current = all.filter(o => o.status === window.activeOrderTab);
-    
-    const formatCurrency = (val) => {
-      const num = parseFloat(val);
-      const formatted = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.abs(num));
-      return num >= 0 ? `+$${formatted}` : `-$${formatted}`;
-    };
-
-    const getStatusBadge = (status) => {
-      if (status === 'ACTIVE') return 'text-green-500 bg-green-500/10';
-      if (status === 'FILLED') return 'text-gray-400 bg-gray-500/10';
-      return 'text-red-500 bg-red-500/10';
-    };
-
-    const desktopHTML = current.length > 0 ? current.map((order, index) => {
-      if (!order || !order.symbol || !order.type) return '';
-      return `
-      <tr onclick="window.showOrderDetails('${order.id}')" class="table-row group hover:bg-white/[0.04] cursor-pointer transition-colors animate-[fadeInUp_0.3s_ease-out] ${index === 0 && window.activeOrderTab === 'ACTIVE' ? 'animate-pulse-glow' : ''}">
-        <td class="px-8 py-5">
-          <span class="text-xs font-mono text-gray-500">${order.time}</span>
-        </td>
-        <td class="px-8 py-5">
-          <div class="flex items-center gap-2">
-            <span class="font-black text-white text-sm">${order.symbol}</span>
-          </div>
-        </td>
-        <td class="px-8 py-5">
-          <span class="badge ${order.type === 'BUY' ? 'text-blue-500 bg-blue-500/10' : 'text-red-500 bg-red-500/10'}">${order.type}</span>
-        </td>
-        <td class="px-8 py-5 text-right font-bold text-gray-400">${order.size}</td>
-        <td class="px-8 py-5 text-right font-mono text-xs opacity-60">${order.entry}</td>
-        <td class="px-8 py-5 text-right">
-          <span data-pl="${order.pl || 0}" class="order-pnl font-black ${parseFloat(order.pl || 0) >= 0 ? 'text-green-500' : 'text-red-500'} transition-colors duration-300">
-            ${formatCurrency(order.pl || 0)}
-          </span>
-        </td>
-        <td class="px-8 py-5 text-right">
-          <span class="badge ${getStatusBadge(order.status)}">${order.status}</span>
-        </td>
-      </tr>
-    `;
-    }).join('') : `
-      <tr><td colspan="7" class="px-8 py-16 text-center space-y-4">
-        <div class="w-16 h-16 bg-blue-600/10 rounded-full flex items-center justify-center mx-auto mb-2 text-blue-500 text-2xl">📋</div>
-        <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">No orders found</p>
-        <button onclick="window.location.hash='dashboard'" class="btn-outline px-6 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl hover:bg-blue-600/10 hover:text-blue-500 hover:border-blue-500/50 transition-all">Start Trading</button>
-      </td></tr>
-    `;
-
-    const mobileHTML = current.length > 0 ? current.map((order, index) => {
-      if (!order || !order.symbol || !order.type) return '';
-      return `
-       <div onclick="window.showOrderDetails('${order.id}')" class="p-4 space-y-4 cursor-pointer hover:bg-white/[0.02] transition-colors animate-[fadeInUp_0.3s_ease-out] ${index === 0 && window.activeOrderTab === 'ACTIVE' ? 'animate-pulse-glow' : ''}">
-          <div class="flex justify-between items-start">
-             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gray-800 flex items-center justify-center font-black text-xs text-white uppercase">${(order.symbol || '').slice(0,2)}</div>
-                <div>
-                   <p class="font-black text-white text-sm">${order.symbol}</p>
-                   <p class="text-xs text-gray-500 font-bold uppercase tracking-widest">${order.time}</p>
-                </div>
-             </div>
-             <div class="flex flex-col items-end gap-2">
-               <span class="badge ${order.type === 'BUY' ? 'text-blue-500 bg-blue-500/10' : 'text-red-500 bg-red-500/10'}">${order.type}</span>
-               <span class="text-[10px] font-bold uppercase tracking-widest ${getStatusBadge(order.status)} px-2 py-0.5 rounded">${order.status}</span>
-             </div>
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-             <div class="p-3 bg-[#0f1115] rounded-xl border border-gray-800">
-                <p class="text-xs text-gray-500 font-black uppercase mb-1">Size</p>
-                <p class="text-xs font-black text-white">${order.size} Lots</p>
-             </div>
-             <div class="p-3 bg-[#0f1115] rounded-xl border border-gray-800">
-                <p class="text-xs text-gray-500 font-black uppercase mb-1">Entry</p>
-                <p class="text-xs font-black text-white">${order.entry}</p>
-             </div>
-          </div>
-          <div class="flex justify-between items-center pt-2">
-             <p class="text-xs font-black text-gray-500 uppercase">P/L (USD)</p>
-             <p data-pl="${order.pl || 0}" class="order-pnl-mobile text-lg font-black ${parseFloat(order.pl || 0) >= 0 ? 'text-green-500' : 'text-red-500'} transition-colors duration-300">${formatCurrency(order.pl || 0)}</p>
-          </div>
-       </div>
-    `;
-    }).join('') : `
-       <div class="p-12 flex flex-col items-center text-center space-y-4">
-          <div class="w-16 h-16 bg-blue-600/10 rounded-full flex items-center justify-center text-blue-500 text-2xl">📋</div>
-          <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">No orders found</p>
-          <button onclick="window.location.hash='dashboard'" class="btn-outline px-6 py-2.5 text-xs font-black uppercase tracking-widest rounded-xl hover:bg-blue-600/10 hover:text-blue-500 transition-all">Start Trading</button>
-       </div>
-    `;
-
-    tbody.innerHTML = desktopHTML;
-    mobileList.innerHTML = mobileHTML;
+  const formatCurrency = (val) => {
+    const num = parseFloat(val);
+    const formatted = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.abs(num));
+    return num >= 0 ? `+$${formatted}` : `-$${formatted}`;
   };
 
-  // switchOrderTab needs to re-render after tab change
-  window.switchOrderTab = (tab) => {
-    window.activeOrderTab = tab;
-    // Re-render tabs UI
-    document.querySelectorAll('[data-tab-btn]').forEach(btn => {
-      const isActive = btn.dataset.tabBtn === tab;
-      btn.className = `flex-1 sm:flex-none px-6 py-2 text-xs font-black rounded-lg transition-all ${isActive ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`;
-    });
-    window.renderOrders();
-  };
-
-  // Register reactive listener only once per session
-  if (!window.__ordersReactiveListener) {
-    window.addEventListener('tradeExecuted', () => {
-      console.log("EVENT RECEIVED");
-      renderOrders();
-    });
-    window.__ordersReactiveListener = true;
-  }
-
-  // Deferred initial render — DOM is injected async, wait 100ms
-  setTimeout(() => {
-    renderOrders();
-  }, 100);
-
-  return `
-    <div class="section-container space-y-6 md:space-y-8 fade-in px-4 md:px-8">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 class="text-2xl md:text-3xl font-black text-white">Institutional Orders</h1>
-          <p class="text-gray-500 text-xs md:text-sm font-medium mt-1 uppercase tracking-widest">Execution Log · Trade History</p>
+  return (
+    <div className="section-container space-y-6 md:space-y-8 fade-in px-4 md:px-8 max-w-[1600px] mx-auto">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-1">
+          <h1 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">Trading <span className="text-blue-500">Analytics.</span></h1>
+          <p className="text-gray-500 text-xs md:text-sm font-medium uppercase tracking-widest">Live Positions · Execution History</p>
         </div>
-        <button onclick="window.exportOrderData()" class="btn-primary w-full md:w-auto px-6 py-3 text-xs font-black uppercase tracking-widest shadow-lg active:scale-95">EXPORT DATA</button>
+        
+        <div className="flex bg-[#111318] rounded-2xl p-1 border border-white/5 w-full md:w-auto">
+           <button 
+             onClick={() => setActiveTab('ACTIVE')} 
+             className={`flex-1 md:flex-none px-8 py-3 text-xs font-black rounded-xl transition-all ${activeTab === 'ACTIVE' ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-gray-500 hover:text-white'}`}
+           >
+             ACTIVE POSITIONS ({activeTrades.length})
+           </button>
+           <button 
+             onClick={() => setActiveTab('CLOSED')} 
+             className={`flex-1 md:flex-none px-8 py-3 text-xs font-black rounded-xl transition-all ${activeTab === 'CLOSED' ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-gray-500 hover:text-white'}`}
+           >
+             HISTORY ({closedTrades.length})
+           </button>
+        </div>
       </div>
 
-      <div class="card p-0 overflow-hidden bg-[#131722]/50 border-0 md:border md:border-gray-800">
-        <div class="p-4 md:p-6 border-b border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-           <div class="flex bg-[#0f1115] rounded-xl p-1 border border-gray-800 w-full sm:w-auto overflow-x-auto no-scrollbar">
-              ${['ACTIVE', 'FILLED', 'CANCELLED'].map(tab => `
-                <button data-tab-btn="${tab}" onclick="window.switchOrderTab('${tab}')" 
-                        class="flex-1 sm:flex-none px-6 py-2 text-xs font-black rounded-lg transition-all ${window.activeOrderTab === tab ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}">
-                  ${tab}
-                </button>
-              `).join('')}
-           </div>
-           <div class="relative w-full sm:w-64 group">
-              <input type="text" placeholder="Filter Ticket ID..." class="input-field py-2 px-10 text-base md:text-sm bg-[#0f1115] border-gray-800 focus:border-blue-500/50">
-              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors">🔍</span>
-           </div>
-        </div>
-
-        <!-- Desktop Table View -->
-        <div class="hidden lg:block overflow-x-auto max-h-[60vh] overflow-y-auto no-scrollbar relative">
-          <table class="w-full text-left min-w-[800px]">
-            <thead class="sticky top-0 z-10">
-              <tr class="bg-[#131722] text-xs font-black text-gray-500 uppercase tracking-widest border-b border-gray-800">
-                <th class="px-8 py-4">Execution Time</th>
-                <th class="px-8 py-4">Instrument</th>
-                <th class="px-8 py-4">Action</th>
-                <th class="px-8 py-4 text-right">Size</th>
-                <th class="px-8 py-4 text-right">Entry Price</th>
-                <th class="px-8 py-4 text-right">P/L (USD)</th>
-                <th class="px-8 py-4">Status</th>
+      <div className="card p-0 overflow-hidden bg-[#0f1115]/50 border-white/5 shadow-2xl">
+        {/* Desktop Table View */}
+        <div className="hidden lg:block overflow-x-auto no-scrollbar relative">
+          <table className="w-full text-left min-w-[1000px]">
+            <thead>
+              <tr className="bg-[#111318] text-[10px] font-black text-gray-500 uppercase tracking-widest border-b border-white/5">
+                <th className="px-8 py-5">Instrument</th>
+                <th className="px-8 py-5">Type</th>
+                <th className="px-8 py-5 text-right">Size</th>
+                <th className="px-8 py-5 text-right">Entry Price</th>
+                <th className="px-8 py-5 text-right">Current/Close</th>
+                <th className="px-8 py-5 text-right">PnL (USD)</th>
+                <th className="px-8 py-5">Outcome</th>
+                <th className="px-8 py-5 text-right">Action</th>
               </tr>
             </thead>
-            <tbody id="desktop-orders-tbody" class="divide-y divide-gray-800">
-              <!-- Populated by renderOrders -->
+            <tbody className="divide-y divide-white/5">
+              {currentOrders.length > 0 ? currentOrders.map((order) => {
+                const isProfit = parseFloat(order.pl || 0) >= 0;
+                return (
+                  <tr key={order.id} className="table-row group hover:bg-white/[0.02] transition-colors">
+                    <td className="px-8 py-6">
+                      <div className="flex items-center gap-3">
+                         <div className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center font-black text-[10px] text-gray-400 group-hover:bg-blue-600 group-hover:text-white transition-colors">{order.symbol.slice(0,2)}</div>
+                         <div>
+                            <span className="font-black text-white text-sm uppercase block leading-none">{order.symbol}</span>
+                            <span className="text-[9px] font-bold text-gray-500 uppercase tracking-tighter">{new Date(order.time).toLocaleTimeString()}</span>
+                         </div>
+                      </div>
+                    </td>
+                    <td className="px-8 py-6">
+                      <span className={`badge px-3 py-1 ${order.type === 'BUY' ? 'text-blue-500 bg-blue-500/10' : 'text-red-500 bg-red-500/10'}`}>{order.type}</span>
+                    </td>
+                    <td className="px-8 py-6 text-right font-black text-gray-400 text-sm">{order.size} Lots</td>
+                    <td className="px-8 py-6 text-right font-mono text-xs opacity-60 tabular-nums">{order.entry}</td>
+                    <td className="px-8 py-6 text-right font-mono text-xs tabular-nums text-white">{order.status === 'ACTIVE' ? order.current : order.closePrice}</td>
+                    <td className="px-8 py-6 text-right">
+                      <span className={`font-black tabular-nums text-sm transition-all duration-500 ${isProfit ? 'text-green-500 drop-shadow-[0_0_8px_rgba(34,197,94,0.3)]' : 'text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]'}`}>
+                        {formatCurrency(order.pl || 0)}
+                      </span>
+                    </td>
+                    <td className="px-8 py-6">
+                       {order.status === 'ACTIVE' ? (
+                         <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+                            <span className="text-[10px] font-black text-blue-500 uppercase">Live</span>
+                         </div>
+                       ) : (
+                         <div className="flex flex-col gap-1">
+                            <span className={`text-[10px] font-black uppercase ${order.result === 'PROFIT' ? 'text-green-500' : 'text-red-500'}`}>{order.result}</span>
+                            <span className="text-[8px] font-bold text-gray-600 uppercase tracking-tighter">{order.closeReason}</span>
+                         </div>
+                       )}
+                    </td>
+                    <td className="px-8 py-6 text-right">
+                      {order.status === 'ACTIVE' ? (
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); closeTrade(order.id); }}
+                          className="px-6 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-gray-400 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all uppercase tracking-widest shadow-lg active:scale-95"
+                        >
+                          Close Pos.
+                        </button>
+                      ) : (
+                        <span className="text-[10px] font-mono text-gray-600">{new Date(order.closeTime).toLocaleTimeString()}</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              }) : (
+                <tr><td colSpan="8" className="px-8 py-24 text-center">
+                  <div className="w-20 h-20 bg-blue-600/5 rounded-3xl flex items-center justify-center mx-auto mb-6 text-blue-500/20 text-4xl border border-dashed border-blue-500/20">📊</div>
+                  <h3 className="text-white font-black uppercase tracking-widest text-sm mb-2">No {activeTab.toLowerCase()} trades in terminal</h3>
+                  <p className="text-gray-500 text-xs mb-8">Execute your first institutional trade via the dashboard terminal</p>
+                  <button onClick={() => router.push('/dashboard')} className="btn-primary px-10 py-3 text-xs font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-blue-600/20 active:scale-95 transition-all">Launch Terminal</button>
+                </td></tr>
+              )}
             </tbody>
           </table>
         </div>
 
-        <!-- Mobile Card View -->
-        <div id="mobile-orders-list" class="lg:hidden divide-y divide-gray-800">
-           <!-- Populated by renderOrders -->
+        {/* Mobile View */}
+        <div className="lg:hidden divide-y divide-white/5">
+           {currentOrders.map((order) => {
+              const isProfit = parseFloat(order.pl || 0) >= 0;
+              return (
+                <div key={order.id} className="p-5 space-y-5">
+                   <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-3">
+                         <div className="w-10 h-10 rounded-2xl bg-gray-900 border border-white/5 flex items-center justify-center font-black text-xs text-blue-500 uppercase">{order.symbol.slice(0,2)}</div>
+                         <div>
+                            <p className="font-black text-white text-sm uppercase leading-none mb-1">{order.symbol}</p>
+                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{new Date(order.time).toLocaleTimeString()}</p>
+                         </div>
+                      </div>
+                      <span className={`badge px-3 py-1 ${order.type === 'BUY' ? 'text-blue-500 bg-blue-500/10' : 'text-red-500 bg-red-500/10'}`}>{order.type}</span>
+                   </div>
+                   
+                   <div className="grid grid-cols-2 gap-3">
+                      <div className="p-4 bg-[#111318] rounded-2xl border border-white/5">
+                         <p className="text-[9px] text-gray-600 font-black uppercase mb-1">Entry Price</p>
+                         <p className="text-sm font-mono font-black text-white">{order.entry}</p>
+                      </div>
+                      <div className="p-4 bg-[#111318] rounded-2xl border border-white/5 text-right">
+                         <p className="text-[9px] text-gray-600 font-black uppercase mb-1">Live/Close</p>
+                         <p className="text-sm font-mono font-black text-white">{order.status === 'ACTIVE' ? order.current : order.closePrice}</p>
+                      </div>
+                   </div>
+
+                   <div className="flex justify-between items-center pt-2">
+                      <div className="space-y-1">
+                         <p className="text-[10px] font-black text-gray-600 uppercase">Unrealized P/L</p>
+                         <p className={`text-xl font-black tabular-nums ${isProfit ? 'text-green-500 text-glow' : 'text-red-500'}`}>{formatCurrency(order.pl || 0)}</p>
+                      </div>
+                      {order.status === 'ACTIVE' ? (
+                        <button 
+                           onClick={(e) => { e.stopPropagation(); closeTrade(order.id); }}
+                           className="px-8 py-3 bg-red-500 text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl shadow-red-500/30"
+                        >
+                          Close
+                        </button>
+                      ) : (
+                        <div className="text-right">
+                           <span className={`badge block mb-1 ${order.result === 'PROFIT' ? 'text-green-500' : 'text-red-500'}`}>{order.result}</span>
+                           <span className="text-[8px] font-black text-gray-600 uppercase">{order.closeReason}</span>
+                        </div>
+                      )}
+                   </div>
+                </div>
+              );
+           })}
         </div>
       </div>
     </div>
-  `;
-};
+  );
+}

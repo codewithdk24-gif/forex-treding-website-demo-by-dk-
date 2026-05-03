@@ -1,3 +1,5 @@
+import LandingPage from "../pages/LandingPage";
+
 export default function Home() {
-  return <div>App Started</div>;
+  return <LandingPage />;
 }
