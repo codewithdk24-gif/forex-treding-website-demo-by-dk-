@@ -100,6 +100,11 @@
   pointer-events: auto;
 }
 
+.modal-overlay.active .modal-content {
+  transform: scale(1);
+  opacity: 1;
+}
+
 .modal-content {
   background-color: #131722;
   border: 1px solid #1f2937;
@@ -107,12 +112,10 @@
   width: 100%;
   max-width: 28rem;
   padding: 2rem;
-  transform: scale(0.95);
-  transition: transform 0.3s ease-in-out;
-}
-
-.modal-overlay.active .modal-content {
-  transform: scale(1);
+  transform: scale(0.9);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 /* Candlestick Animation */
@@ -212,8 +215,14 @@ body {
   border: 1px solid #1f2937;
   padding: 1rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 0.75rem;
+}
+
+.card:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  border-color: rgba(59, 130, 246, 0.3);
 }
 
 @media (min-width: 768px) {
@@ -248,10 +257,11 @@ body {
 
 .btn-primary:hover {
   background-color: #1d4ed8;
+  box-shadow: 0 12px 20px -3px rgba(37, 99, 235, 0.3);
 }
 
 .btn-primary:active {
-  transform: scale(0.96) translateY(1px);
+  transform: scale(0.95);
   filter: brightness(1.1);
 }
 
@@ -299,10 +309,11 @@ body {
 
 .btn-success:hover {
   background-color: #16a34a;
+  box-shadow: 0 12px 20px -3px rgba(34, 197, 94, 0.3);
 }
 
 .btn-success:active {
-  transform: scale(0.96) translateY(1px);
+  transform: scale(0.95);
   filter: brightness(1.1);
 }
 
@@ -324,10 +335,11 @@ body {
 
 .btn-danger:hover {
   background-color: #dc2626;
+  box-shadow: 0 12px 20px -3px rgba(239, 68, 68, 0.3);
 }
 
 .btn-danger:active {
-  transform: scale(0.96) translateY(1px);
+  transform: scale(0.95);
 }
 
 
@@ -349,6 +361,11 @@ body {
 .btn-outline:hover {
   background-color: #1f2937;
   color: white;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-outline:active {
+  transform: scale(0.95);
 }
 
 .input-field {
@@ -453,11 +470,29 @@ body {
   box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
 }
 
+/* Skeleton Loading */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 0.5rem;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 /* Toast Notification */
 .toast-container {
   position: fixed;
-  top: 1.5rem;
-  right: 1.5rem;
+  bottom: 2rem;
+  right: 2rem;
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -486,8 +521,8 @@ body {
 }
 
 @keyframes toastSlideUp {
-  from { opacity: 0; transform: translateY(20px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: translateY(20px) translateX(20px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) translateX(0) scale(1); }
 }
 
 .toast.fade-out {
@@ -716,6 +751,34 @@ body {
 
 .soft-shadow {
   box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.5);
+}
+
+/* Smooth Tab Underline Logic */
+.tab-btn {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: #2563eb;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
+  border-radius: 9999px;
+}
+
+.tab-btn.active::after {
+  width: 60%;
+}
+
+.tab-btn.active {
+  color: white;
+  background-color: rgba(37, 99, 235, 0.1) !important;
 }
 
 /* Institutional Ticker */

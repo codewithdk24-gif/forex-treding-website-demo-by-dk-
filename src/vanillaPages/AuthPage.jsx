@@ -1,5 +1,7 @@
+import { supabase } from '../supabaseClient';
+
 export const AuthPage = () => {
-  const isAdminLogin = window.location.hash === '#admin-login';
+  const isAdminLogin = window.currentRoute === '/admin-login';
   
   if (window.authMode === undefined) window.authMode = 'login';
 
@@ -18,14 +20,18 @@ export const AuthPage = () => {
     
     const login_id = form.login_id.value.trim();
     const login_key = form.login_key.value.trim();
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const users = JSON.parse(localStorage.getItem('demo_users') || '[]');
+    const errorEl = document.getElementById('auth-error');
+    if (errorEl) errorEl.innerText = '';
 
     if (!login_id || !login_key) {
+      if (errorEl) errorEl.innerText = 'Please fill in all fields';
       window.showToast('Please fill in all fields', 'error');
       return;
     }
 
     if (!isLogin && !form.name.value.trim()) {
+      if (errorEl) errorEl.innerText = 'Please enter your full name';
       window.showToast('Please enter your full name', 'error');
       return;
     }
@@ -37,9 +43,10 @@ export const AuthPage = () => {
 
     if (isAdminLogin) {
       if (login_id === 'admin' && login_key === '123456') {
-        localStorage.setItem('currentUser', JSON.stringify({ name: 'Admin', role: 'admin' }));
+        localStorage.setItem('current_user', 'admin');
+        localStorage.setItem('user_role', 'admin');
         window.showToast('Root Access Verified', 'success');
-        window.location.hash = 'admin';
+        window.navigateApp('/admin');
       } else {
         window.showToast('Invalid Admin Credentials', 'error');
         submitBtn.disabled = false;
@@ -51,32 +58,54 @@ export const AuthPage = () => {
     if (mode === 'signup') {
       const name = form.name.value.trim();
       if (users.find(u => u.email === login_id)) {
+        if (errorEl) errorEl.innerText = 'User already exists';
         window.showToast('User already exists', 'error');
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalBtnText;
         return;
       }
-      const newUser = { name, email: login_id, password: login_key, role: 'user', balance: 10000 };
+      const newUser = { id: login_id, name, email: login_id, password: login_key, role: login_id === 'admin@demo.com' ? 'admin' : 'user' };
       users.push(newUser);
-      localStorage.setItem('users', JSON.stringify(users));
-      localStorage.setItem('currentUser', JSON.stringify({ name, role: 'user' }));
+      localStorage.setItem('demo_users', JSON.stringify(users));
+
+      // Hybrid Storage
+      try {
+        const { error } = await supabase.from('users').insert([{
+          id: newUser.id,
+          name: newUser.name,
+          email: newUser.email,
+          password: newUser.password,
+          role: newUser.role
+        }]);
+        if (error) throw error;
+        console.log("Supabase insert success");
+      } catch (error) {
+        console.log("Supabase error", error);
+      }
+
+      localStorage.setItem('current_user', login_id);
+      localStorage.setItem('user_role', newUser.role);
       window.showToast('Account Created', 'success');
-      window.location.hash = 'dashboard';
+      window.location.hash = newUser.role === 'admin' ? 'admin' : 'dashboard';
     } else {
       // Demo Account Bypass
       if (login_id === 'demo@forexpro.com' && login_key === 'demo123') {
-         localStorage.setItem('currentUser', JSON.stringify({ name: 'Demo Trader', role: 'user' }));
+         localStorage.setItem('current_user', 'demo@forexpro.com');
+         localStorage.setItem('user_role', 'user');
          window.showToast('Accessing Demo Terminal', 'success');
-         window.location.hash = 'dashboard';
+         window.navigateApp('/dashboard');
          return;
       }
 
       const user = users.find(u => u.email === login_id && u.password === login_key);
       if (user) {
-        localStorage.setItem('currentUser', JSON.stringify({ name: user.name, role: user.role }));
+        if (user.email === 'admin@demo.com') user.role = 'admin';
+        localStorage.setItem('current_user', user.id);
+        localStorage.setItem('user_role', user.role);
         window.showToast('Welcome back', 'success');
-        window.location.hash = 'dashboard';
+        window.location.hash = user.role === 'admin' ? 'admin' : 'dashboard';
       } else {
+        if (errorEl) errorEl.innerText = 'Invalid Credentials';
         window.showToast('Invalid Credentials', 'error');
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalBtnText;
@@ -89,7 +118,7 @@ export const AuthPage = () => {
   const isLogin = window.authMode === 'login' || isAdminLogin;
 
   return `
-    <div class="min-h-screen w-full flex flex-col lg:flex-row bg-[#0f1115] relative overflow-hidden">
+    <div class="min-h-screen w-full flex flex-col lg:flex-row bg-[#0f1115] relative overflow-auto flex-wrap">
       <!-- Background Effects -->
       <div class="absolute top-[-10%] left-[-5%] w-full max-w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] -z-10 opacity-30"></div>
       <div class="absolute bottom-[-10%] right-[-5%] w-full max-w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] -z-10 opacity-30"></div>
@@ -158,7 +187,9 @@ export const AuthPage = () => {
 
 
 
-            <button type="submit" class="btn-primary w-full py-5 text-sm btn-glow active:scale-95 transition-all">
+            <div id="auth-error" class="text-red-500 text-xs font-bold text-center h-4"></div>
+
+            <button type="submit" class="btn-primary w-full py-5 text-sm btn-glow active:scale-95 transition-all disabled:opacity-75 disabled:cursor-not-allowed">
               ${isAdminLogin ? 'VERIFY ROOT ACCESS' : (isLogin ? 'ENTER TERMINAL' : 'CREATE ACCOUNT')}
             </button>
           </form>

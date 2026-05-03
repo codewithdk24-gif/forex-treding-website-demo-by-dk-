@@ -12,8 +12,9 @@ const Icons = {
 };
 
 export const Sidebar = (isMobile = false) => {
-  const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
-  const isAdmin = user.role === 'admin';
+  const userId = localStorage.getItem('current_user');
+  const user = userId === 'admin' ? { name: 'Admin', role: 'admin' } : (JSON.parse(localStorage.getItem('demo_users') || '[]').find(u => u.id === userId) || {});
+  const isAdmin = user.role === 'admin' || localStorage.getItem('user_role') === 'admin';
   
   const userItems = [
     { id: 'dashboard', icon: Icons.dashboard, label: 'Dashboard' },
@@ -22,15 +23,11 @@ export const Sidebar = (isMobile = false) => {
     { id: 'wallet', icon: Icons.wallet, label: 'Wallet' },
   ];
 
-  const adminItems = [
-    { id: 'admin', icon: Icons.dashboard, label: 'Overview' },
-    { id: 'admin/users', icon: Icons.users, label: 'Users' },
-    { id: 'admin/trades', icon: Icons.trades, label: 'Trades' },
-    { id: 'admin/transactions', icon: Icons.wallet, label: 'Transactions' },
-    { id: 'admin/analytics', icon: Icons.analytics, label: 'Analytics' },
-  ];
+  if (isAdmin) {
+    userItems.push({ id: 'admin', icon: Icons.users, label: 'Admin' });
+  }
 
-  const menuItems = isAdmin ? adminItems : userItems;
+  const menuItems = userItems;
   const currentHash = window.location.hash.slice(1) || (isAdmin ? 'admin' : 'dashboard');
 
   const baseClasses = isMobile 
@@ -82,7 +79,7 @@ export const Sidebar = (isMobile = false) => {
           </div>
         </div>
         
-        <button onclick="const role = JSON.parse(localStorage.getItem('currentUser') || '{}').role; localStorage.removeItem('currentUser'); window.location.hash = role === 'admin' ? 'admin-login' : 'landing'; window.location.reload();" 
+        <button onclick="const userId = localStorage.getItem('current_user'); const role = userId === 'admin' ? 'admin' : 'user'; localStorage.removeItem('current_user'); window.location.hash = role === 'admin' ? 'admin-login' : 'auth'; window.location.reload();" 
                 class="w-full flex items-center justify-center xl:justify-start gap-4 px-4 py-3.5 text-gray-400 hover:text-red-500 transition-colors rounded-xl hover:bg-red-500/5 group">
           <span class="group-hover:scale-110 transition-transform">${Icons.logout}</span>
           <span class="font-semibold text-sm ${isMobile ? 'block' : 'hidden xl:block'}">Logout</span>

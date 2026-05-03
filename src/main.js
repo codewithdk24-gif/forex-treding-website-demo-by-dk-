@@ -12,24 +12,39 @@ import { TradingViewChart } from './components/TradingViewChart';
 
 // Initialize Demo Data
 const initDemoData = () => {
-  const users = JSON.parse(localStorage.getItem('users') || '[]');
+  const users = JSON.parse(localStorage.getItem('demo_users') || '[]');
   if (users.length === 0) {
     users.push({
-      name: "Demo User",
-      email: "user@demo.com",
-      password: "123456",
-      role: "user",
-      balance: 10000
+      id: "demo@forexpro.com",
+      name: "Demo Trader",
+      email: "demo@forexpro.com",
+      password: "demo123",
+      role: "user"
     });
-    localStorage.setItem('users', JSON.stringify(users));
+  }
+  if (!users.find(u => u.email === 'admin@demo.com')) {
+    users.push({
+      id: "admin@demo.com",
+      name: "Admin",
+      email: "admin@demo.com",
+      password: "admin",
+      role: "admin"
+    });
+  }
+  localStorage.setItem('demo_users', JSON.stringify(users));
+  if (!localStorage.getItem('demo_wallet')) {
+    localStorage.setItem('demo_wallet', JSON.stringify({ balance: 10000 }));
   }
 };
 initDemoData();
 
 // Role-based Access Control Helper
 const getAuthUser = () => {
-  const user = localStorage.getItem('currentUser');
-  return user ? JSON.parse(user) : null;
+  const userId = localStorage.getItem('current_user');
+  if (!userId) return null;
+  if (userId === 'admin') return { id: 'admin', name: 'Admin', role: 'admin' };
+  const users = JSON.parse(localStorage.getItem('demo_users') || '[]');
+  return users.find(u => u.id === userId) || null;
 };
 
 // Routes now return only the CONTENT. The Router wraps them in Layout if needed.
@@ -39,30 +54,33 @@ const routes = {
   'admin-login': () => AuthPage(),
   dashboard: () => {
     const user = getAuthUser();
-    if (user?.role === 'admin') { window.location.hash = 'admin'; return ''; }
+    if (!user) { window.location.hash = 'auth'; return ''; }
+    if (user.role === 'admin') { window.location.hash = 'admin'; return ''; }
     return DashboardPage();
   },
   markets: () => {
     const user = getAuthUser();
-    if (user?.role === 'admin') { window.location.hash = 'admin'; return ''; }
+    if (!user) { window.location.hash = 'auth'; return ''; }
+    if (user.role === 'admin') { window.location.hash = 'admin'; return ''; }
     return MarketsPage();
   },
   orders: () => {
     const user = getAuthUser();
-    if (user?.role === 'admin') { window.location.hash = 'admin'; return ''; }
+    if (!user) { window.location.hash = 'auth'; return ''; }
+    if (user.role === 'admin') { window.location.hash = 'admin'; return ''; }
     return OrdersPage();
   },
   wallet: () => {
     const user = getAuthUser();
-    if (user?.role === 'admin') { window.location.hash = 'admin'; return ''; }
+    if (!user) { window.location.hash = 'auth'; return ''; }
+    if (user.role === 'admin') { window.location.hash = 'admin'; return ''; }
     return WalletPage();
   },
-  admin: () => AdminPage(),
-  'admin/users': () => AdminPage(),
-  'admin/trades': () => AdminPage(),
-  'admin/transactions': () => AdminPage(),
-  'admin/analytics': () => AdminPage(),
-  'admin/settings': () => AdminPage()
+  admin: () => {
+    const role = localStorage.getItem('user_role');
+    if (role !== 'admin') { window.location.hash = 'dashboard'; return ''; }
+    return AdminPage();
+  }
 };
 
 

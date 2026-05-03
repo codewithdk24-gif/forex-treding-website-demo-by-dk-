@@ -81,7 +81,7 @@ export const MarketsPage = () => {
           const isUp = Math.random() > 0.4;
           const price = (asset.cat === 'Crypto' ? (asset.symbol.startsWith('BTC') ? 64230 : 3420) : (asset.cat === 'Commodities' ? 2342 : 1.08240)).toFixed(5);
           return `
-            <div onclick="window.activeSymbol = '${asset.symbol}'; window.location.hash = 'dashboard';" 
+            <div onclick="window.activeSymbol = '${asset.symbol}'; window.navigateApp('/dashboard');" 
                  class="market-card group bg-[#111318] border border-white/5 rounded-[2rem] p-6 hover:border-blue-500/30 transition-all duration-500 cursor-pointer relative overflow-hidden" 
                  data-symbol="${asset.symbol}" 
                  data-cat="${asset.cat}">

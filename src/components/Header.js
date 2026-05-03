@@ -3,7 +3,9 @@ const Icons = {
 };
 
 export const Header = () => {
-  const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const userId = localStorage.getItem('current_user');
+  const user = userId === 'admin' ? { name: 'Admin', role: 'admin' } : (JSON.parse(localStorage.getItem('demo_users') || '[]').find(u => u.id === userId) || {});
+  const wallet = JSON.parse(localStorage.getItem('demo_wallet') || '{"balance": 10000}');
 
   return `
     <header class="h-16 md:h-20 border-b border-gray-800 bg-[#0f1115]/50 backdrop-blur-xl flex items-center justify-between px-4 md:px-8 relative z-40">
@@ -30,7 +32,7 @@ export const Header = () => {
       <div class="flex items-center gap-4 md:gap-6">
         <div class="flex flex-col items-end">
             <p class="text-xs md:text-xs font-black text-gray-500 uppercase tracking-widest leading-none mb-1">Live Equity</p>
-            <p id="header-balance" class="text-sm md:text-base font-black text-white leading-none tracking-tight">$124,592</p>
+            <p id="header-balance" class="text-sm md:text-base font-black text-white leading-none tracking-tight">$${wallet.balance.toLocaleString('en-US', {minimumFractionDigits: 0})}</p>
         </div>
         
         <div class="h-8 w-px bg-gray-800 mx-1"></div>

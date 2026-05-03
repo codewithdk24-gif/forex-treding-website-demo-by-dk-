@@ -36,4 +36,4 @@ const initializeAdminData = () => {
   }
 };
 
-initializeAdminData();
+export { initializeAdminData };
