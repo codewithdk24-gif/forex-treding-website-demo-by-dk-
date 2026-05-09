@@ -1,10 +1,6 @@
 'use client';
-import { createDynamicPage } from '../../components/DynamicPage';
+import MarketsPage from '../../pages/MarketsPage';
 
-const Page = createDynamicPage(
-  () => import('../../vanillaPages/MarketsPage'),
-  'markets',
-  'MarketsPage'
-);
-
-export default Page;
+export default function Page() {
+  return <MarketsPage />;
+}

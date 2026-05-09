@@ -2,7 +2,7 @@
 import dynamic from 'next/dynamic';
 
 const DashboardPage = dynamic(
-  () => import('../../vanillaPages/DashboardPage').then(mod => mod.DashboardPage),
+  () => import('../../pages/DashboardPage'),
   { ssr: false }
 );
 

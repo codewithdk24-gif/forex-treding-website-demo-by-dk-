@@ -5,50 +5,30 @@ import { useRouter } from 'next/navigation';
 import { TradingViewChart } from '../components/TradingViewChart';
 import { initializeAdminData } from '../utils/mockAdminData'; // keep mock admin data import
 import { useStore } from '../store/useStore';
+import { useAuth } from '@/context/AuthContext';
 
 export default function ClientSetup() {
   const router = useRouter();
+  const { user } = useAuth();
+  const initializeRealtime = useStore(state => state.initializeRealtime);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallBtn, setShowInstallBtn] = useState(false);
 
   useEffect(() => {
-    // Expose router to window so existing inline handlers can navigate
-    // The instruction says "Replace hash routing with Next.js routing"
-    // Since existing code uses window.location.hash = 'X', we can intercept it or rewrite it.
-    // It is safer to rewrite it in the files, but we also provide window.navigateApp.
+    let cleanup;
+    if (user?.id) {
+       cleanup = initializeRealtime(user.id);
+    }
+    return () => {
+      if (cleanup) cleanup();
+    };
+  }, [user?.id, initializeRealtime]);
+
+  useEffect(() => {
+    // Global navigation bridge
     window.navigateApp = (path) => {
       router.push(path);
     };
-
-    // Initialize Demo Data
-    const initDemoData = () => {
-      const users = JSON.parse(localStorage.getItem('demo_users') || '[]');
-      if (users.length === 0) {
-        users.push({
-          id: "demo@forexpro.com",
-          name: "Demo Trader",
-          email: "demo@forexpro.com",
-          password: "demo123",
-          role: "user"
-        });
-      }
-      if (!users.find(u => u.email === 'admin@demo.com')) {
-        users.push({
-          id: "admin@demo.com",
-          name: "Admin",
-          email: "admin@demo.com",
-          password: "admin",
-          role: "admin"
-        });
-      }
-      localStorage.setItem('demo_users', JSON.stringify(users));
-      if (!localStorage.getItem('demo_wallet')) {
-        localStorage.setItem('demo_wallet', JSON.stringify({ balance: 10000 }));
-      }
-    };
-    initDemoData();
-    initializeAdminData();
-    useStore.getState().syncFromLocalStorage();
 
     // --- PWA Service Worker Registration ---
     if ('serviceWorker' in navigator) {
@@ -78,10 +58,7 @@ export default function ClientSetup() {
 
     // Global toggle functions
     window.toggleSidebar = () => {
-      const sidebar = document.getElementById('mobile-sidebar');
-      const overlay = document.getElementById('sidebar-overlay');
-      sidebar?.classList.toggle('active');
-      overlay?.classList.toggle('active');
+      window.dispatchEvent(new CustomEvent('toggleSidebar'));
     };
 
     window.toggleBottomSheet = (isOpen) => {
@@ -187,8 +164,8 @@ export default function ClientSetup() {
     };
 
     window.showOrderDetails = (id) => {
-      const orders = JSON.parse(localStorage.getItem('demo_orders') || '[]');
-      const order = orders.find(o => o.id === id);
+      const trades = useStore.getState().trades;
+      const order = trades.find(o => o.id === id);
       if (!order) return;
       
       const msg = `

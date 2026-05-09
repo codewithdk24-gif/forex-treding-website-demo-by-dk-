@@ -1,5 +1,7 @@
 import '../style.css';
 import ClientSetup from './ClientSetup';
+import { AuthProvider } from '@/context/AuthContext';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 export const metadata = {
   title: 'ForexPro | Institutional Trading Terminal',
@@ -17,11 +19,16 @@ export default function RootLayout({ children }) {
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#0f1115" />
       </head>
-      <body className="bg-[#0f1115] text-white selection:bg-blue-500/30 selection:text-blue-500">
-        <ClientSetup />
-        <div id="app">
-          {children}
-        </div>
+      <body className="bg-[#0f1115] text-white selection:bg-blue-500/30 selection:text-blue-500" suppressHydrationWarning>
+        <ErrorBoundary>
+          <AuthProvider>
+            <ClientSetup />
+            <div id="app">
+              {children}
+            </div>
+            <div id="modal-root"></div>
+          </AuthProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

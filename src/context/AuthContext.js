@@ -1,158 +1,167 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter, usePathname } from 'next/navigation';
+import { db } from '@/lib/db';
 
 const AuthContext = createContext({});
 
+export const useAuth = () => useContext(AuthContext);
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [wallet, setWallet] = useState(null);
   const [isReady, setIsReady] = useState(false);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
 
+  const isRefreshing = useRef(false);
+  const lastUserId = useRef(null);
+
+  const refreshUserData = useCallback(async (userId) => {
+    // Prevent duplicate concurrent refreshes or redundant refreshes for same user
+    if (isRefreshing.current) return;
+    
+    try {
+      isRefreshing.current = true;
+      
+      const [profileData, walletData] = await Promise.all([
+        db.getProfile(userId),
+        db.getActiveWallet(userId, 'demo')
+      ]);
+
+      console.log(`[AuthContext] Refresh Success: Profile=${!!profileData}, Wallet Balance=$${walletData?.balance || 0}`);
+
+      setProfile(profileData);
+      setWallet(walletData);
+      lastUserId.current = userId;
+    } catch (err) {
+      console.error('Data Refresh Error:', err.message);
+    } finally {
+      isRefreshing.current = false;
+    }
+  }, []);
+
   useEffect(() => {
     let mounted = true;
 
-    const init = async () => {
-      const { data } = await supabase.auth.getSession();
-
-      if (!mounted) return;
-
-      const sessionUser = data?.session?.user ?? null;
-
-      setUser(sessionUser);
-      setIsReady(true);
-      setLoading(false);
-    };
+    async function init() {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        
+        if (session?.user && mounted) {
+          setUser(session.user);
+          await refreshUserData(session.user.id);
+        }
+      } catch (err) {
+        console.error('Auth Init Error:', err);
+      } finally {
+        if (mounted) {
+          setLoading(false);
+          setIsReady(true);
+        }
+      }
+    }
 
     init();
 
-    const { data: { subscription } } =
-      supabase.auth.onAuthStateChange((_event, session) => {
-        if (!mounted) return;
-        setUser(session?.user ?? null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+
+      const sessionUser = session?.user ?? null;
+      
+      // Only refresh if user changed or explicitly signed in
+      if (sessionUser?.id !== lastUserId.current || event === 'SIGNED_IN') {
+        setUser(sessionUser);
+        if (sessionUser) {
+          await refreshUserData(sessionUser.id);
+        } else {
+          setProfile(null);
+          setWallet(null);
+          lastUserId.current = null;
+        }
+      }
+
+      setLoading(false);
+      setIsReady(true);
+    });
+
+    // SAFETY TIMEOUT: Ensure we never stay stuck in loading forever
+    const safetyTimeout = setTimeout(() => {
+      if (mounted && loading) {
+        console.warn("Auth initialization safety timeout triggered. Force-clearing loading state.");
         setIsReady(true);
         setLoading(false);
-      });
+      }
+    }, 10000);
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
+      clearTimeout(safetyTimeout);
     };
   }, []);
 
   useEffect(() => {
     if (!isReady) return;
 
-    const publicRoutes = ["/", "/auth"];
-    const protectedRoutes = ["/dashboard", "/wallet", "/orders", "/markets"];
-
-    // Check if the current path is protected
-    const isProtected = protectedRoutes.some(route => pathname.startsWith(route));
-    const isPublic = publicRoutes.includes(pathname);
-
-    // 1. If NOT authenticated and trying to access a PROTECTED route -> redirect to /auth
-    if (!user && isProtected) {
+    const publicRoutes = ["/", "/auth", "/auth/callback"];
+    const isPublic = publicRoutes.some(route => pathname === route || pathname.startsWith('/auth/callback'));
+    
+    if (!user && !isPublic) {
       router.replace("/auth");
-      return;
-    }
-
-    // 2. If authenticated and trying to access /auth -> redirect to /dashboard
-    if (user && pathname === "/auth") {
+    } else if (user && pathname === "/auth") {
       router.replace("/dashboard");
-      return;
     }
 
   }, [user, isReady, pathname, router]);
 
   const signUp = async (email, password, options = {}) => {
-    try {
-      const cleanEmail = email.trim().toLowerCase();
-      const cleanPassword = password.trim();
-
-      console.log("STEP: AuthContext signUp Attempt", { email: cleanEmail });
-      const { data, error } = await supabase.auth.signUp({
-        email: cleanEmail,
-        password: cleanPassword,
-        ...options
-      });
-
-      console.log("FULL SIGNUP RESPONSE:", { data, error });
-
-      if (error) {
-        console.error("SIGNUP ERROR DETAILS:", {
-          message: error.message,
-          status: error.status,
-          name: error.name,
-          fullError: error
-        });
+    return await supabase.auth.signUp({
+      email: email.trim().toLowerCase(),
+      password: password.trim(),
+      options: {
+        ...options,
+        emailRedirectTo: `${window.location.origin}/auth/callback`
       }
-
-      // If session null, trigger signIn
-      if (data?.user && !data?.session && !error) {
-        console.log("STEP: signUp success but session null, attempting auto-signIn...");
-        return await signIn(email, password);
-      }
-
-      return { data, error };
-    } catch (err) {
-      console.error("SIGNUP ERROR:", err);
-      return { data: null, error: err };
-    }
+    });
   };
 
   const signIn = async (email, password) => {
-    try {
-      const cleanEmail = email.trim().toLowerCase();
-      const cleanPassword = password.trim();
-
-      console.log("STEP: AuthContext signIn Attempt", { email: cleanEmail });
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: cleanEmail,
-        password: cleanPassword
-      });
-
-      console.log("FULL LOGIN RESPONSE:", { data, error });
-
-      if (error) {
-        console.error("LOGIN ERROR DETAILS:", {
-          message: error.message,
-          status: error.status,
-          fullError: error
-        });
-      }
-
-      return { data, error };
-    } catch (err) {
-      console.error("CRITICAL LOGIN ERROR:", err);
-      return { data: null, error: err };
-    }
+    return await supabase.auth.signInWithPassword({
+      email: email.trim().toLowerCase(),
+      password: password.trim()
+    });
   };
 
   const signOut = async () => {
     try {
+      setLoading(true);
       await supabase.auth.signOut();
+      
+      // Clear local state
       setUser(null);
-      router.push('/auth');
+      setProfile(null);
+      setWallet(null);
+      
+      router.replace('/auth');
     } catch (err) {
-      console.error('STEP: AuthContext signOut Error', err);
+      console.error('SignOut Error:', err.message);
+      // Fallback: force state clear even if Supabase fails
+      setUser(null);
+      router.replace('/auth');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, isReady, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, profile, wallet, isReady, loading, signIn, signUp, signOut, refreshUserData }}>
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };

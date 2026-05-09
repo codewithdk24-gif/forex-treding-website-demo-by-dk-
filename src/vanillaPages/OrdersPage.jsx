@@ -1,72 +1,37 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useStore } from '../store/useStore';
+import { useAuth } from '@/context/AuthContext';
 
 export const OrdersPage = () => {
   const [activeTab, setActiveTab] = useState('ACTIVE');
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const orders = useStore(state => state.orders);
-  const updateOrders = useStore(state => state.updateOrders);
-  const syncFromLocalStorage = useStore(state => state.syncFromLocalStorage);
+  const trades = useStore(state => state.trades);
+  const initializeRealtime = useStore(state => state.initializeRealtime);
+  const { user } = useAuth();
 
-  // Initial load & Event Listener
+  // Initial load
   useEffect(() => {
-    syncFromLocalStorage();
-
+    if (user?.id) {
+      initializeRealtime(user.id);
+    }
+    
     const loadTimer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(loadTimer);
+  }, [user?.id, initializeRealtime]);
 
-    const handleTradeExecuted = () => {
-      console.log("EVENT RECEIVED: tradeExecuted");
-      syncFromLocalStorage();
-    };
-
-    window.addEventListener('tradeExecuted', handleTradeExecuted);
-    return () => {
-      window.removeEventListener('tradeExecuted', handleTradeExecuted);
-    };
-  }, [syncFromLocalStorage]);
-
-  // PnL Simulation Interval
-  useEffect(() => {
-    if (activeTab !== 'ACTIVE') return;
-
-    const intervalId = setInterval(() => {
-      let ordersUpdated = false;
-      const newOrders = useStore.getState().orders.map(o => {
-        if (o.status === 'ACTIVE') {
-          // 10% chance to fill
-          if (Math.random() > 0.90) {
-            if (window.showToast) window.showToast(`Ticket ${o.id} Filled`, 'success');
-            ordersUpdated = true;
-            return { ...o, status: 'FILLED' };
-          }
-          // PnL swing
-          const currentPl = parseFloat(o.pl || 0);
-          const change = (Math.random() * 20 - 10);
-          const newPl = currentPl + change;
-          return { ...o, pl: newPl };
-        }
-        return o;
-      });
-
-      if (ordersUpdated) {
-        updateOrders(newOrders);
-      } else {
-        useStore.setState({ orders: newOrders }); // Just update state without localstorage write if only PnL changed
-      }
-    }, 2000);
-
-    return () => clearInterval(intervalId);
-  }, [activeTab]);
+  // Real-time PnL logic is now handled in useStore.js or on the backend.
+  // We keep the simulation only if absolutely necessary for UI 'liveliness', 
+  // but it should use 'trades' and not direct store mutation.
 
   const exportOrderData = () => {
-    if (orders.length === 0) {
+    if (trades.length === 0) {
       if (window.showToast) window.showToast('No data to export', 'error');
       return;
     }
     const headers = ['Ticket ID', 'Time', 'Instrument', 'Action', 'Size', 'Entry Price', 'Current Price', 'P/L (USD)', 'Status'];
-    const rows = orders.map(o => [o.id, o.time, o.symbol, o.type, o.size, o.entry, o.current, o.pl || 0, o.status]);
+    const rows = trades.map(o => [o.id, o.time, o.symbol, o.type, o.size, o.entry, o.current, o.pl || 0, o.status]);
     
     const csvContent = "data:text/csv;charset=utf-8," 
         + headers.join(',') + '\n' 
@@ -94,7 +59,7 @@ export const OrdersPage = () => {
     return 'text-red-500 bg-red-500/10';
   };
 
-  const filteredOrders = orders.filter(o => 
+  const filteredOrders = (trades || []).filter(o => 
     o.status === activeTab &&
     (searchTerm === '' || o.id?.toLowerCase().includes(searchTerm.toLowerCase()) || o.symbol?.toLowerCase().includes(searchTerm.toLowerCase()))
   );

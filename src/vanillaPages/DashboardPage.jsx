@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../lib/supabaseClient';
 import { TradingViewChart } from '../components/TradingViewChart';
 import { useStore } from '../store/useStore';
 import { io } from 'socket.io-client';

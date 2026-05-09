@@ -1,10 +1,5 @@
-'use client';
-import { createDynamicPage } from '../components/DynamicPage';
+import LandingPage from '../pages/LandingPage';
 
-const Page = createDynamicPage(
-  () => import('../vanillaPages/LandingPage'),
-  'landing',
-  'LandingPage'
-);
-
-export default Page;
+export default function Page() {
+  return <LandingPage />;
+}

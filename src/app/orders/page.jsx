@@ -1,11 +1,6 @@
 'use client';
-import dynamic from 'next/dynamic';
+import OrdersPage from '../../pages/OrdersPage';
 
-const OrdersPage = dynamic(
-  () => import('../../vanillaPages/OrdersPage').then(mod => mod.OrdersPage),
-  { ssr: false }
-);
-
-export default function Route() {
+export default function Page() {
   return <OrdersPage />;
 }

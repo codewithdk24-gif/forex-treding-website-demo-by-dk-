@@ -1,10 +1,11 @@
 'use client';
-import { createDynamicPage } from '../../components/DynamicPage';
+import dynamic from 'next/dynamic';
 
-const Page = createDynamicPage(
-  () => import('../../vanillaPages/AdminPage'),
-  'admin',
-  'AdminPage'
+const AdminDashboard = dynamic(
+  () => import('./AdminDashboard'),
+  { ssr: false }
 );
 
-export default Page;
+export default function Route() {
+  return <AdminDashboard />;
+}

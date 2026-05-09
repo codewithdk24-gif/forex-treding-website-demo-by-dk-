@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-<<<<<<< Updated upstream
   reactStrictMode: true,
-=======
+
   // Allow HMR WebSocket from any local IP (localhost, 127.0.0.1, or any 192.168.x.x)
   allowedDevOrigins: [
     'localhost',
@@ -11,7 +10,6 @@ const nextConfig = {
     '192.168.56.1',
     '*.local',
   ],
->>>>>>> Stashed changes
 };
 
 export default nextConfig;

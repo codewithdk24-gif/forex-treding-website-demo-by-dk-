@@ -1,6 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import Sidebar from './Sidebar';
+import DashboardHeader from './DashboardHeader';
 
 export default function PageWrapper({ pageFn, pageName }) {
   const [html, setHtml] = useState('');
@@ -29,5 +31,15 @@ export default function PageWrapper({ pageFn, pageName }) {
 
   if (!html) return null;
 
-  return <div dangerouslySetInnerHTML={{ __html: html }} className="h-full w-full" />;
+  return (
+    <div className="flex h-screen bg-[#0f1115] overflow-hidden">
+      <Sidebar />
+      <div className="flex-1 flex flex-col min-w-0">
+        <DashboardHeader />
+        <main className="flex-1 overflow-y-auto">
+          <div dangerouslySetInnerHTML={{ __html: html }} className="h-full w-full" />
+        </main>
+      </div>
+    </div>
+  );
 }

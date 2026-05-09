@@ -1,10 +1,11 @@
 'use client';
-import { createDynamicPage } from '../../components/DynamicPage';
+import dynamic from 'next/dynamic';
 
-const Page = createDynamicPage(
-  () => import('../../vanillaPages/AuthPage'),
-  'auth',
-  'AuthPage'
+const AuthPage = dynamic(
+  () => import('../../pages/AuthPage'),
+  { ssr: false }
 );
 
-export default Page;
+export default function Route() {
+  return <AuthPage />;
+}
