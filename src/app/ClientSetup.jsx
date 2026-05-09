@@ -77,8 +77,6 @@ export default function ClientSetup() {
       const container = document.getElementById('tv-chart-container');
       if (container) {
         container.classList.toggle('chart-fullscreen');
-        const symbol = container.dataset.symbol || 'FX:EURUSD';
-        TradingViewChart('tv-chart-container', symbol, 'dark');
         if (container.classList.contains('chart-fullscreen')) {
            window.showToast('Fullscreen Mode Enabled', 'info');
         }

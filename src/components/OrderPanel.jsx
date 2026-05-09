@@ -1,18 +1,30 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useTradeStore } from '@/store/useTradeStore';
-import { useAuth } from '@/context/AuthContext';
-import { db } from '@/lib/db';
+import React, { useState, useEffect } from 'react';
+import { useTradeStore } from '../store/useTradeStore';
+import { useAuth } from '../context/AuthContext';
+import { db } from '../lib/db';
 
 export default function OrderPanel({ isBottomSheet = false }) {
   const { user, profile, wallet, refreshUserData } = useAuth();
-  const { showNotification } = useTradeStore();
+  const { showNotification, activeSymbol, prices } = useTradeStore();
   
+  const [orderType, setOrderType] = useState('Market'); // Market | Limit | Stop
   const [type, setType] = useState('BUY');
   const [lots, setLots] = useState(1.00);
-  const [symbol] = useState('EUR/USD');
+  const [symbol, setSymbol] = useState(activeSymbol);
   const [isExecuting, setIsExecuting] = useState(false);
+  
+  const [tp, setTp] = useState('');
+  const [sl, setSl] = useState('');
+  const [limitPrice, setLimitPrice] = useState('');
+
+  const currentPrice = prices[activeSymbol] || 1.08245;
+
+  useEffect(() => {
+    setSymbol(activeSymbol);
+    setLimitPrice(currentPrice.toString());
+  }, [activeSymbol, currentPrice]);
 
   const balance = wallet?.balance || 0;
   const marginRequired = lots * 450; // Institutional margin calculation
@@ -31,24 +43,32 @@ export default function OrderPanel({ isBottomSheet = false }) {
     setIsExecuting(true);
     
     try {
+      const entryPrice = orderType === 'Market' ? currentPrice : parseFloat(limitPrice);
+      
       const tradeData = {
         user_id: user.id,
         wallet_id: wallet.id,
         symbol,
         type,
         size: lots,
-        entry_price: 1.08245, // In production, this comes from a real-time price feed
-        status: 'ACTIVE'
+        entry_price: entryPrice,
+        status: orderType === 'Market' ? 'ACTIVE' : 'PENDING',
+        tp: tp ? parseFloat(tp) : null,
+        sl: sl ? parseFloat(sl) : null
       };
 
-      await db.executeTrade(tradeData);
+      console.log("[ORDER PANEL] Executing trade:", tradeData);
+      const result = await db.executeTrade(tradeData);
+      console.log("[ORDER PANEL] Trade result:", result);
       
-      // Refresh wallet balance to show impact of trade (margin used)
       if (typeof window !== 'undefined' && window.showToast) {
-        window.showToast(`${type} Order Executed: ${lots} ${symbol}`, 'success');
+        window.showToast(`${orderType} ${type} Placed: ${lots} ${symbol}`, 'success');
       }
       
-      // Wait a moment for database triggers to finish then refresh
+      // Clear inputs
+      setTp('');
+      setSl('');
+
       setTimeout(() => {
         if (user?.id) refreshUserData(user.id);
       }, 800);
@@ -64,7 +84,7 @@ export default function OrderPanel({ isBottomSheet = false }) {
   const isBuy = type === 'BUY';
 
   return (
-    <div className={`${isBottomSheet ? 'w-full' : 'w-full h-full flex flex-col bg-[#131722]/50 backdrop-blur-sm'} transition-colors duration-300`}>
+    <div className={`${isBottomSheet ? 'w-full min-h-[400px] flex flex-col pb-8' : 'w-full h-full flex flex-col bg-[#131722]/50 backdrop-blur-sm'} transition-colors duration-300`}>
       {!isBottomSheet && (
         <div className="p-5 border-b border-white/5 bg-white/[0.02]">
           <div className="flex justify-between items-start mb-4">
@@ -76,7 +96,7 @@ export default function OrderPanel({ isBottomSheet = false }) {
               </div>
             </div>
             <div className="text-right">
-               <p className="text-[7px] font-black text-gray-500 uppercase mb-0">{wallet?.account_type === 'demo' ? 'Demo Balance' : 'Account Balance'}</p>
+               <p className="text-[7px] font-black text-gray-500 uppercase mb-0">{wallet?.account_type === 'demo' ? 'Institutional Account' : 'Account Balance'}</p>
                <p className="text-xs font-black text-white">${Number(balance).toLocaleString()}</p>
             </div>
           </div>
@@ -98,11 +118,34 @@ export default function OrderPanel({ isBottomSheet = false }) {
         <div className="space-y-2">
           <label className="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">Order Type</label>
           <div className="flex bg-[#0f1115] border border-white/5 rounded-xl p-1">
-            <button className="flex-1 py-1.5 text-xs font-black rounded-lg bg-blue-600/10 text-blue-500 shadow-sm">Market</button>
-            <button className="flex-1 py-1.5 text-xs font-bold text-gray-500 hover:text-white transition-colors">Limit</button>
-            <button className="flex-1 py-1.5 text-xs font-bold text-gray-500 hover:text-white transition-colors">Stop</button>
+            {['Market', 'Limit', 'Stop'].map(t => (
+              <button 
+                key={t}
+                onClick={() => setOrderType(t)}
+                className={`flex-1 py-1.5 text-xs font-black rounded-lg transition-all ${orderType === t ? 'bg-blue-600/10 text-blue-500 shadow-sm' : 'text-gray-500 hover:text-white'}`}
+              >
+                {t}
+              </button>
+            ))}
           </div>
         </div>
+
+        {/* Limit Price Input (Only if not Market) */}
+        {orderType !== 'Market' && (
+          <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+            <label className="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">{orderType} Price</label>
+            <div className="relative group">
+              <input 
+                type="number" 
+                value={limitPrice} 
+                onChange={(e) => setLimitPrice(e.target.value)}
+                step="0.00001" 
+                className="input-field py-3 text-lg font-black text-white bg-[#0f1115] border-white/5 w-full h-11" 
+              />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-blue-500 uppercase">Target</span>
+            </div>
+          </div>
+        )}
 
         {/* Position Direction */}
         <div className="grid grid-cols-2 gap-2">
@@ -150,11 +193,25 @@ export default function OrderPanel({ isBottomSheet = false }) {
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <label className="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">Take Profit</label>
-            <input type="text" placeholder="None" className="input-field py-2 text-sm text-white border-white/5 bg-[#0f1115] h-9 w-full" />
+            <input 
+              type="number" 
+              value={tp}
+              onChange={(e) => setTp(e.target.value)}
+              step="0.00001"
+              placeholder="Optional" 
+              className="input-field py-2 text-sm text-white border-white/5 bg-[#0f1115] h-9 w-full" 
+            />
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-black text-gray-500 uppercase tracking-widest pl-1">Stop Loss</label>
-            <input type="text" placeholder="None" className="input-field py-2 text-sm text-white border-white/5 bg-[#0f1115] h-9 w-full" />
+            <input 
+              type="number" 
+              value={sl}
+              onChange={(e) => setSl(e.target.value)}
+              step="0.00001"
+              placeholder="Optional" 
+              className="input-field py-2 text-sm text-white border-white/5 bg-[#0f1115] h-9 w-full" 
+            />
           </div>
         </div>
 
@@ -177,7 +234,7 @@ export default function OrderPanel({ isBottomSheet = false }) {
           disabled={isExecuting || !wallet}
           className={`${isBuy ? 'btn-success' : 'btn-danger'} w-full py-4 text-xs font-black tracking-widest uppercase shadow-xl active:scale-[0.98] h-14 disabled:opacity-50`}
         >
-          {isExecuting ? 'EXECUTING...' : `Execute ${type}`}
+          {isExecuting ? 'EXECUTING...' : `${orderType === 'Market' ? 'Execute' : 'Place'} ${type}`}
         </button>
         <p className="text-[9px] text-gray-500/50 text-center mt-3 font-bold uppercase tracking-tighter leading-tight">
           Direct Node Execution (STP)

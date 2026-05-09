@@ -2,6 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  /* Institutional Global Constraints */
+  .institutional-container {
+    @apply max-w-[1600px] mx-auto w-full px-6 md:px-10;
+  }
+  
+  .institutional-container-mobile-tight {
+    @apply max-w-[1600px] mx-auto w-full px-4 md:px-10;
+  }
+
+  /* Institutional Typography System */
+  .text-heading-1 {
+    @apply text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none;
+  }
+  
+  .text-heading-2 {
+    @apply text-2xl md:text-3xl font-black uppercase tracking-tight leading-tight;
+  }
+  
+  .text-heading-3 {
+    @apply text-lg md:text-xl font-black uppercase tracking-tight;
+  }
+
+  .text-subtitle {
+    @apply text-[10px] md:text-[11px] font-black uppercase tracking-[0.3em] text-gray-500;
+  }
+  
+  .text-label {
+    @apply text-[9px] font-black uppercase tracking-widest text-gray-600;
+  }
+  
+  .text-value {
+    @apply text-lg md:text-xl font-black uppercase tabular-nums;
+  }
+}
+
+
 /* Mobile Sidebar Drawer */
 .sidebar-drawer {
   position: fixed;
@@ -153,15 +190,15 @@ html {
 }
 
 body {
-  background-color: #0f1115;
+  background-color: #0d1117;
   color: #f3f4f6;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
   min-height: 100dvh;
   -webkit-tap-highlight-color: transparent;
-  padding-bottom: max(80px, env(safe-area-inset-bottom)); /* Spacer for Mobile Sticky CTA */
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 @media (min-width: 1024px) {
@@ -384,19 +421,24 @@ body {
   border-color: rgba(37, 99, 235, 0.5);
 }
 
-.badge {
-  padding: 0.125rem 0.5rem;
-  border-radius: 0.375rem;
-  font-size: 10px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.glass {
+  background-color: rgba(13, 17, 23, 0.7);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.glass {
-  background-color: rgba(19, 23, 34, 0.6);
-  backdrop-filter: blur(20px);
+.institutional-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.institutional-card:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 25px 50px -20px rgba(0, 0, 0, 0.7);
 }
 
 /* Custom Utilities */
@@ -750,7 +792,20 @@ body {
 
 
 .soft-shadow {
-  box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 25px 60px -25px rgba(0, 0, 0, 0.7);
+}
+
+/* Depth Utilities */
+.depth-1 { transform: translateZ(10px); }
+.depth-2 { transform: translateZ(30px); }
+.depth-3 { transform: translateZ(60px); }
+
+.mask-fade-bottom {
+  mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+}
+
+.mask-fade-right {
+  mask-image: linear-gradient(to right, black 70%, transparent 100%);
 }
 
 /* Smooth Tab Underline Logic */
@@ -1110,3 +1165,200 @@ input[type="number"]::-webkit-outer-spin-button {
   100% { transform: translateX(-50%); }
 }
 
+/* --- CINEMATIC LANDING PAGE SYSTEM --- */
+
+/* SVG Draw Line */
+.animate-draw-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawLine 3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes drawLine {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Flash Animations */
+.animate-flash-green { animation: flashGreen 0.6s ease-out; }
+@keyframes flashGreen {
+  0% { color: #10b981; text-shadow: 0 0 20px rgba(16, 185, 129, 0.8); }
+  100% { color: inherit; text-shadow: none; }
+}
+
+.animate-flash-red { animation: flashRed 0.6s ease-out; }
+@keyframes flashRed {
+  0% { color: #ef4444; text-shadow: 0 0 20px rgba(239, 68, 68, 0.8); }
+  100% { color: inherit; text-shadow: none; }
+}
+
+/* Cinematic Hover Lift */
+.hover-cinematic-lift {
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-cinematic-lift:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), 0 0 30px rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+/* Premium Glassmorphism */
+.glassmorphism-premium {
+  background: rgba(255, 255, 255, 0.015);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02);
+}
+
+/* Cinematic Glow */
+.cinematic-glow {
+  box-shadow: 0 0 40px rgba(59, 130, 246, 0.15), inset 0 0 20px rgba(255, 255, 255, 0.02);
+}
+
+/* Rotating Gradient Properties */
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.bg-rotating-gradient {
+  background: conic-gradient(
+    from var(--gradient-angle),
+    rgba(59, 130, 246, 0.1),
+    rgba(16, 185, 129, 0.05),
+    rgba(59, 130, 246, 0.1)
+  );
+  animation: rotateGradient 10s linear infinite;
+}
+
+@keyframes rotateGradient {
+  0% { --gradient-angle: 0deg; }
+  100% { --gradient-angle: 360deg; }
+}
+
+.animate-glow-pulse-intense {
+  animation: glowPulseIntense 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes glowPulseIntense {
+  0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.6)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 30px rgba(59, 130, 246, 1)); }
+}
+
+/* FAQ Fluid Height */
+.faq-content-cinematic {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.faq-content-cinematic.open {
+  grid-template-rows: 1fr;
+}
+.faq-content-cinematic > div {
+  overflow: hidden;
+}
+
+/* Mouse Follow Glow Container */
+.mouse-glow-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* --- PHASE 2 CINEMATIC REFINEMENTS --- */
+
+/* Ambient Matte Noise */
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  pointer-events: none;
+}
+
+/* Cinematic Drift (Particles) */
+.animate-drift {
+  animation: drift 20s cubic-bezier(0.25, 0.1, 0.25, 1) infinite alternate;
+}
+@keyframes drift {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, -50px) scale(1.05); }
+}
+
+/* Cinematic Glow Bridge (Divider) */
+.glow-bridge {
+  width: 100%;
+  height: 1px;
+  background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.4) 0%, rgba(59, 130, 246, 0.1) 40%, transparent 80%);
+  position: relative;
+  opacity: 0.8;
+}
+.glow-bridge::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 60%);
+  filter: blur(8px);
+}
+
+/* Enhanced Glassmorphism Realism */
+.glass-edge-light {
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(255, 255, 255, 0.02), 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Soft Flash */
+.animate-flash-green-soft { animation: flashGreenSoft 1s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes flashGreenSoft {
+  0% { color: #10b981; text-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
+  100% { color: inherit; text-shadow: none; }
+}
+.animate-flash-red-soft { animation: flashRedSoft 1s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes flashRedSoft {
+  0% { color: #ef4444; text-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
+  100% { color: inherit; text-shadow: none; }
+}
+
+/* Feature Card Inner Glow Hover */
+.hover-inner-glow {
+  position: relative;
+}
+.hover-inner-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(59, 130, 246, 0.08), transparent 40%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.hover-inner-glow:hover::before {
+  opacity: 1;
+}
+
+/* Deep CTA Breathing */
+.animate-breathing-shadow {
+  animation: breathingShadow 3s ease-in-out infinite alternate;
+}
+@keyframes breathingShadow {
+  0% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
+  100% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.5); }
+}

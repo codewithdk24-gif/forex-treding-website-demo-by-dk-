@@ -1,14 +1,25 @@
 'use client';
+
 import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { 
+  Menu, 
+  ChevronLeft, 
+  Wallet as WalletIcon, 
+  Circle, 
+  LayoutDashboard,
+  BarChart3,
+  History,
+  Wallet,
+  User
+} from 'lucide-react';
 
 export default function DashboardHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, profile, wallet } = useAuth();
 
-  // Helper to format currency
   const formatCurrency = (val) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -22,68 +33,90 @@ export default function DashboardHeader() {
     if (pathname.includes('/wallet')) return 'Financial Hub';
     if (pathname.includes('/orders')) return 'Execution Log';
     if (pathname.includes('/markets')) return 'Asset Markets';
+    if (pathname.includes('/admin')) return 'Admin Control';
     return 'ForexPro';
   };
 
+  const getPageIcon = () => {
+    if (pathname.includes('/dashboard')) return <LayoutDashboard size={18} />;
+    if (pathname.includes('/wallet')) return <Wallet size={18} />;
+    if (pathname.includes('/orders')) return <History size={18} />;
+    if (pathname.includes('/markets')) return <BarChart3 size={18} />;
+    return null;
+  };
+
   return (
-    <nav className="h-14 md:h-16 border-b border-white/[0.05] flex items-center justify-between px-4 md:px-6 shrink-0 bg-[#0f1115]/80 backdrop-blur-md z-50 w-full">
-      <div className="flex items-center gap-4">
+    <nav className="h-20 border-b border-white/[0.06] flex items-center justify-between px-6 md:px-10 shrink-0 bg-[#0d1117]/80 backdrop-blur-xl z-50 w-full sticky top-0">
+      <div className="flex items-center gap-3 md:gap-4">
          {/* Mobile Menu Toggle */}
          <button 
            onClick={() => window.dispatchEvent(new CustomEvent('toggleSidebar'))} 
-           className="lg:hidden p-2 -ml-2 text-gray-400 hover:text-white transition-colors"
+           className="lg:hidden p-2.5 -ml-2 rounded-xl bg-white/[0.03] border border-white/[0.05] text-gray-400 hover:text-white transition-all active:scale-95"
          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            <Menu size={20} />
          </button>
 
          {/* Back Button (Desktop mostly, or mobile subpages) */}
-         <button onClick={() => router.back()} className="p-2 -ml-2 text-gray-500 hover:text-white transition-colors hidden sm:block">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7"></path></svg>
+         <button 
+           onClick={() => router.back()} 
+           className="p-2.5 -ml-1 rounded-xl bg-white/[0.03] border border-white/[0.05] text-gray-400 hover:text-white transition-all active:scale-95 hidden sm:flex"
+         >
+            <ChevronLeft size={20} />
          </button>
 
-         <div className="flex items-center gap-2 md:gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-black text-xs text-white hidden xs:flex">FX</div>
-            <div className="min-w-0">
-               <div className="flex items-center gap-1.5 md:gap-2">
-                  <h3 className="font-black text-[11px] xs:text-sm tracking-tight text-white uppercase truncate">{getPageTitle()}</h3>
-                  {pathname.includes('/dashboard') && (
-                    <div className="flex items-center gap-1 md:gap-1.5 bg-red-500/10 px-1 md:px-1.5 py-0.5 rounded shrink-0">
-                       <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-red-500 rounded-full animate-pulse"></div>
-                       <span className="text-[8px] md:text-[9px] font-black text-red-500 uppercase tracking-widest">Live</span>
-                    </div>
-                  )}
+         <div className="flex items-center gap-4 ml-1">
+            <div className="hidden xs:flex w-12 h-12 rounded-[1.25rem] bg-gradient-to-br from-blue-600/10 to-blue-500/5 border border-blue-500/20 items-center justify-center text-blue-500 shrink-0 shadow-inner">
+              {getPageIcon() || <div className="font-black text-xs">FX</div>}
+            </div>
+            <div className="min-w-0 space-y-0.5">
+               <div className="flex items-center gap-2">
+                  <h3 className="text-heading-3 text-white truncate flex items-center gap-2">
+                    {getPageTitle()}
+                    {pathname.includes('/dashboard') && (
+                      <span className="hidden sm:flex items-center gap-1.5 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                         <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                         <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">Market Open</span>
+                      </span>
+                    )}
+                  </h3>
                </div>
-               <p className="text-[9px] md:text-[10px] text-gray-500 font-bold uppercase tracking-widest hidden sm:block">Institutional Terminal v2.4</p>
+               <p className="text-subtitle hidden sm:block">Institutional Node v2.4</p>
             </div>
          </div>
       </div>
       
-      <div className="flex items-center gap-4 md:gap-6">
-         <div className="text-right">
-            <p className="text-sm md:text-base font-black tracking-tight text-white tabular-nums">
-              {formatCurrency(wallet?.balance)}
-            </p>
-            <p className="text-[9px] font-black text-blue-500 uppercase tracking-widest leading-none">Demo Equity</p>
+      <div className="flex items-center gap-4 md:gap-8">
+         {/* Wallet Summary */}
+         <div className="hidden sm:flex items-center gap-3 px-4 py-2.5 rounded-[1.25rem] bg-white/[0.02] border border-white/[0.05]">
+            <div className="w-10 h-10 rounded-xl bg-blue-600/10 flex items-center justify-center text-blue-500 shrink-0">
+              <WalletIcon size={18} />
+            </div>
+            <div className="text-right">
+               <p className="text-value text-white tabular-nums leading-none">
+                 {formatCurrency(wallet?.balance)}
+               </p>
+               <p className="text-label mt-1 leading-none">Available Balance</p>
+            </div>
          </div>
          
-         <div className="w-px h-8 bg-white/5 hidden md:block"></div>
-
          {/* User Profile Summary */}
-         <div className="flex items-center gap-3">
+         <div className="flex items-center gap-3 group cursor-pointer">
             <div className="text-right hidden xl:block">
-               <p className="text-xs font-black text-white truncate max-w-[120px]">
+               <p className="text-xs font-black text-white group-hover:text-blue-400 transition-colors">
                  {profile?.full_name || user?.user_metadata?.full_name || 'Active Trader'}
                </p>
-               <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest">
+               <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest mt-0.5">
                  {profile?.role || 'Institutional'}
                </p>
             </div>
-            <div className="w-9 h-9 rounded-xl bg-blue-600/10 border border-white/5 flex items-center justify-center overflow-hidden shrink-0">
-               {profile?.avatar_url ? (
-                 <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-               ) : (
-                 <span className="text-blue-500 font-black text-xs uppercase">{user?.email?.[0] || 'T'}</span>
-               )}
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 p-[1px] shadow-lg shadow-blue-500/10 group-hover:shadow-blue-500/20 transition-all active:scale-95">
+               <div className="w-full h-full rounded-[11px] bg-[#0d1117] flex items-center justify-center overflow-hidden">
+                  {profile?.avatar_url ? (
+                    <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    <User size={20} className="text-blue-500 opacity-80" />
+                  )}
+               </div>
             </div>
          </div>
       </div>

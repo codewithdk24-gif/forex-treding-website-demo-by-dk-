@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar';
 import DashboardHeader from '../components/DashboardHeader';
 import { OrdersPage as OrdersContent } from '../vanillaPages/OrdersPage';
 
+
 export default function OrdersPage() {
   return (
     <div className="flex h-screen bg-[#0f1115] overflow-hidden">
@@ -14,6 +15,7 @@ export default function OrdersPage() {
           <OrdersContent />
         </main>
       </div>
+
     </div>
   );
 }

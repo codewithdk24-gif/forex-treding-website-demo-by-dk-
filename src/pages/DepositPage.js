@@ -1,21 +1,20 @@
 'use client';
+
 import React from 'react';
 import Sidebar from '../components/Sidebar';
 import DashboardHeader from '../components/DashboardHeader';
-import { MarketsPage as MarketsContent } from '../vanillaPages/MarketsPage';
+import DepositContent from '../vanillaPages/DepositPage';
 
-
-export default function MarketsPage() {
+export default function DepositPage() {
   return (
-    <div className="flex h-screen bg-[#0f1115] overflow-hidden">
+    <div className="flex h-screen bg-[#0d1117] overflow-hidden">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <DashboardHeader />
-        <main className="flex-1 overflow-y-auto">
-          <MarketsContent />
+        <main className="flex-1 overflow-y-auto no-scrollbar">
+          <DepositContent />
         </main>
       </div>
-
     </div>
   );
 }

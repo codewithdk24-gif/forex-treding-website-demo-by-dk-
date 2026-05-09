@@ -45,10 +45,10 @@ export const db = {
       if (error) throw error;
 
       if (!data || data.length === 0) {
-        console.log("No wallet found, creating one...");
+        console.log("[DB] No wallet found, creating institutional account...");
         const { data: newWallet, error: createError } = await supabase
           .from('wallets')
-          .insert([{ user_id: userId, account_type: type, balance: 10000, is_active: true }])
+          .insert([{ user_id: userId, account_type: type, balance: 100000, is_active: true }])
           .select()
           .maybeSingle();
         
@@ -56,12 +56,33 @@ export const db = {
         return newWallet;
       }
 
-      // If multiple, return the first one (safety)
       return data[0];
     } catch (err) {
-      console.error("Wallet Fetch Error:", err.message);
+      console.error("[DB] Wallet Fetch Error:", err.message);
       throw err;
     }
+  },
+
+  async updateWalletBalance(walletId, amount) {
+    // amount can be positive (deposit) or negative (withdraw)
+    const { data, error } = await supabase.rpc('update_wallet_balance', {
+      w_id: walletId,
+      amount_delta: amount
+    });
+    if (error) {
+      // Fallback if RPC doesn't exist yet (though we should assume it does or use normal update)
+      const { data: current } = await supabase.from('wallets').select('balance').eq('id', walletId).single();
+      const newBalance = (current?.balance || 0) + amount;
+      const { data: updated, error: upError } = await supabase
+        .from('wallets')
+        .update({ balance: newBalance })
+        .eq('id', walletId)
+        .select()
+        .single();
+      if (upError) throw upError;
+      return updated;
+    }
+    return data;
   },
 
   // --- Trades ---
@@ -94,6 +115,7 @@ export const db = {
       .insert([tradeData])
       .select()
       .maybeSingle();
+    
     if (error) throw error;
     return data;
   },
@@ -119,10 +141,10 @@ export const db = {
     return data;
   },
 
-  async createDepositRequest(depositData) {
+  async createTransaction(txData) {
     const { data, error } = await supabase
       .from('transactions')
-      .insert([{ ...depositData, type: 'DEPOSIT', status: 'PENDING' }])
+      .insert([{ ...txData, status: 'COMPLETED' }])
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -140,7 +162,6 @@ export const db = {
   },
 
   async toggleWatchlist(userId, symbol) {
-    // Check if exists
     const { data: existing } = await supabase
       .from('watchlists')
       .select('*')
@@ -155,13 +176,13 @@ export const db = {
         .eq('user_id', userId)
         .eq('symbol', symbol);
       if (error) throw error;
-      return false; // Removed
+      return false;
     } else {
       const { error } = await supabase
         .from('watchlists')
         .insert([{ user_id: userId, symbol }]);
       if (error) throw error;
-      return true; // Added
+      return true;
     }
   }
 };
