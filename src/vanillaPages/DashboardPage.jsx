@@ -236,7 +236,7 @@ export const DashboardPage = () => {
             {/* Chart Area */}
             <div className="flex-1 relative bg-[#090c10] min-h-[40vh] md:min-h-0 overflow-hidden">
                {!isLoading && (
-                  <div className="absolute inset-0 w-full h-full z-10">
+                  <div className="absolute inset-0 w-full h-full z-10 pl-1 md:pl-0">
                      <TradingViewChart symbol={activeSymbol || 'FX:EURUSD'} theme="dark" />
                   </div>
                )}
