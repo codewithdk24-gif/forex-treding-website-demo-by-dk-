@@ -2,16 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { 
+import {
   Zap,
-  Shield, 
-  BarChart3, 
-  Globe, 
-  Menu, 
-  X, 
-  CheckCircle2, 
-  Cpu, 
-  TrendingUp, 
+  Shield,
+  BarChart3,
+  Globe,
+  Menu,
+  X,
+  CheckCircle2,
+  Cpu,
+  TrendingUp,
   TrendingDown,
   ChevronRight,
   ArrowRight,
@@ -168,9 +168,9 @@ export default function LandingPage() {
 
             {/* Desktop Infrastructure Row */}
             <div className="hidden lg:flex items-center gap-8 pt-2 opacity-20">
-               {['Tier-1 Liquidity', 'ECN Network', 'Global Nodes', 'STP Engine'].map((node, idx) => (
-                 <span key={node} className="text-[9px] font-medium uppercase tracking-[0.35em] text-gray-500" style={{ animationDelay: `${0.5 + idx * 0.1}s` }}>{node}</span>
-               ))}
+              {['Tier-1 Liquidity', 'ECN Network', 'Global Nodes', 'STP Engine'].map((node, idx) => (
+                <span key={node} className="text-[9px] font-medium uppercase tracking-[0.35em] text-gray-500" style={{ animationDelay: `${0.5 + idx * 0.1}s` }}>{node}</span>
+              ))}
             </div>
           </div>
 
@@ -194,42 +194,42 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                   <div className="flex items-center gap-1.5 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 bg-[#0f1219] border border-white/[0.05] rounded-full shadow-inner">
-                      <div className="relative flex items-center justify-center">
-                        <div className="absolute w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-500/40 animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
-                        <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-emerald-500"></div>
-                      </div>
-                      <span className="text-[7px] md:text-[9px] font-black text-gray-400 uppercase tracking-widest">Live Node</span>
-                   </div>
+                  <div className="flex items-center gap-1.5 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 bg-[#0f1219] border border-white/[0.05] rounded-full shadow-inner">
+                    <div className="relative flex items-center justify-center">
+                      <div className="absolute w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-500/40 animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+                      <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-emerald-500"></div>
+                    </div>
+                    <span className="text-[7px] md:text-[9px] font-black text-gray-400 uppercase tracking-widest">Live Node</span>
+                  </div>
                 </div>
               </div>
 
               {/* Price Content */}
               <div className="mb-6 md:mb-10 relative z-10">
                 <div className="flex items-end gap-2 md:gap-3 mb-1.5 md:mb-2">
-                   <p className={`text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter tabular-nums drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-colors duration-300 ${mounted ? priceData.color : 'text-white'}`} key={priceData.bid}>
+                  <p className={`text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter tabular-nums drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-colors duration-300 ${mounted ? priceData.color : 'text-white'}`} key={priceData.bid}>
                     {mounted ? priceData.bid : '1.08240'}
-                   </p>
-                   <div className="pb-1.5 md:pb-3 flex items-center gap-1.5 md:gap-2">
-                      <div className="w-5 h-5 md:w-8 md:h-8 rounded-full bg-emerald-500/10 flex items-center justify-center animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite]">
-                        <TrendingUp size={12} className="text-emerald-500 md:w-4 md:h-4" />
-                      </div>
-                   </div>
+                  </p>
+                  <div className="pb-1.5 md:pb-3 flex items-center gap-1.5 md:gap-2">
+                    <div className="w-5 h-5 md:w-8 md:h-8 rounded-full bg-emerald-500/10 flex items-center justify-center animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite]">
+                      <TrendingUp size={12} className="text-emerald-500 md:w-4 md:h-4" />
+                    </div>
+                  </div>
                 </div>
                 <div className="flex items-center gap-3 sm:gap-4 md:gap-6 pt-2 md:pt-3">
                   <div className="flex flex-col gap-0.5 md:gap-1">
-                     <span className="text-[7px] md:text-[9px] font-black text-gray-600 uppercase tracking-widest">Ask</span>
-                     <p className="text-[10px] sm:text-xs md:text-sm font-black text-gray-300 tabular-nums">{mounted ? priceData.ask : '1.08252'}</p>
+                    <span className="text-[7px] md:text-[9px] font-black text-gray-600 uppercase tracking-widest">Ask</span>
+                    <p className="text-[10px] sm:text-xs md:text-sm font-black text-gray-300 tabular-nums">{mounted ? priceData.ask : '1.08252'}</p>
                   </div>
                   <div className="w-px h-4 md:h-6 bg-white/[0.08]"></div>
                   <div className="flex flex-col gap-0.5 md:gap-1">
-                     <span className="text-[7px] md:text-[9px] font-black text-gray-600 uppercase tracking-widest">Vol</span>
-                     <p className="text-[10px] sm:text-xs md:text-sm font-black text-gray-300 tabular-nums">$42.8B</p>
+                    <span className="text-[7px] md:text-[9px] font-black text-gray-600 uppercase tracking-widest">Vol</span>
+                    <p className="text-[10px] sm:text-xs md:text-sm font-black text-gray-300 tabular-nums">$42.8B</p>
                   </div>
                   <div className="w-px h-4 md:h-6 bg-white/[0.08]"></div>
                   <div className="flex flex-col gap-0.5 md:gap-1">
-                     <span className="text-[7px] md:text-[9px] font-black text-emerald-500 uppercase tracking-widest">Perf</span>
-                     <p className="text-[10px] sm:text-xs md:text-sm font-black text-emerald-500 tabular-nums drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]">+1.42%</p>
+                    <span className="text-[7px] md:text-[9px] font-black text-emerald-500 uppercase tracking-widest">Perf</span>
+                    <p className="text-[10px] sm:text-xs md:text-sm font-black text-emerald-500 tabular-nums drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]">+1.42%</p>
                   </div>
                 </div>
               </div>
@@ -238,21 +238,21 @@ export default function LandingPage() {
               <div className="h-20 sm:h-24 md:h-32 w-full bg-[#0d1117]/80 backdrop-blur-md border border-white/[0.05] rounded-2xl md:rounded-3xl relative overflow-hidden mb-6 md:mb-10 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] group/chart">
                 {/* Chart Grid Lines */}
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] [background-size:2rem_2rem] [background-position:center_center] opacity-30"></div>
-                
+
                 {/* Scrolling Highlight */}
                 <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,rgba(59,130,246,0.1)_50%,transparent_100%)] -translate-x-full group-hover/chart:animate-[shimmer_2s_infinite] pointer-events-none"></div>
-                
+
                 <svg className="w-full h-full px-2 relative z-10" viewBox="0 0 400 100" preserveAspectRatio="none">
                   {/* Glowing Line */}
-                  <path d="M0,85 Q30,80 60,70 T120,50 T180,60 T240,40 T300,50 T360,30 L400,20" stroke="#3b82f6" strokeWidth="2.5" fill="none" className="drop-shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-draw-line" style={{ animationDuration: '3s', animationTimingFunction: 'ease-out', strokeDasharray: '1000', strokeDashoffset: '1000', animationFillMode: 'forwards' }}/>
+                  <path d="M0,85 Q30,80 60,70 T120,50 T180,60 T240,40 T300,50 T360,30 L400,20" stroke="#3b82f6" strokeWidth="2.5" fill="none" className="drop-shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-draw-line" style={{ animationDuration: '3s', animationTimingFunction: 'ease-out', strokeDasharray: '1000', strokeDashoffset: '1000', animationFillMode: 'forwards' }} />
                   {/* Subtle Secondary Line */}
-                  <path d="M0,85 Q30,80 60,70 T120,50 T180,60 T240,40 T300,50 T360,30 L400,20" stroke="rgba(255,255,255,0.2)" strokeWidth="1" fill="none" style={{ transform: 'translateY(4px)' }}/>
+                  <path d="M0,85 Q30,80 60,70 T120,50 T180,60 T240,40 T300,50 T360,30 L400,20" stroke="rgba(255,255,255,0.2)" strokeWidth="1" fill="none" style={{ transform: 'translateY(4px)' }} />
                   {/* Area Fill */}
-                  <path d="M0,85 Q30,80 60,70 T120,50 T180,60 T240,40 T300,50 T360,30 L400,20 L400,100 L0,100 Z" fill="url(#blueGradHero)" opacity="0.15" className="animate-fade-in-up" style={{ animationDelay: '1s', animationFillMode: 'both' }}/>
+                  <path d="M0,85 Q30,80 60,70 T120,50 T180,60 T240,40 T300,50 T360,30 L400,20 L400,100 L0,100 Z" fill="url(#blueGradHero)" opacity="0.15" className="animate-fade-in-up" style={{ animationDelay: '1s', animationFillMode: 'both' }} />
                   <defs>
                     <linearGradient id="blueGradHero" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#3b82f6"/>
-                      <stop offset="100%" stopColor="transparent"/>
+                      <stop offset="0%" stopColor="#3b82f6" />
+                      <stop offset="100%" stopColor="transparent" />
                     </linearGradient>
                   </defs>
                 </svg>
@@ -264,7 +264,7 @@ export default function LandingPage() {
 
                 {/* Floating Price Tooltip */}
                 <div className="absolute top-4 md:top-6 right-4 md:right-16 px-2 md:px-3 py-1 md:py-1.5 bg-[#0f1219]/90 backdrop-blur-md border border-white/[0.1] rounded-lg text-[8px] md:text-[9px] font-black text-white shadow-[0_10px_20px_rgba(0,0,0,0.5)] animate-float z-20 uppercase tracking-widest text-blue-400 whitespace-nowrap">
-                   STP Node Active
+                  STP Node Active
                 </div>
               </div>
 
@@ -324,26 +324,26 @@ export default function LandingPage() {
         {/* Section Header */}
         <div className="text-center mb-8 md:mb-14 space-y-2 md:space-y-3">
           <p className="text-[9px] font-semibold text-blue-500/70 uppercase tracking-[0.45em]">Zero Compromise Infrastructure</p>
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter leading-[0.95]">Built For<br/><span className="text-blue-400">The Professional.</span></h2>
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter leading-[0.95]">Built For<br /><span className="text-blue-400">The Professional.</span></h2>
         </div>
 
         {/* 2×3 Floating Feature Node Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
           {[
-            { title: 'Deep Liquidity',    desc: 'Direct access to Tier-1 banks and ECN networks. Minimal slippage and superior fill rates at all volumes.',         icon: <Activity size={20} />,  color: 'blue'   },
-            { title: 'Advanced Charting', desc: 'Full TradingView integration. 100+ indicators, drawing tools, and multi-timeframe analysis in one workspace.',      icon: <BarChart3 size={20} />, color: 'indigo' },
-            { title: 'Secure Vault',      desc: 'Multi-signature cold storage, institutional AES-256 encryption, and fully segregated client accounts.',             icon: <Shield size={20} />,   color: 'emerald'},
-            { title: 'Realtime Ticker',   desc: 'Sub-millisecond price feeds via our low-latency websocket network. 50+ global nodes. Zero data delay.',             icon: <Zap size={20} />,      color: 'amber'  },
-            { title: 'Global Markets',    desc: 'Trade Forex, Crypto, Stocks, Indices, and Commodities from one unified institutional terminal.',                    icon: <Globe size={20} />,    color: 'blue'   },
-            { title: 'Precision Logs',    desc: 'Granular execution reports, P&L analytics, and slippage tracking. Every trade documented with precision.',          icon: <Cpu size={20} />,      color: 'violet' },
+            { title: 'Deep Liquidity', desc: 'Direct access to Tier-1 banks and ECN networks. Minimal slippage and superior fill rates at all volumes.', icon: <Activity size={20} />, color: 'blue' },
+            { title: 'Advanced Charting', desc: 'Full TradingView integration. 100+ indicators, drawing tools, and multi-timeframe analysis in one workspace.', icon: <BarChart3 size={20} />, color: 'indigo' },
+            { title: 'Secure Vault', desc: 'Multi-signature cold storage, institutional AES-256 encryption, and fully segregated client accounts.', icon: <Shield size={20} />, color: 'emerald' },
+            { title: 'Realtime Ticker', desc: 'Sub-millisecond price feeds via our low-latency websocket network. 50+ global nodes. Zero data delay.', icon: <Zap size={20} />, color: 'amber' },
+            { title: 'Global Markets', desc: 'Trade Forex, Crypto, Stocks, Indices, and Commodities from one unified institutional terminal.', icon: <Globe size={20} />, color: 'blue' },
+            { title: 'Precision Logs', desc: 'Granular execution reports, P&L analytics, and slippage tracking. Every trade documented with precision.', icon: <Cpu size={20} />, color: 'violet' },
           ].map((f, i) => {
             const isOpen = openFeatureId === i;
             const colorMap = {
-              blue:   { ring: 'ring-blue-500/30',   iconActive: 'bg-blue-600',   iconIdle: 'bg-blue-500/10 text-blue-400   border-blue-500/20',  glow: 'shadow-[0_0_20px_rgba(59,130,246,0.15)]',  labelActive: 'text-blue-300'   },
-              indigo: { ring: 'ring-indigo-500/30',  iconActive: 'bg-indigo-600', iconIdle: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20', glow: 'shadow-[0_0_20px_rgba(99,102,241,0.15)]',  labelActive: 'text-indigo-300' },
-              emerald:{ ring: 'ring-emerald-500/25', iconActive: 'bg-emerald-600',iconIdle: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',glow:'shadow-[0_0_20px_rgba(16,185,129,0.12)]',  labelActive: 'text-emerald-300'},
-              amber:  { ring: 'ring-amber-500/25',   iconActive: 'bg-amber-600',  iconIdle: 'bg-amber-500/10 text-amber-400   border-amber-500/20',  glow: 'shadow-[0_0_20px_rgba(245,158,11,0.12)]',  labelActive: 'text-amber-300'  },
-              violet: { ring: 'ring-violet-500/25',  iconActive: 'bg-violet-600', iconIdle: 'bg-violet-500/10 text-violet-400 border-violet-500/20', glow: 'shadow-[0_0_20px_rgba(139,92,246,0.12)]',  labelActive: 'text-violet-300' },
+              blue: { ring: 'ring-blue-500/30', iconActive: 'bg-blue-600', iconIdle: 'bg-blue-500/10 text-blue-400   border-blue-500/20', glow: 'shadow-[0_0_20px_rgba(59,130,246,0.15)]', labelActive: 'text-blue-300' },
+              indigo: { ring: 'ring-indigo-500/30', iconActive: 'bg-indigo-600', iconIdle: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20', glow: 'shadow-[0_0_20px_rgba(99,102,241,0.15)]', labelActive: 'text-indigo-300' },
+              emerald: { ring: 'ring-emerald-500/25', iconActive: 'bg-emerald-600', iconIdle: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', glow: 'shadow-[0_0_20px_rgba(16,185,129,0.12)]', labelActive: 'text-emerald-300' },
+              amber: { ring: 'ring-amber-500/25', iconActive: 'bg-amber-600', iconIdle: 'bg-amber-500/10 text-amber-400   border-amber-500/20', glow: 'shadow-[0_0_20px_rgba(245,158,11,0.12)]', labelActive: 'text-amber-300' },
+              violet: { ring: 'ring-violet-500/25', iconActive: 'bg-violet-600', iconIdle: 'bg-violet-500/10 text-violet-400 border-violet-500/20', glow: 'shadow-[0_0_20px_rgba(139,92,246,0.12)]', labelActive: 'text-violet-300' },
             };
             const c = colorMap[f.color] || colorMap.blue;
             return (
@@ -434,7 +434,7 @@ export default function LandingPage() {
               </button>
               <div className={`faq-content-cinematic ${openFaqId === i ? 'open' : ''}`}>
                 <div className="px-5 sm:px-7 md:px-8 pb-5 sm:pb-7 md:pb-8">
-                   <p className="text-xs text-gray-400 leading-relaxed tracking-wide border-t border-white/5 pt-4 md:pt-6">{faq.a}</p>
+                  <p className="text-xs text-gray-400 leading-relaxed tracking-wide border-t border-white/5 pt-4 md:pt-6">{faq.a}</p>
                 </div>
               </div>
             </div>
@@ -447,20 +447,20 @@ export default function LandingPage() {
         <div className="relative p-7 sm:p-10 md:p-16 lg:p-24 rounded-[2.5rem] md:rounded-[4rem] bg-rotating-gradient overflow-hidden text-center group shadow-[0_0_60px_rgba(59,130,246,0.12)] ring-1 ring-white/[0.08]">
           <div className="absolute inset-0 bg-[#0d1117]/50 backdrop-blur-3xl"></div>
           <div className="absolute -top-24 -right-24 w-80 h-80 md:w-96 md:h-96 bg-blue-500/15 rounded-full blur-[120px] animate-glow-pulse-intense"></div>
-          
+
           <div className="relative z-10 space-y-5 md:space-y-6 mb-8 md:mb-10">
-            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-black text-white tracking-tighter leading-[0.95]">Institutional Access.<br/><span className="text-blue-400">No Limits.</span></h2>
+            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-black text-white tracking-tighter leading-[0.95]">Institutional Access.<br /><span className="text-blue-400">No Limits.</span></h2>
             <p className="text-gray-400 text-sm md:text-base font-normal tracking-wide opacity-80 max-w-md mx-auto">Professional-grade liquidity infrastructure, available in under two minutes.</p>
           </div>
-          
+
           <div className="relative z-10 flex flex-col sm:flex-row justify-center gap-4 md:gap-6">
-             <Link href="/auth" className="w-full sm:w-auto px-7 md:px-12 py-4 md:py-5 bg-blue-600 text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.25em] rounded-xl md:rounded-2xl hover:-translate-y-0.5 hover:shadow-[0_0_60px_rgba(59,130,246,0.5)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 ring-1 ring-blue-400/30">
-               Open Live Account
-               <CheckCircle2 size={16} className="md:w-[18px] md:h-[18px]" />
-             </Link>
-             <Link href="/dashboard" className="w-full sm:w-auto px-7 md:px-12 py-4 md:py-5 bg-transparent border border-white/20 text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.25em] rounded-xl md:rounded-2xl hover:bg-white/[0.06] hover:border-white/30 active:scale-95 transition-all duration-300 text-center">
-               Try Demo Terminal
-             </Link>
+            <Link href="/auth" className="w-full sm:w-auto px-7 md:px-12 py-4 md:py-5 bg-blue-600 text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.25em] rounded-xl md:rounded-2xl hover:-translate-y-0.5 hover:shadow-[0_0_60px_rgba(59,130,246,0.5)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 ring-1 ring-blue-400/30">
+              Open Live Account
+              <CheckCircle2 size={16} className="md:w-[18px] md:h-[18px]" />
+            </Link>
+            <Link href="/dashboard" className="w-full sm:w-auto px-7 md:px-12 py-4 md:py-5 bg-transparent border border-white/20 text-white text-[10px] md:text-[11px] font-black uppercase tracking-[0.25em] rounded-xl md:rounded-2xl hover:bg-white/[0.06] hover:border-white/30 active:scale-95 transition-all duration-300 text-center">
+              Try Demo Terminal
+            </Link>
           </div>
         </div>
       </section>
@@ -481,43 +481,43 @@ export default function LandingPage() {
               <span className="text-[9px] md:text-[10px] font-black tracking-widest uppercase text-white">Equinix</span>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 lg:col-span-2 gap-8 lg:gap-20">
             <div className="space-y-6 md:space-y-8">
               <h4 className="text-[9px] md:text-[10px] font-black text-white uppercase tracking-[0.4em]">Infrastructure</h4>
               <ul className="space-y-4 text-[9px] md:text-[10px] font-black text-gray-600 uppercase tracking-widest">
-                 <li className="hover:text-blue-500 cursor-pointer transition-colors">Tier-1 Nodes</li>
-                 <li className="hover:text-blue-500 cursor-pointer transition-colors">API Docs</li>
-                 <li className="hover:text-blue-500 cursor-pointer transition-colors">Uptime Monitor</li>
+                <li className="hover:text-blue-500 cursor-pointer transition-colors">Tier-1 Nodes</li>
+                <li className="hover:text-blue-500 cursor-pointer transition-colors">API Docs</li>
+                <li className="hover:text-blue-500 cursor-pointer transition-colors">Uptime Monitor</li>
               </ul>
             </div>
 
             <div className="space-y-6 md:space-y-8">
               <h4 className="text-[9px] md:text-[10px] font-semibold text-gray-400 uppercase tracking-[0.4em]">Legal & Compliance</h4>
               <ul className="space-y-4 text-[9px] md:text-[10px] font-black text-gray-600 uppercase tracking-widest">
-                 <li className="hover:text-blue-500 cursor-pointer transition-colors">Privacy Policy</li>
-                 <li className="hover:text-blue-500 cursor-pointer transition-colors">Risk Disclosure</li>
-                 <li className="hover:text-blue-500 cursor-pointer transition-colors">Compliance</li>
+                <li className="hover:text-blue-500 cursor-pointer transition-colors">Privacy Policy</li>
+                <li className="hover:text-blue-500 cursor-pointer transition-colors">Risk Disclosure</li>
+                <li className="hover:text-blue-500 cursor-pointer transition-colors">Compliance</li>
               </ul>
             </div>
           </div>
         </div>
-        
+
         <div className="max-w-7xl mx-auto mt-16 md:mt-24 pt-8 md:pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8 text-center md:text-left">
-           <p className="text-[8px] md:text-[9px] font-black text-gray-500 uppercase tracking-[0.5em]">© 2024 Vantage Global Group Ltd. All Rights Reserved.</p>
-           <div className="flex gap-4">
-              {['X', 'In', 'Dc'].map(platform => (
-                <div key={platform} className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-center text-[10px] font-black text-gray-500 hover:text-white hover:bg-white/[0.05] hover:border-blue-500/30 transition-all cursor-pointer">
-                  {platform}
-                </div>
-              ))}
-           </div>
+          <p className="text-[8px] md:text-[9px] font-black text-gray-500 uppercase tracking-[0.5em]">© 2024 Vantage Global Group Ltd. All Rights Reserved.</p>
+          <div className="flex gap-4">
+            {['X', 'In', 'Dc'].map(platform => (
+              <div key={platform} className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-center text-[10px] font-black text-gray-500 hover:text-white hover:bg-white/[0.05] hover:border-blue-500/30 transition-all cursor-pointer">
+                {platform}
+              </div>
+            ))}
+          </div>
         </div>
         {/* ── Developer Signature Block ── */}
         <div className="max-w-7xl mx-auto mt-10 md:mt-14 pb-2">
           <div className="flex justify-center">
             <div className="group inline-flex flex-col sm:flex-row items-center sm:items-stretch gap-0 bg-white/[0.025] border border-white/[0.06] rounded-2xl overflow-hidden backdrop-blur-xl hover:border-white/[0.10] hover:bg-white/[0.035] transition-all duration-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.05)] max-w-full">
-              
+
               {/* Left — Developer identity */}
               <div className="flex items-center gap-3 px-5 py-4 sm:pr-6 sm:border-r sm:border-white/[0.05]">
                 {/* Avatar monogram */}

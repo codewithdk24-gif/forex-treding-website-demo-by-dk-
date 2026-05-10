@@ -54,17 +54,14 @@ export const DashboardPage = () => {
    };
 
    const executeOrder = async () => {
+      console.log("[EXECUTION] Start:", { orderType, lotSize, activeSymbol });
       setIsExecuting(true);
+      
       const symbol = activeSymbol || 'EUR/USD';
       const entryPrice = terminalPrice;
 
       const now = new Date();
-      const timeString = now.getFullYear() + '-' +
-         String(now.getMonth() + 1).padStart(2, '0') + '-' +
-         String(now.getDate()).padStart(2, '0') + ' ' +
-         String(now.getHours()).padStart(2, '0') + ':' +
-         String(now.getMinutes()).padStart(2, '0') + ':' +
-         String(now.getSeconds()).padStart(2, '0');
+      const timeString = now.toISOString().replace('T', ' ').split('.')[0];
 
       const newOrder = {
          id: 'T-' + Math.floor(10000 + Math.random() * 90000),
@@ -78,35 +75,58 @@ export const DashboardPage = () => {
          status: 'ACTIVE'
       };
 
+      console.log("[EXECUTION] Local State Update:", newOrder.id);
       addOrder(newOrder);
 
+      // Create a timeout promise
+      const timeoutPromise = new Promise((_, reject) => 
+         setTimeout(() => reject(new Error("Execution Timeout (10s)")), 10000)
+      );
+
       try {
-         const { data: { user } } = await supabase.auth.getUser();
-         const userId = user?.id || 'anonymous';
+         console.log("[EXECUTION] Syncing to Supabase...");
          
-         await supabase.from('trades').insert([{
-            id: newOrder.id,
-            user_id: userId,
-            symbol: newOrder.symbol,
-            type: newOrder.type,
-            size: newOrder.size,
-            entry: newOrder.entry,
-            status: newOrder.status,
-            time: newOrder.time
-         }]);
+         const executionPromise = (async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            const userId = user?.id || 'anonymous';
+            
+            console.log("[EXECUTION] Database Insert Start:", userId);
+            const { error } = await supabase.from('trades').insert([{
+               id: newOrder.id,
+               user_id: userId,
+               symbol: newOrder.symbol,
+               type: newOrder.type,
+               size: newOrder.size,
+               entry: newOrder.entry,
+               status: newOrder.status,
+               time: newOrder.time
+            }]);
+            
+            if (error) throw error;
+            console.log("[EXECUTION] Database Insert Success");
+            return true;
+         })();
+
+         // Race between execution and timeout
+         await Promise.race([executionPromise, timeoutPromise]);
+         
+         console.log("[EXECUTION] Flow Complete");
+         if (window.showToast) {
+            const toastType = orderType === 'BUY' ? 'success' : 'sell';
+            const msg = `<span class="font-bold text-white">${orderType} Order Executed</span><br/>
+                      <span class="text-[10px] text-gray-400 uppercase tracking-widest">${symbol} • ${parseFloat(lotSize).toFixed(2)} Lot</span>`;
+            window.showToast(msg, toastType);
+         }
       } catch (error) {
-         console.log("[INFRA] Supabase order error", error);
-      }
-
-      window.dispatchEvent(new CustomEvent('tradeExecuted'));
-      setIsExecuting(false);
-      closeOrderModal();
-
-      if (window.showToast) {
-         const toastType = orderType === 'BUY' ? 'success' : 'sell';
-         const msg = `<span class="font-bold text-white">${orderType} Order Executed</span><br/>
-                   <span class="text-[10px] text-gray-400 uppercase tracking-widest">${symbol} • ${parseFloat(lotSize).toFixed(2)} Lot</span>`;
-         window.showToast(msg, toastType);
+         console.error("[EXECUTION] Failure:", error.message || error);
+         if (window.showToast) {
+            window.showToast(`<span class="text-rose-500 font-bold">Execution Error</span><br/><span class="text-[10px] opacity-70">${error.message || 'Node Timeout'}</span>`, 'error');
+         }
+      } finally {
+         console.log("[EXECUTION] Cleanup & UI Reset");
+         window.dispatchEvent(new CustomEvent('tradeExecuted'));
+         setIsExecuting(false);
+         closeOrderModal();
       }
    };
 

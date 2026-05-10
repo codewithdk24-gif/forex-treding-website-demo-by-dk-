@@ -19,23 +19,17 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-export default function Sidebar() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const { user, profile, signOut } = useAuth();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  useEffect(() => {
-    const handleToggle = () => setIsSidebarOpen(prev => !prev);
-    
-    window.addEventListener('toggleSidebar', handleToggle);
-    
-    return () => {
-      window.removeEventListener('toggleSidebar', handleToggle);
-    };
-  }, []);
-
-  const isAdmin = user?.email?.includes('admin'); 
+// --- Sub-component extracted for stability ---
+const SidebarContent = ({ 
+  isMobile = false, 
+  router, 
+  pathname, 
+  user, 
+  profile, 
+  signOut, 
+  setIsSidebarOpen,
+  isAdmin 
+}) => {
   
   const menuItems = [
     { id: 'dashboard', icon: <LayoutDashboard size={20} />, label: 'Terminal', path: '/dashboard' },
@@ -48,11 +42,15 @@ export default function Sidebar() {
     menuItems.push({ id: 'admin', icon: <ShieldCheck size={20} />, label: 'Admin Panel', path: '/admin' });
   }
 
-  const handleLogout = () => {
-    signOut();
+  const handleLogoutClick = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("[SIDEBAR] Logout button clicked");
+    if (isMobile) setIsSidebarOpen(false);
+    await signOut();
   };
 
-  const SidebarContent = ({ isMobile = false }) => (
+  return (
     <div className="flex flex-col h-full bg-[#0d1117] border-r border-white/5 shadow-2xl relative overflow-hidden">
       {/* Decorative Gradient Background */}
       <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-blue-600/5 to-transparent pointer-events-none opacity-50"></div>
@@ -168,8 +166,8 @@ export default function Sidebar() {
         </div>
         
         <button 
-          onClick={handleLogout}
-          className="w-full flex items-center justify-center xl:justify-start gap-3.5 px-4 py-3.5 text-gray-500 hover:text-rose-500 transition-all rounded-2xl hover:bg-rose-500/5 group"
+          onClick={handleLogoutClick}
+          className="w-full flex items-center justify-center xl:justify-start gap-3.5 px-4 py-3.5 text-gray-500 hover:text-rose-500 transition-all rounded-2xl hover:bg-rose-500/5 group relative z-50"
         >
           <LogOut size={20} className="group-hover:-translate-x-1 transition-transform duration-300" />
           <span className={`font-bold text-sm tracking-tight ${isMobile ? 'block' : 'hidden xl:block'}`}>Sign Out</span>
@@ -177,15 +175,44 @@ export default function Sidebar() {
       </div>
     </div>
   );
+};
+
+export default function Sidebar() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { user, profile, signOut } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const handleToggle = () => setIsSidebarOpen(prev => !prev);
+    
+    window.addEventListener('toggleSidebar', handleToggle);
+    
+    return () => {
+      window.removeEventListener('toggleSidebar', handleToggle);
+    };
+  }, []);
+
+  const isAdmin = user?.email?.includes('admin'); 
+  
+  const commonProps = {
+    router,
+    pathname,
+    user,
+    profile,
+    signOut,
+    setIsSidebarOpen,
+    isAdmin
+  };
 
   return (
     <>
       <aside id="desktop-sidebar" className="hidden lg:flex w-20 xl:w-72 flex-col h-screen sticky top-0 transition-all duration-300 z-50">
-        <SidebarContent isMobile={false} />
+        <SidebarContent {...commonProps} isMobile={false} />
       </aside>
 
       <aside id="mobile-sidebar" className={`lg:hidden fixed top-0 left-0 z-[100] transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) w-[85vw] max-w-[320px] h-screen flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.5)]`}>
-        <SidebarContent isMobile={true} />
+        <SidebarContent {...commonProps} isMobile={true} />
       </aside>
 
       {isSidebarOpen && (

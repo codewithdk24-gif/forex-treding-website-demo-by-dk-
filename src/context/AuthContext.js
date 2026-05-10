@@ -142,20 +142,28 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signOut = async () => {
+    console.log("[INFRA] Initiating Sign Out Flow...");
     try {
       setLoading(true);
-      await supabase.auth.signOut();
+      // We attempt to sign out from Supabase, but we don't let a network failure block local logout
+      await supabase.auth.signOut().catch(err => {
+        console.warn("[INFRA] Supabase SignOut Warning (continuing local logout):", err.message);
+      });
       
+      console.log("[INFRA] Clearing local auth session...");
       setUser(null);
       setProfile(null);
       setWallet(null);
       lastUserId.current = null;
       
-      router.replace('/auth');
+      // Use push instead of replace to ensure history is cleared and redirect is absolute
+      await router.push('/auth');
+      console.log("[INFRA] Sign Out Complete - Redirected to Auth");
     } catch (err) {
-      console.error('[INFRA] SignOut Error:', err.message);
+      console.error('[INFRA] Critical SignOut Error:', err.message);
+      // Emergency state clearing
       setUser(null);
-      router.replace('/auth');
+      router.push('/auth');
     } finally {
       setLoading(false);
     }

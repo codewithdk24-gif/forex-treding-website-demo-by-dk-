@@ -8,6 +8,17 @@ export const metadata = {
   description: 'Institutional grade liquidity and precision execution in real-time.',
 };
 
+// --- Infrastructure Guard: Suppress External Extension Errors ---
+if (typeof window !== 'undefined') {
+  const originalError = console.error;
+  console.error = (...args) => {
+    if (args[0] && typeof args[0] === 'string' && args[0].includes('Extension context invalidated')) {
+      return; // Suppress noise from browser extensions
+    }
+    originalError.apply(console, args);
+  };
+}
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

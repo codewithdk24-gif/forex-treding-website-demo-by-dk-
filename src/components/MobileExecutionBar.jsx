@@ -23,6 +23,7 @@ export default function MobileExecutionBar() {
   const marginRequired = lots * 450; 
 
   const handleExecute = async (type) => {
+    console.log("[MOBILE EXEC] Order Start:", { type, lots, symbol });
     if (!user || !wallet) {
       showNotification({ type: 'ERROR', message: 'Auth Required' });
       return;
@@ -35,6 +36,10 @@ export default function MobileExecutionBar() {
 
     setIsExecuting(true);
     
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Mobile Node Timeout")), 10000)
+    );
+
     try {
       const tradeData = {
         user_id: user.id,
@@ -46,20 +51,31 @@ export default function MobileExecutionBar() {
         status: 'ACTIVE'
       };
 
-      await db.executeTrade(tradeData);
+      console.log("[MOBILE EXEC] Syncing to DB...");
+      const executionPromise = db.executeTrade(tradeData);
+
+      await Promise.race([executionPromise, timeoutPromise]);
+      console.log("[MOBILE EXEC] Success");
       
       if (typeof window !== 'undefined' && window.showToast) {
         window.showToast(`${type} Executed: ${lots} ${symbol}`, 'success');
       }
       
       setTimeout(() => {
-        if (user?.id) refreshUserData(user.id);
+        if (user?.id) {
+          console.log("[MOBILE EXEC] Refreshing User Data");
+          refreshUserData(user.id);
+        }
       }, 800);
 
     } catch (err) {
-      console.error("Trade Error:", err);
-      showNotification({ type: 'ERROR', message: 'Execution Failed' });
+      console.error("[MOBILE EXEC] Trade Error:", err.message || err);
+      showNotification({ 
+        type: 'ERROR', 
+        message: err.message === "Mobile Node Timeout" ? "Execution Timeout" : "Execution Failed" 
+      });
     } finally {
+      console.log("[MOBILE EXEC] Cleanup");
       setIsExecuting(false);
     }
   };

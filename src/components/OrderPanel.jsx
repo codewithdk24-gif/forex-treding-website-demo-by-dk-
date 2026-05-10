@@ -30,6 +30,7 @@ export default function OrderPanel({ isBottomSheet = false }) {
   const marginRequired = lots * 450; // Institutional margin calculation
 
   const handleExecute = async () => {
+    console.log("[ORDER PANEL] Execution Request:", { type, lots, symbol, orderType });
     if (!user) {
       showNotification({ type: 'ERROR', message: 'Authentication Required' });
       return;
@@ -42,6 +43,11 @@ export default function OrderPanel({ isBottomSheet = false }) {
 
     setIsExecuting(true);
     
+    // Timeout Guard
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Execution Node Timeout")), 10000)
+    );
+
     try {
       const entryPrice = orderType === 'Market' ? currentPrice : parseFloat(limitPrice);
       
@@ -57,9 +63,15 @@ export default function OrderPanel({ isBottomSheet = false }) {
         sl: sl ? parseFloat(sl) : null
       };
 
-      console.log("[ORDER PANEL] Executing trade:", tradeData);
-      const result = await db.executeTrade(tradeData);
-      console.log("[ORDER PANEL] Trade result:", result);
+      console.log("[ORDER PANEL] Database Sync Start:", tradeData);
+      
+      const executionPromise = (async () => {
+        const result = await db.executeTrade(tradeData);
+        console.log("[ORDER PANEL] Database Sync Success:", result);
+        return result;
+      })();
+
+      await Promise.race([executionPromise, timeoutPromise]);
       
       if (typeof window !== 'undefined' && window.showToast) {
         window.showToast(`${orderType} ${type} Placed: ${lots} ${symbol}`, 'success');
@@ -70,13 +82,20 @@ export default function OrderPanel({ isBottomSheet = false }) {
       setSl('');
 
       setTimeout(() => {
-        if (user?.id) refreshUserData(user.id);
+        if (user?.id) {
+          console.log("[ORDER PANEL] Refreshing Account Data");
+          refreshUserData(user.id);
+        }
       }, 800);
 
     } catch (err) {
-      console.error("Trade Execution Error:", err);
-      showNotification({ type: 'ERROR', message: 'Execution Failed' });
+      console.error("[ORDER PANEL] Execution Failed:", err.message || err);
+      showNotification({ 
+        type: 'ERROR', 
+        message: err.message === "Execution Node Timeout" ? "Node Timeout - Check History" : "Execution Failed" 
+      });
     } finally {
+      console.log("[ORDER PANEL] Loading State Cleanup");
       setIsExecuting(false);
     }
   };

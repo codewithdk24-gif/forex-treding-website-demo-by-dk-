@@ -155,7 +155,8 @@ export const useStore = create((set, get) => ({
     set({ activeChannel: channel });
 
     // Price Simulation Engine (Consolidated)
-    const priceInterval = setInterval(() => {
+    let simulationTimeout;
+    const runSimulation = async () => {
       const currentPrices = get().prices;
       const newPrices = { ...currentPrices };
       const history = get().priceHistory;
@@ -174,9 +175,11 @@ export const useStore = create((set, get) => ({
 
       // Trade Trigger Logic
       const activeTrades = (get().trades || []).filter(t => t.status === 'ACTIVE' || t.status === 'PENDING');
-      activeTrades.forEach(async (trade) => {
+      
+      // Process trades sequentially to prevent Supabase spam
+      for (const trade of activeTrades) {
         const currentPrice = newPrices[trade.symbol];
-        if (!currentPrice) return;
+        if (!currentPrice) continue;
 
         if (trade.status === 'PENDING') {
            const isBuy = trade.type === 'BUY';
@@ -202,12 +205,17 @@ export const useStore = create((set, get) => ({
               await db.closeTrade(trade.id, currentPrice, finalPnl);
            }
         }
-      });
-    }, 1500);
+      }
+
+      simulationTimeout = setTimeout(runSimulation, 1500);
+    };
+
+    runSimulation();
 
     return () => {
+      console.log("[INFRA] Cleaning up Realtime Engine...");
       supabase.removeChannel(channel);
-      clearInterval(priceInterval);
+      if (simulationTimeout) clearTimeout(simulationTimeout);
       set({ activeChannel: null });
     };
   },
