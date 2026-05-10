@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useRef, useCallb
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter, usePathname } from 'next/navigation';
 import { db } from '@/lib/db';
+import { useStore } from '@/store/useStore';
 
 const AuthContext = createContext({});
 
@@ -22,31 +23,48 @@ export const AuthProvider = ({ children }) => {
   const lastRefreshTime = useRef(0);
   const lastUserId = useRef(null);
 
-  // Centralized Data Fetcher with Mutex/Guard
+  // Centralized Data Fetcher with Strict Mutex
   const refreshUserData = useCallback(async (userId, force = false) => {
     if (!userId) return;
     
-    // Throttle refreshes to prevent lock storms (debounce 2s unless forced)
+    // Strict Mutex: Never allow concurrent requests for the same user
+    if (isRefreshing.current) {
+      console.log(`[INFRA] refreshUserData skipped: Already fetching for ${userId}`);
+      return;
+    }
+
+    // Debounce: Prevent rapid sequential calls unless forced
     const now = Date.now();
-    if (!force && isRefreshing.current && (now - lastRefreshTime.current < 2000)) {
+    if (!force && (now - lastRefreshTime.current < 2000)) {
+      console.log(`[INFRA] refreshUserData throttled: Too soon for ${userId}`);
       return;
     }
 
     try {
       isRefreshing.current = true;
-      console.log(`[INFRA] Refreshing user data for: ${userId}`);
+      console.log(`[INFRA] Syncing profile for: ${userId}`);
+      const startTime = Date.now();
       
-      const [profileData, walletData] = await Promise.all([
-        db.getProfile(userId),
-        db.getActiveWallet(userId, 'demo')
-      ]);
+      const profileData = await db.getProfile(userId);
+
+      if (!profileData) {
+        console.warn(`[INFRA] No profile found for ${userId}, continuing with null profile`);
+      }
+
+      console.log(`[INFRA] Profile Sync Complete in ${Date.now() - startTime}ms`);
 
       setProfile(profileData);
-      setWallet(walletData);
+      
+      // Sync Wallet in Zustand Store
+      const { syncWallet } = useStore.getState();
+      await syncWallet(userId).catch(err => {
+        console.error("[INFRA] Wallet Sync Failed:", err.message);
+      });
+
       lastUserId.current = userId;
       lastRefreshTime.current = Date.now();
     } catch (err) {
-      console.error('[INFRA] Data Refresh Error:', err.message);
+      console.error('[INFRA] Profile Sync Error:', err.message);
     } finally {
       isRefreshing.current = false;
     }
@@ -58,10 +76,13 @@ export const AuthProvider = ({ children }) => {
     async function init() {
       try {
         console.log("[INFRA] Initializing Auth Singleton...");
+        const startTime = Date.now();
         
         // Single call to get session
         const { data: { session }, error } = await supabase.auth.getSession();
         if (error) throw error;
+        
+        console.log(`[INFRA] session check complete in ${Date.now() - startTime}ms`);
         
         if (session?.user && mounted) {
           setUser(session.user);
@@ -86,14 +107,20 @@ export const AuthProvider = ({ children }) => {
 
       const sessionUser = session?.user ?? null;
       
-      if (sessionUser?.id !== lastUserId.current || event === 'SIGNED_IN') {
+      // Only refresh if user changed, or if we have no user and a sign-in event occurs
+      const shouldRefresh = (sessionUser?.id !== lastUserId.current) || (event === 'SIGNED_IN' && !user);
+
+      if (shouldRefresh) {
+        console.log(`[INFRA] Auth state trigger refresh for: ${sessionUser?.id}`);
         setUser(sessionUser);
         if (sessionUser) {
-          await refreshUserData(sessionUser.id, true);
+          await refreshUserData(sessionUser.id, event === 'SIGNED_IN');
         } else {
           setProfile(null);
           setWallet(null);
           lastUserId.current = null;
+          // Clear store on logout
+          useStore.getState().setConnectionStatus('OFFLINE');
         }
       }
 
@@ -173,7 +200,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={{ 
       user, 
       profile, 
-      wallet, 
+      wallet,
       isReady, 
       loading, 
       signIn, 

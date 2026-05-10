@@ -1,9 +1,75 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '../store/useStore';
 import { useAuth } from '@/context/AuthContext';
+import { 
+  CheckCircle2, 
+  XCircle, 
+  Info, 
+  AlertCircle,
+  X
+} from 'lucide-react';
+
+// --- Professional Toast Component with Lifecycle Management ---
+const Toast = ({ notification, onDismiss }) => {
+  const [isExiting, setIsExiting] = useState(false);
+
+  useEffect(() => {
+    const duration = notification.type === 'ERROR' ? 5000 : 3000;
+    const exitBuffer = 400; // ms before actual removal to show animation
+
+    const timer = setTimeout(() => {
+      setIsExiting(true);
+    }, duration - exitBuffer);
+
+    return () => clearTimeout(timer);
+  }, [notification.type]);
+
+  const getIcon = () => {
+    switch (notification.type) {
+      case 'SUCCESS':
+      case 'success':
+      case 'sell':
+        return <CheckCircle2 className="text-emerald-500" size={20} />;
+      case 'ERROR':
+      case 'error':
+        return <XCircle className="text-rose-500" size={20} />;
+      case 'INFO':
+      case 'info':
+        return <Info className="text-blue-500" size={20} />;
+      default:
+        return <AlertCircle className="text-amber-500" size={20} />;
+    }
+  };
+
+  return (
+    <div 
+      className={`toast ${notification.type.toLowerCase()} ${isExiting ? 'fade-out' : ''} group`}
+      style={{ pointerEvents: 'auto' }}
+    >
+      <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center shadow-inner">
+        {getIcon()}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div 
+          className="text-[13px] font-bold text-white tracking-tight leading-snug"
+          dangerouslySetInnerHTML={{ __html: notification.message }}
+        />
+      </div>
+      <button 
+        onClick={() => {
+          setIsExiting(true);
+          setTimeout(() => onDismiss(notification.id), 300);
+        }}
+        className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-white/5 text-gray-500 hover:text-white transition-all"
+      >
+        <X size={14} />
+      </button>
+    </div>
+  );
+};
 
 export default function ClientSetup() {
   const router = useRouter();
@@ -77,38 +143,13 @@ export default function ClientSetup() {
       }
     };
 
-    // Global Feedback System
+    // Global Feedback System (Bridge to Zustand)
     window.showToast = (message, type = 'success') => {
-      let container = document.querySelector('.toast-container');
-      if (!container) {
-        container = document.createElement('div');
-        container.className = 'toast-container fixed bottom-8 right-8 z-[9999] flex flex-col gap-3';
-        document.body.appendChild(container);
-      }
-
-      const toast = document.createElement('div');
-      toast.className = `toast ${type} bg-[#131722]/90 backdrop-blur-md border border-white/10 px-5 py-4 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.4)] flex items-center gap-4 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] opacity-0 translate-y-4 translate-x-4 scale-95`;
-      
-      const icon = (type === 'success' || type === 'sell') ? '✅' : type === 'error' ? '❌' : 'ℹ️';
-      
-      toast.innerHTML = `
-        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-lg">${icon}</div>
-        <p class="text-sm font-bold text-white tracking-tight">${message}</p>
-      `;
-      
-      container.appendChild(toast);
-      
-      // Animate in
-      requestAnimationFrame(() => {
-        toast.classList.remove('opacity-0', 'translate-y-4', 'translate-x-4', 'scale-95');
+      // Direct call to store ensures consistent behavior across React and Vanilla JS
+      useStore.getState().showNotification({ 
+        message, 
+        type: type.toUpperCase() 
       });
-      
-      setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-x-12', 'scale-90');
-        toast.addEventListener('transitionend', () => {
-          toast.remove();
-        }, { once: true });
-      }, 3500);
     };
 
     window.showModal = (title, content) => {
@@ -196,5 +237,20 @@ export default function ClientSetup() {
     };
   }, [router, setPwaPrompt]);
 
-  return null;
+  const notifications = useStore(state => state.notifications);
+  const dismissNotification = useStore(state => state.dismissNotification);
+
+  return (
+    <>
+      <div className="toast-container">
+        {notifications.map((note) => (
+          <Toast 
+            key={note.id} 
+            notification={note} 
+            onDismiss={dismissNotification} 
+          />
+        ))}
+      </div>
+    </>
+  );
 }

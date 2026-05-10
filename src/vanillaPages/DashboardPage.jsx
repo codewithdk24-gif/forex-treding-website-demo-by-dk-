@@ -4,17 +4,19 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { TradingViewChart } from '../components/TradingViewChart';
 import { useStore } from '../store/useStore';
-import { 
-  Zap, 
-  TrendingUp, 
-  TrendingDown, 
-  ArrowUp,
-  ArrowDown,
-  Loader2,
-  BarChart3,
-  MousePointer2,
-  Crosshair,
-  Timer
+import { db } from '../lib/db';
+import { useAuth } from '../context/AuthContext';
+import {
+   Zap,
+   TrendingUp,
+   TrendingDown,
+   ArrowUp,
+   ArrowDown,
+   Loader2,
+   BarChart3,
+   MousePointer2,
+   Crosshair,
+   Timer
 } from 'lucide-react';
 
 export const DashboardPage = () => {
@@ -25,7 +27,9 @@ export const DashboardPage = () => {
    const [isLoading, setIsLoading] = useState(true);
    const [terminalPrice, setTerminalPrice] = useState('1.08245');
    const [priceColor, setPriceColor] = useState('text-white');
-   
+
+   const { user, refreshUserData } = useAuth();
+
    const addOrder = useStore(state => state.addOrder);
    const prices = useStore(state => state.prices);
    const mode = useStore(state => state.mode);
@@ -58,6 +62,26 @@ export const DashboardPage = () => {
       console.log("[EXECUTION] Start:", { orderType, lotSize, activeSymbol });
       setIsExecuting(true);
       
+      if (!db) {
+         console.error("[EXECUTION] Critical Error: DB module not initialized");
+         setIsExecuting(false);
+         return;
+      }
+
+      if (!user) {
+         console.error("[EXECUTION] Critical Error: Unauthenticated user attempt");
+         if (window.showToast) window.showToast("Authentication Required", "error");
+         setIsExecuting(false);
+         return;
+      }
+
+      if (!wallet) {
+         console.error("[EXECUTION] Critical Error: Wallet Node Not Linked");
+         if (window.showToast) window.showToast("Wallet Connection Failed", "error");
+         setIsExecuting(false);
+         return;
+      }
+
       const symbol = activeSymbol || 'EUR/USD';
       const entryPrice = terminalPrice;
 
@@ -65,7 +89,7 @@ export const DashboardPage = () => {
       const timeString = now.toISOString().replace('T', ' ').split('.')[0];
 
       const newOrder = {
-         id: 'T-' + Math.floor(10000 + Math.random() * 90000),
+         id: crypto.randomUUID(),
          time: timeString,
          symbol: symbol,
          type: orderType,
@@ -80,53 +104,57 @@ export const DashboardPage = () => {
       addOrder(newOrder);
 
       // Create a timeout promise
-      const timeoutPromise = new Promise((_, reject) => 
+      const timeoutPromise = new Promise((_, reject) =>
          setTimeout(() => reject(new Error("Execution Timeout (10s)")), 10000)
       );
 
       try {
          console.log("[EXECUTION] Syncing to Supabase...");
-         
+
          const executionPromise = (async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            const userId = user?.id || 'anonymous';
-            
-            console.log("[EXECUTION] Database Insert Start:", userId);
+            console.log("[EXECUTION_START] Initiating Node Sync...");
+            const startTime = Date.now();
             const tradeData = {
                id: newOrder.id,
-               user_id: userId,
-               wallet_id: wallet?.id,
+               user_id: user.id,
+               wallet_id: wallet.id,
                symbol: newOrder.symbol,
                type: newOrder.type,
                size: parseFloat(newOrder.size),
                entry_price: parseFloat(newOrder.entry_price),
-               status: newOrder.status,
-               time: newOrder.time
+               status: newOrder.status
             };
 
+            console.log("[INSERT_START] Sending to Supabase Trades Layer...");
             const result = await db.executeTrade(tradeData);
-            console.log("[EXECUTION] Database Insert Success:", result);
+            console.log(`[INSERT_SUCCESS] Trade Node Synchronized in ${Date.now() - startTime}ms:`, result?.id);
             return true;
          })();
 
          // Race between execution and timeout
          await Promise.race([executionPromise, timeoutPromise]);
-         
-         console.log("[EXECUTION] Flow Complete");
+
+         console.log("[EXECUTION_COMPLETE] Flow Success");
          if (window.showToast) {
             const toastType = orderType === 'BUY' ? 'success' : 'sell';
-            const msg = `<span class="font-bold text-white">${orderType} Order Executed</span><br/>
+            const msg = `<span class="font-bold text-white">${orderType} Order Executed Successfully</span><br/>
                       <span class="text-[10px] text-gray-400 uppercase tracking-widest">${symbol} • ${parseFloat(lotSize).toFixed(2)} Lot</span>`;
             window.showToast(msg, toastType);
          }
-      } catch (error) {
-         console.error("[EXECUTION] Failure:", error.message || error);
+
+         // Refresh data to reflect wallet balance change
+         if (refreshUserData && user?.id) {
+            console.log("[SYNC_START] Updating Wallet and Positions...");
+            refreshUserData(user.id);
+         }
+
+      } catch (err) {
+         console.error("[EXECUTION] Failure:", err.message || err);
          if (window.showToast) {
-            window.showToast(`<span class="text-rose-500 font-bold">Execution Error</span><br/><span class="text-[10px] opacity-70">${error.message || 'Node Timeout'}</span>`, 'error');
+            window.showToast(`Execution Failed: ${err.message || 'Node Error'}`, 'error');
          }
       } finally {
-         console.log("[EXECUTION] Cleanup & UI Reset");
-         window.dispatchEvent(new CustomEvent('tradeExecuted'));
+         console.log("[EXECUTION] Loading State Cleanup");
          setIsExecuting(false);
          closeOrderModal();
       }
@@ -137,7 +165,7 @@ export const DashboardPage = () => {
       const loadTimer = setTimeout(() => setIsLoading(false), 1200);
 
       const symbolKey = activeSymbol || 'EUR/USD';
-      
+
       const interval = setInterval(() => {
          const currentPrice = prices[symbolKey];
          if (currentPrice) {
@@ -181,7 +209,7 @@ export const DashboardPage = () => {
                   <BarChart3 size={14} className="text-blue-500" />
                   <span className="text-[11px] font-black uppercase tracking-widest">{activeSymbol || 'EUR / USD'}</span>
                </div>
-               
+
                <div className="hidden sm:flex items-center bg-white/[0.03] p-1 rounded-xl border border-white/5">
                   <button onClick={() => setMode('demo')} className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${mode === 'demo' ? 'bg-orange-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}>Demo</button>
                   <button onClick={() => setMode('live')} className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${mode === 'live' ? 'bg-emerald-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}>Live</button>
@@ -192,7 +220,7 @@ export const DashboardPage = () => {
                <div className="flex items-center gap-4 bg-emerald-500/5 px-3 py-1.5 rounded-xl border border-emerald-500/10">
                   <p className={`text-lg font-black tracking-tighter tabular-nums ${priceColor} transition-all duration-300 leading-none`}>{terminalPrice}</p>
                   <div className="flex flex-col">
-                    <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest leading-none">+1.42%</span>
+                     <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest leading-none">+1.42%</span>
                   </div>
                </div>
                <div className="hidden md:flex items-center gap-2">
@@ -212,7 +240,7 @@ export const DashboardPage = () => {
                      <TradingViewChart symbol={activeSymbol || 'FX:EURUSD'} theme="dark" />
                   </div>
                )}
-               
+
                {isLoading && (
                   <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#0d1117]">
                      <Loader2 size={40} className="text-blue-500 animate-spin mb-4" />
@@ -329,15 +357,15 @@ export const DashboardPage = () => {
          {isModalOpen && (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
                <div className="absolute inset-0 bg-[#0d1117]/90 backdrop-blur-2xl" onClick={closeOrderModal}></div>
-               
+
                <div className="relative w-full max-w-md bg-[#131722] border border-white/10 rounded-[3rem] p-10 shadow-[0_0_100px_rgba(0,0,0,0.9)] overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-600 via-emerald-500 to-blue-400"></div>
-                  
+
                   <div className="text-center space-y-8">
                      <div className={`w-24 h-24 rounded-[2.5rem] flex items-center justify-center mx-auto mb-2 shadow-inner ring-1 ring-white/10 ${orderType === 'BUY' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
                         {orderType === 'BUY' ? <TrendingUp size={40} /> : <TrendingDown size={40} />}
                      </div>
-                     
+
                      <div className="space-y-3">
                         <h2 className="text-3xl font-black uppercase tracking-tighter text-white">Execution <span className={orderType === 'BUY' ? 'text-emerald-500' : 'text-rose-500'}>{orderType}</span></h2>
                         <p className="text-[10px] font-black text-gray-600 uppercase tracking-[0.4em]">Sub-Millisecond Node Confirmation</p>

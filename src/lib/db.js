@@ -1,15 +1,35 @@
 import { supabase } from './supabaseClient';
 
+// Institutional Timeout Guard (7 seconds)
+const withTimeout = async (promise, timeoutMs = 7000) => {
+  let timeoutId;
+  const timeoutPromise = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error("Supabase Operation Timeout")), timeoutMs);
+  });
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};
+
 export const db = {
   // --- Profiles ---
   async getProfile(userId) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
-    if (error) throw error;
-    return data;
+    try {
+      const result = await withTimeout(
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .maybeSingle()
+      );
+      if (result.error) throw result.error;
+      return result.data;
+    } catch (error) {
+      console.error(`[DB] getProfile Error: ${error.message}`);
+      throw error;
+    }
   },
 
   async updateProfile(userId, updates) {
@@ -34,31 +54,39 @@ export const db = {
   },
 
   async getActiveWallet(userId, type = 'demo') {
+    console.log(`[DB] getActiveWallet Start: ${userId} (${type})`);
     try {
-      const { data, error } = await supabase
-        .from('wallets')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('account_type', type)
-        .eq('is_active', true);
+      const result = await withTimeout(
+        supabase
+          .from('wallets')
+          .select('*')
+          .eq('user_id', userId)
+          .eq('account_type', type)
+          .eq('is_active', true)
+      );
 
-      if (error) throw error;
+      if (result.error) throw result.error;
+      const data = result.data;
 
       if (!data || data.length === 0) {
         console.log("[DB] No wallet found, creating institutional account...");
-        const { data: newWallet, error: createError } = await supabase
-          .from('wallets')
-          .insert([{ user_id: userId, account_type: type, balance: 100000, is_active: true }])
-          .select()
-          .maybeSingle();
+        const createResult = await withTimeout(
+          supabase
+            .from('wallets')
+            .insert([{ user_id: userId, account_type: type, balance: 100000, is_active: true }])
+            .select()
+            .maybeSingle()
+        );
         
-        if (createError) throw createError;
-        return newWallet;
+        if (createResult.error) throw createResult.error;
+        console.log("[DB] getActiveWallet: Created New Wallet");
+        return createResult.data;
       }
 
+      console.log(`[DB] getActiveWallet Success: ${data[0].id}`);
       return data[0];
     } catch (err) {
-      console.error("[DB] Wallet Fetch Error:", err.message);
+      console.error("[DB] getActiveWallet Error:", err.message);
       throw err;
     }
   },
@@ -110,6 +138,8 @@ export const db = {
   },
 
   async executeTrade(tradeData) {
+    console.log("[DB] executeTrade Initiation:", tradeData.symbol);
+    
     // --- Defensive Validation ---
     const required = ['user_id', 'symbol', 'type', 'size', 'entry_price'];
     for (const field of required) {
@@ -119,29 +149,60 @@ export const db = {
       }
     }
 
-    // Unify entry field (fallback for legacy code)
-    const finalizedData = {
-      ...tradeData,
-      entry_price: tradeData.entry_price || tradeData.entry,
-      size: parseFloat(tradeData.size)
-    };
+    // UUID Validation (Postgres UUID column will hang or fail on 'anonymous' or non-UUID formats)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     
-    // Clean legacy field
-    delete finalizedData.entry;
-
-    console.log("[DB] Executing Validated Trade Node:", finalizedData);
-
-    const { data, error } = await supabase
-      .from('trades')
-      .insert([finalizedData])
-      .select()
-      .maybeSingle();
-    
-    if (error) {
-      console.error("[DB] Supabase Insert Error:", error.message);
-      throw error;
+    if (!tradeData.user_id || !uuidRegex.test(tradeData.user_id)) {
+       console.error("[DB] INVALID USER UUID:", tradeData.user_id);
+       throw new Error("Execution Error: Invalid Institutional Session");
     }
-    return data;
+
+    if (tradeData.id && !uuidRegex.test(tradeData.id)) {
+       console.warn("[DB] INVALID TRADE UUID provided, allowing Supabase to generate:", tradeData.id);
+       delete tradeData.id;
+    }
+
+    // Strict Schema Mapping (Prevents "column does not exist" errors)
+    const finalizedData = {
+      user_id: tradeData.user_id,
+      wallet_id: tradeData.wallet_id,
+      symbol: tradeData.symbol,
+      type: tradeData.type,
+      size: parseFloat(tradeData.size),
+      entry_price: parseFloat(tradeData.entry_price || tradeData.entry),
+      status: tradeData.status || 'ACTIVE',
+      tp: tradeData.tp ? parseFloat(tradeData.tp) : null,
+      sl: tradeData.sl ? parseFloat(tradeData.sl) : null,
+      pnl: parseFloat(tradeData.pnl || 0)
+    };
+
+    if (tradeData.id && uuidRegex.test(tradeData.id)) {
+      finalizedData.id = tradeData.id;
+    }
+
+    console.log("[DB] Supabase Insert Start:", finalizedData.symbol);
+
+    try {
+      const result = await withTimeout(
+        supabase
+          .from('trades')
+          .insert([finalizedData])
+          .select()
+          .maybeSingle()
+      );
+      
+      if (result.error) {
+        console.error("[DB] Supabase Insert Error:", result.error.message);
+        throw result.error;
+      }
+      
+      const data = result.data;
+      console.log("[DB] Supabase Insert Success:", data?.id);
+      return data;
+    } catch (err) {
+      console.error("[DB] executeTrade Critical Failure:", err.message);
+      throw err;
+    }
   },
 
   async closeTrade(tradeId, exitPrice, pnl) {
@@ -166,9 +227,17 @@ export const db = {
   },
 
   async createTransaction(txData) {
+    const finalizedTx = {
+      user_id: txData.user_id,
+      wallet_id: txData.wallet_id,
+      amount: parseFloat(txData.amount),
+      type: txData.type,
+      asset: txData.asset || 'USD',
+      status: 'COMPLETED'
+    };
     const { data, error } = await supabase
       .from('transactions')
-      .insert([{ ...txData, status: 'COMPLETED' }])
+      .insert([finalizedTx])
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -210,3 +279,6 @@ export const db = {
     }
   }
 };
+
+export default db;
+

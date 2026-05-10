@@ -113,20 +113,25 @@ export const useStore = create((set, get) => ({
 
     const fetchInitialData = async () => {
       set({ connectionStatus: 'SYNCING' });
-      const { data: trades } = await supabase
-        .from('trades')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false });
-      
-      const walletData = await db.getActiveWallet(userId, get().mode);
-      
-      set({ 
-        trades: trades || [], 
-        wallet: { balance: walletData?.balance || 0, currency: 'USD', id: walletData?.id },
-        isHydrated: true, 
-        connectionStatus: 'LIVE' 
-      });
+      try {
+        const { data: trades } = await supabase
+          .from('trades')
+          .select('*')
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false });
+        
+        const walletData = await db.getActiveWallet(userId, get().mode);
+        
+        set({ 
+          trades: trades || [], 
+          wallet: { balance: walletData?.balance || 0, currency: 'USD', id: walletData?.id },
+          isHydrated: true, 
+          connectionStatus: 'LIVE' 
+        });
+      } catch (err) {
+        console.error("[INFRA] Initial Data Fetch Error:", err);
+        set({ connectionStatus: 'OFFLINE' });
+      }
     };
 
     fetchInitialData();
@@ -186,41 +191,44 @@ export const useStore = create((set, get) => ({
 
       set({ prices: newPrices, priceHistory: newHistory });
 
-      // Trade Trigger Logic
-      const activeTrades = (get().trades || []).filter(t => t.status === 'ACTIVE' || t.status === 'PENDING');
-      
-      // Process trades sequentially to prevent Supabase spam
-      for (const trade of activeTrades) {
-        const currentPrice = newPrices[trade.symbol];
-        if (!currentPrice) continue;
+      try {
+        const activeTrades = (get().trades || []).filter(t => t.status === 'ACTIVE' || t.status === 'PENDING');
+        for (const trade of activeTrades) {
+          const currentPrice = newPrices[trade.symbol];
+          if (!currentPrice) continue;
 
-        if (trade.status === 'PENDING') {
-           const isBuy = trade.type === 'BUY';
-           const entry = trade.entry_price;
-           let shouldTrigger = false;
-           if (isBuy && currentPrice <= entry) shouldTrigger = true;
-           if (!isBuy && currentPrice >= entry) shouldTrigger = true;
-           if (shouldTrigger) {
-              await supabase.from('trades').update({ status: 'ACTIVE' }).eq('id', trade.id);
-           }
-        }
+          if (trade.status === 'PENDING') {
+             const isBuy = trade.type === 'BUY';
+             const entry = trade.entry_price;
+             let shouldTrigger = false;
+             if (isBuy && currentPrice <= entry) shouldTrigger = true;
+             if (!isBuy && currentPrice >= entry) shouldTrigger = true;
+             if (shouldTrigger) {
+                await supabase.from('trades').update({ status: 'ACTIVE' }).eq('id', trade.id);
+             }
+          }
 
-        if (trade.status === 'ACTIVE') {
-           const isBuy = trade.type === 'BUY';
-           let shouldClose = false;
-           if (trade.tp && ((isBuy && currentPrice >= trade.tp) || (!isBuy && currentPrice <= trade.tp))) shouldClose = true;
-           if (trade.sl && ((isBuy && currentPrice <= trade.sl) || (!isBuy && currentPrice >= trade.sl))) shouldClose = true;
-           
-           if (shouldClose) {
-              const diff = isBuy ? (currentPrice - trade.entry_price) : (trade.entry_price - currentPrice);
-              const multiplier = trade.symbol.includes('JPY') ? 1000 : (trade.symbol.includes('BTC') ? 1 : 100000);
-              const finalPnl = diff * trade.size * multiplier;
-              await db.closeTrade(trade.id, currentPrice, finalPnl);
-           }
+          if (trade.status === 'ACTIVE') {
+             const isBuy = trade.type === 'BUY';
+             let shouldClose = false;
+             if (trade.tp && ((isBuy && currentPrice >= trade.tp) || (!isBuy && currentPrice <= trade.tp))) shouldClose = true;
+             if (trade.sl && ((isBuy && currentPrice <= trade.sl) || (!isBuy && currentPrice >= trade.sl))) shouldClose = true;
+             
+             if (shouldClose) {
+                const diff = isBuy ? (currentPrice - trade.entry_price) : (trade.entry_price - currentPrice);
+                const multiplier = trade.symbol.includes('JPY') ? 1000 : (trade.symbol.includes('BTC') ? 1 : 100000);
+                const finalPnl = diff * trade.size * multiplier;
+                await db.closeTrade(trade.id, currentPrice, finalPnl);
+             }
+          }
         }
+      } catch (err) {
+        console.error("[INFRA] Simulation Trade Processor Error:", err.message);
       }
-
-      simulationTimeout = setTimeout(runSimulation, 1500);
+      
+      if (get().connectionStatus === 'LIVE') {
+         simulationTimeout = setTimeout(runSimulation, 3000);
+      }
     };
 
     runSimulation();
@@ -234,15 +242,23 @@ export const useStore = create((set, get) => ({
   },
 
   showNotification: (note) => {
-    const id = Date.now();
+    const id = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString();
+    const duration = (note.type && note.type.toUpperCase() === 'ERROR') ? 5000 : 3000;
+    
     set((state) => ({
       notifications: [...state.notifications, { ...note, id }]
     }));
+
+    // Auto-dismiss logic handled in store for architectural consistency
     setTimeout(() => {
-      set((state) => ({
-        notifications: get().notifications.filter(n => n.id !== id)
-      }));
-    }, 4000);
+      get().dismissNotification(id);
+    }, duration);
+  },
+
+  dismissNotification: (id) => {
+    set((state) => ({
+      notifications: state.notifications.filter(n => n.id !== id)
+    }));
   },
 
   updatePrices: (newPrices) => set((state) => ({
