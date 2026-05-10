@@ -31,6 +31,7 @@ export const DashboardPage = () => {
    const mode = useStore(state => state.mode);
    const setMode = useStore(state => state.setMode);
    const activeSymbol = useStore(state => state.activeSymbol);
+   const wallet = useStore(state => state.wallet);
 
    const profit = (parseFloat(lotSize) * 640).toFixed(2);
    const risk = (parseFloat(lotSize) * 360).toFixed(2);
@@ -69,7 +70,7 @@ export const DashboardPage = () => {
          symbol: symbol,
          type: orderType,
          size: parseFloat(lotSize).toFixed(2),
-         entry: entryPrice,
+         entry_price: entryPrice,
          current: entryPrice,
          pl: 0,
          status: 'ACTIVE'
@@ -91,19 +92,20 @@ export const DashboardPage = () => {
             const userId = user?.id || 'anonymous';
             
             console.log("[EXECUTION] Database Insert Start:", userId);
-            const { error } = await supabase.from('trades').insert([{
+            const tradeData = {
                id: newOrder.id,
                user_id: userId,
+               wallet_id: wallet?.id,
                symbol: newOrder.symbol,
                type: newOrder.type,
-               size: newOrder.size,
-               entry: newOrder.entry,
+               size: parseFloat(newOrder.size),
+               entry_price: parseFloat(newOrder.entry_price),
                status: newOrder.status,
                time: newOrder.time
-            }]);
-            
-            if (error) throw error;
-            console.log("[EXECUTION] Database Insert Success");
+            };
+
+            const result = await db.executeTrade(tradeData);
+            console.log("[EXECUTION] Database Insert Success:", result);
             return true;
          })();
 

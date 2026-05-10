@@ -110,13 +110,37 @@ export const db = {
   },
 
   async executeTrade(tradeData) {
+    // --- Defensive Validation ---
+    const required = ['user_id', 'symbol', 'type', 'size', 'entry_price'];
+    for (const field of required) {
+      if (!tradeData[field]) {
+        console.error(`[DB] VALIDATION FAILED: Missing ${field}`, tradeData);
+        throw new Error(`Execution Error: Missing ${field}`);
+      }
+    }
+
+    // Unify entry field (fallback for legacy code)
+    const finalizedData = {
+      ...tradeData,
+      entry_price: tradeData.entry_price || tradeData.entry,
+      size: parseFloat(tradeData.size)
+    };
+    
+    // Clean legacy field
+    delete finalizedData.entry;
+
+    console.log("[DB] Executing Validated Trade Node:", finalizedData);
+
     const { data, error } = await supabase
       .from('trades')
-      .insert([tradeData])
+      .insert([finalizedData])
       .select()
       .maybeSingle();
     
-    if (error) throw error;
+    if (error) {
+      console.error("[DB] Supabase Insert Error:", error.message);
+      throw error;
+    }
     return data;
   },
 
