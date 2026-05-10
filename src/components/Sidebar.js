@@ -55,9 +55,9 @@ const SidebarContent = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#0d1117] border-r border-white/5 shadow-2xl relative overflow-hidden">
+    <div className="flex flex-col h-full bg-[#0d1117] border-r border-white/5 shadow-2xl relative">
       {/* Decorative Gradient Background */}
-      <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-blue-600/5 to-transparent pointer-events-none opacity-50"></div>
+      <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-blue-600/5 to-transparent pointer-events-none opacity-30"></div>
       
       {/* Brand Header */}
       <div className="p-6 mb-2 flex items-center justify-between gap-3 relative z-10">
@@ -81,8 +81,8 @@ const SidebarContent = ({
       </div>
       
       {/* Navigation Links */}
-      <nav className="flex-1 px-4 space-y-1 relative z-10">
-        <p className={`text-label mb-3 px-3 ${isMobile ? 'block' : 'hidden xl:block'}`}>Main Menu</p>
+      <nav className="flex-1 px-4 space-y-1 relative z-10 overflow-y-auto no-scrollbar pb-6">
+        <p className={`text-label mb-3 px-3 ${isMobile ? 'block' : 'hidden xl:block'} sticky top-0 bg-[#0d1117] py-2 z-20`}>Main Menu</p>
         
         {menuItems.map(item => {
           const isActive = pathname === item.path;
@@ -163,7 +163,7 @@ const SidebarContent = ({
       </nav>
 
       {/* User Footer Section */}
-      <div className="mt-auto space-y-3 pt-6 border-t border-white/5 pb-8 px-4 relative z-10 bg-[#0d1117]/80 backdrop-blur-xl">
+      <div className="mt-auto space-y-3 pt-4 border-t border-white/5 pb-[max(2rem,env(safe-area-inset-bottom))] px-4 relative z-30 bg-[#0d1117] shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
         <div className="flex items-center justify-center xl:justify-start gap-4 px-2 py-3 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-700/20 border border-blue-500/20 flex items-center justify-center text-blue-500 font-black shrink-0 shadow-lg uppercase overflow-hidden">
             {profile?.avatar_url ? (
@@ -232,7 +232,7 @@ export default function Sidebar() {
         <SidebarContent {...commonProps} isMobile={false} />
       </aside>
 
-      <aside id="mobile-sidebar" className={`lg:hidden fixed top-0 left-0 z-[100] transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) w-[85vw] max-w-[320px] h-screen flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.5)]`}>
+      <aside id="mobile-sidebar" className={`lg:hidden fixed top-0 left-0 z-[100] transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) w-[85vw] max-w-[320px] h-[100dvh] flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.5)]`}>
         <SidebarContent {...commonProps} isMobile={true} />
       </aside>
 

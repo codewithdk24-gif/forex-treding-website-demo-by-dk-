@@ -186,7 +186,7 @@ export const DashboardPage = () => {
    }, [activeSymbol, prices]);
 
    return (
-      <div className="h-full bg-[#0d1117] text-white flex flex-col overflow-hidden selection:bg-blue-500/20 max-w-[1600px] mx-auto w-full relative border-x border-white/5 shadow-2xl">
+      <div className="h-[100dvh] bg-[#0d1117] text-white flex flex-col overflow-hidden selection:bg-blue-500/20 max-w-[1600px] mx-auto w-full relative border-x border-white/5 shadow-2xl">
 
          {/* Institutional Ticker - Compact Desktop Only */}
          <div className="hidden lg:flex shrink-0 bg-black/40 border-b border-white/5 py-1.5 overflow-hidden">
@@ -248,11 +248,11 @@ export const DashboardPage = () => {
                   </div>
                )}
 
-               {/* Mobile Header Overlay */}
-               <div className="lg:hidden absolute top-4 left-1/2 -translate-x-1/2 px-5 py-2.5 bg-black/70 backdrop-blur-xl rounded-full border border-white/10 flex items-center gap-4 z-20 shadow-2xl">
-                  <p className={`text-sm font-black tracking-tighter tabular-nums ${priceColor} transition-all duration-300`}>{terminalPrice}</p>
-                  <div className="w-px h-3 bg-white/10"></div>
-                  <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">+1.42%</span>
+               {/* Mobile Header Overlay - Compact */}
+               <div className="lg:hidden absolute top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-black/60 backdrop-blur-xl rounded-full border border-white/5 flex items-center gap-3 z-20 shadow-xl pointer-events-none">
+                  <p className={`text-xs font-black tracking-tighter tabular-nums ${priceColor} transition-all duration-300`}>{terminalPrice}</p>
+                  <div className="w-px h-2.5 bg-white/10"></div>
+                  <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">+1.42%</span>
                </div>
             </div>
 
@@ -328,27 +328,27 @@ export const DashboardPage = () => {
             </div>
          </main>
 
-         {/* Mobile Bottom Execution Bar */}
-         <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0d1117]/95 backdrop-blur-3xl border-t border-white/10 px-6 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-[0_-20px_60px_rgba(0,0,0,0.9)]">
-            <div className="space-y-6">
-               <div className="flex items-center justify-between gap-10">
-                  <div className="flex-1 space-y-3">
-                     <p className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Trade Size</p>
-                     <div className="flex items-center gap-4">
-                        <button onClick={() => adjustLotSize(-0.01)} className="w-12 h-12 bg-white/[0.05] rounded-2xl border border-white/10 flex items-center justify-center font-black text-xl active:scale-90 text-gray-400">-</button>
-                        <input type="number" value={lotSize} onChange={(e) => setLotSize(e.target.value)} step="0.01" className="w-16 bg-transparent text-center font-black text-xl focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                        <button onClick={() => adjustLotSize(0.01)} className="w-12 h-12 bg-white/[0.05] rounded-2xl border border-white/10 flex items-center justify-center font-black text-xl active:scale-90 text-gray-400">+</button>
+         {/* Mobile Bottom Execution Bar - Compact & Optimized */}
+         <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0d1117]/98 backdrop-blur-3xl border-t border-white/10 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[0_-15px_50px_rgba(0,0,0,0.9)]">
+            <div className="space-y-4">
+               <div className="flex items-center justify-between gap-6">
+                  <div className="flex-1 space-y-2">
+                     <p className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em]">Trade Size</p>
+                     <div className="flex items-center gap-3">
+                        <button onClick={() => adjustLotSize(-0.01)} className="w-10 h-10 bg-white/[0.05] rounded-xl border border-white/10 flex items-center justify-center font-black text-lg active:scale-90 text-gray-400 transition-all">-</button>
+                        <input type="number" value={lotSize} onChange={(e) => setLotSize(e.target.value)} step="0.01" className="w-14 bg-transparent text-center font-black text-lg focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <button onClick={() => adjustLotSize(0.01)} className="w-10 h-10 bg-white/[0.05] rounded-xl border border-white/10 flex items-center justify-center font-black text-lg active:scale-90 text-gray-400 transition-all">+</button>
                      </div>
                   </div>
-                  <div className="text-right space-y-2 pt-4">
-                     <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">+${formattedProfit} Profit</p>
-                     <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest">-${formattedRisk} Risk</p>
+                  <div className="text-right flex flex-col justify-end">
+                     <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest mb-1">PROFIT: +${formattedProfit}</p>
+                     <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest">RISK: -${formattedRisk}</p>
                   </div>
                </div>
 
-               <div className="flex gap-4">
-                  <button onClick={() => initiateOrder('SELL')} className="flex-1 py-5 rounded-[1.5rem] bg-rose-600 text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-rose-900/40 active:scale-95 transition-all ring-1 ring-white/10">Sell</button>
-                  <button onClick={() => initiateOrder('BUY')} className="flex-1 py-5 rounded-[1.5rem] bg-emerald-600 text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-900/40 active:scale-95 transition-all ring-1 ring-white/10">Buy</button>
+               <div className="flex gap-3">
+                  <button onClick={() => initiateOrder('SELL')} className="flex-1 py-3.5 rounded-2xl bg-rose-600 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-rose-900/30 active:scale-95 transition-all ring-1 ring-white/10">Sell</button>
+                  <button onClick={() => initiateOrder('BUY')} className="flex-1 py-3.5 rounded-2xl bg-emerald-600 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-emerald-900/30 active:scale-95 transition-all ring-1 ring-white/10">Buy</button>
                </div>
             </div>
          </div>

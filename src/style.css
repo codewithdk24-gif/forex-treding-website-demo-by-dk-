@@ -14,27 +14,33 @@
 
   /* Institutional Typography System */
   .text-heading-1 {
-    @apply text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none;
+    font-size: clamp(2rem, 8vw, 3rem);
+    @apply font-black uppercase tracking-tighter leading-none;
   }
   
   .text-heading-2 {
-    @apply text-2xl md:text-3xl font-black uppercase tracking-tight leading-tight;
+    font-size: clamp(1.25rem, 6vw, 1.875rem);
+    @apply font-black uppercase tracking-tight leading-tight;
   }
   
   .text-heading-3 {
-    @apply text-lg md:text-xl font-black uppercase tracking-tight;
+    font-size: clamp(1rem, 4vw, 1.25rem);
+    @apply font-black uppercase tracking-tight;
   }
 
   .text-subtitle {
-    @apply text-[10px] md:text-[11px] font-black uppercase tracking-[0.3em] text-gray-500;
+    font-size: clamp(0.5rem, 1.5vw, 0.6875rem);
+    @apply font-black uppercase tracking-[0.3em] text-gray-500;
   }
   
   .text-label {
-    @apply text-[9px] font-black uppercase tracking-widest text-gray-600;
+    font-size: clamp(0.45rem, 1.2vw, 0.5625rem);
+    @apply font-black uppercase tracking-widest text-gray-600;
   }
   
   .text-value {
-    @apply text-lg md:text-xl font-black uppercase tabular-nums;
+    font-size: clamp(1rem, 5vw, 1.25rem);
+    @apply font-black uppercase tabular-nums;
   }
 }
 
