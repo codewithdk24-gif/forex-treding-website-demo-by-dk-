@@ -8,7 +8,7 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 // If environment variables are missing (e.g. during Vercel build if not configured),
 // we provide dummy values to prevent createClient from throwing an error.
 // The app will still require these variables at runtime for actual functionality.
-const finalUrl = supabaseUrl || 'https://placeholder-project.supabase.co';
+const finalUrl = supabaseUrl || 'https://jnjmhruxvhxqovrptgbl.supabase.co';
 const finalKey = supabaseKey || 'placeholder-anon-key';
 
 if (!supabaseUrl || !supabaseKey) {
