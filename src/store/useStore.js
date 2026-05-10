@@ -13,8 +13,21 @@ export const useStore = create((set, get) => ({
   isHydrated: false,
   connectionStatus: 'LIVE',
   mode: 'demo',
+  pwaPrompt: null,
 
   // --- Actions ---
+  setPwaPrompt: (prompt) => set({ pwaPrompt: prompt }),
+  
+  installPwa: async () => {
+    const prompt = get().pwaPrompt;
+    if (!prompt) return;
+    
+    prompt.prompt();
+    const { outcome } = await prompt.userChoice;
+    console.log(`[PWA] Install Outcome: ${outcome}`);
+    
+    set({ pwaPrompt: null });
+  },
   addOrder: (order) => set((state) => ({ 
     trades: [order, ...state.trades] 
   })),

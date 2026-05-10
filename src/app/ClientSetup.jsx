@@ -1,9 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { TradingViewChart } from '../components/TradingViewChart';
-import { initializeAdminData } from '../utils/mockAdminData'; // keep mock admin data import
 import { useStore } from '../store/useStore';
 import { useAuth } from '@/context/AuthContext';
 
@@ -11,8 +9,7 @@ export default function ClientSetup() {
   const router = useRouter();
   const { user } = useAuth();
   const initializeRealtime = useStore(state => state.initializeRealtime);
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [showInstallBtn, setShowInstallBtn] = useState(false);
+  const setPwaPrompt = useStore(state => state.setPwaPrompt);
 
   useEffect(() => {
     let cleanup;
@@ -44,14 +41,11 @@ export default function ClientSetup() {
       });
     }
 
-    // --- PWA Install Prompt Logic ---
+    // --- PWA Install Prompt Logic (Headless Sync) ---
     const handleBeforeInstallPrompt = (e) => {
-      // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
-      // Stash the event so it can be triggered later.
-      setDeferredPrompt(e);
-      // Update UI notify the user they can install the PWA
-      setShowInstallBtn(true);
+      console.log("[PWA] Installation prompt detected and stashed in store.");
+      setPwaPrompt(e);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -200,32 +194,7 @@ export default function ClientSetup() {
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };
-  }, [router]);
+  }, [router, setPwaPrompt]);
 
-  const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-    
-    // Show the install prompt
-    deferredPrompt.prompt();
-    
-    // Wait for the user to respond to the prompt
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(`User response to the install prompt: ${outcome}`);
-    
-    // We've used the prompt, and can't use it again, throw it away
-    setDeferredPrompt(null);
-    setShowInstallBtn(false);
-  };
-
-  if (!showInstallBtn) return null;
-
-  return (
-    <button 
-      onClick={handleInstallClick}
-      className="fixed bottom-6 right-6 z-[9999] btn-primary px-6 py-3 text-xs font-black uppercase tracking-widest shadow-[0_10px_40px_rgba(37,99,235,0.4)] animate-[fadeInUp_0.5s_ease-out] flex items-center gap-2"
-    >
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-      Install App
-    </button>
-  );
+  return null;
 }

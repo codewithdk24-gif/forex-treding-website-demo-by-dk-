@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { useStore } from '@/store/useStore';
 import { 
   LayoutDashboard, 
   BarChart3, 
@@ -16,7 +17,8 @@ import {
   ArrowRightLeft,
   Settings,
   ShieldCheck,
-  ChevronRight
+  ChevronRight,
+  Monitor
 } from 'lucide-react';
 
 // --- Sub-component extracted for stability ---
@@ -28,7 +30,9 @@ const SidebarContent = ({
   profile, 
   signOut, 
   setIsSidebarOpen,
-  isAdmin 
+  isAdmin,
+  pwaPrompt,
+  installPwa 
 }) => {
   
   const menuItems = [
@@ -138,7 +142,19 @@ const SidebarContent = ({
           </div>
         )}
 
-        <div className="pt-6 mt-6 border-t border-white/5">
+        <div className="pt-6 mt-6 border-t border-white/5 space-y-1">
+           {pwaPrompt && (
+             <div 
+               onClick={() => {
+                 installPwa();
+                 if (isMobile) setIsSidebarOpen(false);
+               }}
+               className="flex items-center justify-center xl:justify-start gap-3.5 px-4 py-3.5 rounded-2xl text-blue-500 hover:text-white hover:bg-blue-600/10 border border-blue-500/10 transition-all group cursor-pointer shadow-[0_0_15px_rgba(59,130,246,0.05)]"
+             >
+                <Monitor size={20} className="group-hover:scale-110 transition-transform duration-300" />
+                <span className={`font-bold text-sm tracking-tight ${isMobile ? 'block' : 'hidden xl:block'}`}>Install Terminal</span>
+             </div>
+           )}
            <div onClick={() => router.push('/')} className="flex items-center justify-center xl:justify-start gap-3.5 px-4 py-3.5 rounded-2xl text-gray-500 hover:text-white hover:bg-white/[0.04] transition-all group cursor-pointer">
               <Home size={20} className="group-hover:scale-110 transition-transform duration-300" />
               <span className={`font-bold text-sm tracking-tight ${isMobile ? 'block' : 'hidden xl:block'}`}>Back to Landing</span>
@@ -195,6 +211,9 @@ export default function Sidebar() {
 
   const isAdmin = user?.email?.includes('admin'); 
   
+  const pwaPrompt = useStore(state => state.pwaPrompt);
+  const installPwa = useStore(state => state.installPwa);
+
   const commonProps = {
     router,
     pathname,
@@ -202,7 +221,9 @@ export default function Sidebar() {
     profile,
     signOut,
     setIsSidebarOpen,
-    isAdmin
+    isAdmin,
+    pwaPrompt,
+    installPwa
   };
 
   return (

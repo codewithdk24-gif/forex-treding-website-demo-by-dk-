@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useStore } from '../store/useStore';
 import {
   Zap,
   Shield,
@@ -19,7 +21,10 @@ import {
   Activity,
   Gem,
   Phone,
-  Mail
+  Mail,
+  Monitor,
+  Terminal,
+  Send
 } from 'lucide-react';
 
 export default function LandingPage() {
@@ -28,6 +33,9 @@ export default function LandingPage() {
   const [openFeatureId, setOpenFeatureId] = useState(null);
   const [priceData, setPriceData] = useState({ bid: '1.08240', ask: '1.08252', color: 'text-white' });
   const [mounted, setMounted] = useState(false);
+  
+  const pwaPrompt = useStore(state => state.pwaPrompt);
+  const installPwa = useStore(state => state.installPwa);
 
   useEffect(() => {
     setMounted(true);
@@ -62,7 +70,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0d1117] text-white transition-all duration-300 overflow-x-hidden selection:bg-blue-500/20 selection:text-blue-500 font-sans">
+    <div className="min-h-screen bg-[#0d1117] text-white transition-all duration-300 overflow-x-hidden selection:bg-blue-500/20 selection:text-blue-500 font-sans scroll-pt-20">
 
       {/* ── Navbar ── */}
       <nav className="fixed top-0 w-full z-50 bg-[#0d1117]/70 backdrop-blur-3xl h-14 md:h-16 lg:h-20 flex items-center justify-between px-4 md:px-6 lg:px-20">
@@ -85,6 +93,15 @@ export default function LandingPage() {
           <Link href="/auth" className="hidden sm:flex px-6 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05] text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-white/[0.08] transition-all">
             Login
           </Link>
+          {pwaPrompt && (
+            <button 
+              onClick={installPwa}
+              className="hidden md:flex px-5 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.1] text-[10px] font-black uppercase tracking-widest text-blue-400 hover:text-white hover:bg-blue-600/20 hover:border-blue-500/30 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all flex items-center gap-2 group"
+            >
+              <Monitor size={14} className="group-hover:scale-110 transition-transform" />
+              Install Terminal
+            </button>
+          )}
           <Link href="/auth" className="px-3 md:px-6 py-1.5 md:py-2.5 rounded-lg md:rounded-xl bg-blue-600 text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-white shadow-xl shadow-blue-600/20 hover:bg-blue-500 active:scale-95 transition-all ring-1 ring-white/10 whitespace-nowrap">
             Open Account
           </Link>
@@ -94,31 +111,132 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* ── Mobile Menu Overlay ── */}
-      <div className={`fixed inset-0 z-[100] bg-[#0d1117]/98 backdrop-blur-3xl transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-500 p-8 flex flex-col justify-between overflow-hidden`}>
-        {/* Cinematic Orb inside Menu */}
-        <div className="absolute top-[10%] right-[-20%] w-[400px] h-[400px] bg-blue-600/10 blur-[100px] rounded-full pointer-events-none z-0"></div>
-        <div className="relative z-10">
-          <div className="flex justify-between items-center mb-10 sm:mb-16">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-600/20 ring-1 ring-white/10">FX</div>
-            <button onClick={() => toggleMenu(false)} className="p-2.5 rounded-xl bg-white/[0.05] text-gray-500 hover:text-white"><X size={24} /></button>
-          </div>
-          <div className="flex flex-col gap-5">
-            {['Markets', 'Execution', 'Pricing', 'Infrastructure'].map((label) => (
-              <a key={label} href={`#${label.toLowerCase()}`} onClick={() => toggleMenu(false)} className="p-4 sm:p-6 bg-white/[0.03] border border-white/[0.05] rounded-[1.5rem] sm:rounded-[2rem] flex items-center justify-between group active:scale-95 transition-all">
-                <span className="text-xl font-black uppercase tracking-tighter">{label}</span>
-                <ChevronRight className="text-blue-500 group-hover:translate-x-1 transition-transform" />
-              </a>
-            ))}
-          </div>
-        </div>
-        <div className="relative z-10 space-y-6">
-          <Link href="/auth" onClick={() => toggleMenu(false)} className="w-full py-5 bg-blue-600 text-center text-xs font-black uppercase tracking-[0.2em] rounded-[1.5rem] inline-block shadow-2xl shadow-blue-600/20 ring-1 ring-white/10">
-            Start Trading Now
-          </Link>
-          <p className="text-[10px] text-gray-600 text-center font-medium tracking-[0.3em] italic opacity-40">ForexPro Terminal v2.4.8</p>
-        </div>
-      </div>
+      {/* ── Cinematic Mobile Navigation System (Off-Canvas Drawer) ── */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <>
+            {/* Backdrop Overlay */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => toggleMenu(false)}
+              className="fixed inset-0 z-[90] bg-[#0d1117]/60 backdrop-blur-sm lg:hidden"
+            />
+
+            {/* Sidebar Drawer */}
+            <motion.div 
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 left-0 bottom-0 z-[100] w-[85%] max-w-[400px] bg-[#0d1117] border-r border-white/5 flex flex-col overflow-hidden shadow-[20px_0_50px_rgba(0,0,0,0.5)] lg:hidden"
+            >
+              {/* Drawer Content */}
+              <div className="flex flex-col h-full relative">
+                {/* Decorative Lighting Atmosphere */}
+                <div className="absolute top-[-10%] right-[-20%] w-[400px] h-[400px] bg-blue-600/10 blur-[100px] rounded-full pointer-events-none -z-10 animate-pulse"></div>
+                
+                {/* Header Block */}
+                <div className="px-6 py-6 flex justify-between items-center shrink-0 border-b border-white/5 bg-[#0d1117]">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-black shadow-lg shadow-blue-600/30 ring-1 ring-white/20 text-sm">FX</div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-black tracking-tight text-white uppercase leading-none">Forex<span className="text-blue-500">Pro</span></span>
+                      <span className="text-[6px] font-black text-blue-500 uppercase tracking-[0.4em] mt-1 opacity-60">Institutional</span>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => toggleMenu(false)} 
+                    className="w-9 h-9 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-gray-500 hover:text-white transition-all active:scale-90"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                {/* Scrollable Content Container */}
+                <div className="flex-1 overflow-y-auto px-6 py-8 space-y-10 no-scrollbar">
+                  {/* Live Infrastructure Status */}
+                  <div className="flex items-center justify-between p-4 bg-white/[0.02] border border-white/[0.06] rounded-2xl">
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-2 h-2">
+                        <div className="absolute inset-0 bg-emerald-500 rounded-full animate-ping opacity-40"></div>
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full relative z-10"></div>
+                      </div>
+                      <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none">Institutional Node Active</span>
+                    </div>
+                  </div>
+
+                  {/* Main Navigation Grid */}
+                  <div className="space-y-4">
+                    <p className="text-[8px] font-black text-gray-600 uppercase tracking-[0.4em] ml-1">Main Infrastructure</p>
+                    <div className="flex flex-col gap-2.5">
+                      {[
+                        { label: 'Markets',       icon: <BarChart3 size={18} />, id: 'markets' },
+                        { label: 'Execution',     icon: <Zap size={18} />,        id: 'execution' },
+                        { label: 'Pricing',       icon: <Gem size={18} />,        id: 'pricing' },
+                        { label: 'Infrastructure',icon: <Cpu size={18} />,        id: 'infrastructure' }
+                      ].map((item) => (
+                        <a 
+                          key={item.label} 
+                          href={`#${item.id}`} 
+                          onClick={() => toggleMenu(false)}
+                          className="p-4 bg-white/[0.02] border border-white/[0.05] rounded-2xl flex items-center justify-between group active:scale-[0.98] transition-all hover:bg-white/[0.04] hover:border-white/[0.1]"
+                        >
+                          <div className="flex items-center gap-4">
+                             <div className="w-9 h-9 rounded-xl bg-white/[0.03] flex items-center justify-center text-gray-500 group-hover:text-blue-400 transition-colors">
+                                {item.icon}
+                             </div>
+                             <span className="text-sm font-black uppercase tracking-tight text-white/80 group-hover:text-white">{item.label}</span>
+                          </div>
+                          <ChevronRight className="text-gray-700 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" size={14} />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Quick Actions Section */}
+                  <div className="space-y-4 pb-10">
+                    <p className="text-[8px] font-black text-gray-600 uppercase tracking-[0.4em] ml-1">Quick Access</p>
+                    <div className="grid grid-cols-2 gap-2.5">
+                      {pwaPrompt && (
+                        <button 
+                          onClick={() => { installPwa(); toggleMenu(false); }}
+                          className="p-4 bg-blue-600/5 border border-blue-500/10 rounded-2xl flex flex-col items-center gap-2 text-blue-400 hover:bg-blue-600/10 transition-all active:scale-95"
+                        >
+                          <Monitor size={18} />
+                          <span className="text-[8px] font-black uppercase tracking-widest">Install App</span>
+                        </button>
+                      )}
+                      <a href="https://t.me/your_support" className="p-4 bg-white/[0.02] border border-white/[0.05] rounded-2xl flex flex-col items-center gap-2 text-gray-400 hover:text-white transition-all active:scale-95">
+                        <Send size={18} />
+                        <span className="text-[8px] font-black uppercase tracking-widest text-center">Support</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Navigation CTA */}
+                <div className="p-6 bg-[#0d1117] border-t border-white/5 space-y-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+                  <Link 
+                    href="/dashboard" 
+                    onClick={() => toggleMenu(false)}
+                    className="w-full py-4 bg-blue-600 text-white flex items-center justify-center gap-2.5 rounded-2xl shadow-xl shadow-blue-600/20 active:scale-95 transition-all relative overflow-hidden group"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none"></div>
+                    <Terminal size={16} className="fill-white" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Launch Terminal</span>
+                  </Link>
+
+                  <div className="flex flex-col items-center gap-1 opacity-30">
+                    <p className="text-[7px] text-gray-500 font-black tracking-[0.3em] uppercase">ForexPro Terminal v2.4.8</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* ── Hero Section ── */}
       <section className="relative min-h-[100dvh] flex flex-col justify-center pt-20 lg:pt-[120px] pb-12 lg:pb-20 px-4 md:px-6 overflow-hidden">
