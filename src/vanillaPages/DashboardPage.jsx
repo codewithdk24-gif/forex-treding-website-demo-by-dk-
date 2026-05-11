@@ -257,15 +257,15 @@ export const DashboardPage = () => {
             </div>
 
             {/* Desktop Side Panel */}
-            <div className="hidden md:flex w-[350px] border-l border-white/5 bg-[#0d1117] flex-col shrink-0 overflow-y-auto no-scrollbar relative z-30">
-               <div className="p-8 space-y-10">
+            <div className="hidden md:flex w-[350px] border-l border-white/5 bg-[#0d1117] flex-col shrink-0 overflow-y-auto relative z-30">
+               <div className="p-5 pb-20 space-y-5">
                   {/* Order Selector */}
                   <div className="space-y-4">
                      <p className="text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Execution Type</p>
-                     <div className="flex bg-white/[0.03] rounded-2xl p-1.5 gap-1.5 border border-white/5">
-                        <button className="flex-1 py-2.5 text-[10px] font-black rounded-xl bg-blue-600 text-white uppercase tracking-widest shadow-lg shadow-blue-600/20">Market</button>
-                        <button className="flex-1 py-2.5 text-[10px] font-black rounded-xl text-gray-500 hover:text-white uppercase tracking-widest transition-all">Limit</button>
-                        <button className="flex-1 py-2.5 text-[10px] font-black rounded-xl text-gray-500 hover:text-white uppercase tracking-widest transition-all">Stop</button>
+                     <div className="flex bg-white/[0.03] rounded-2xl p-1 gap-1 border border-white/5">
+                        <button className="flex-1 py-2 text-[10px] font-black rounded-xl bg-blue-600 text-white uppercase tracking-widest shadow-lg shadow-blue-600/20">Market</button>
+                        <button className="flex-1 py-2 text-[10px] font-black rounded-xl text-gray-500 hover:text-white uppercase tracking-widest transition-all">Limit</button>
+                        <button className="flex-1 py-2 text-[10px] font-black rounded-xl text-gray-500 hover:text-white uppercase tracking-widest transition-all">Stop</button>
                      </div>
                   </div>
 
@@ -297,7 +297,7 @@ export const DashboardPage = () => {
                   </div>
 
                   {/* Order Stats */}
-                  <div className="space-y-4 pt-4 border-t border-white/5">
+                  <div className="space-y-3 pt-3 border-t border-white/5">
                      {[
                         { label: 'Market Spread', val: '0.2 pips' },
                         { label: 'Commission Fee', val: '$0.10 / lot' },
@@ -312,16 +312,17 @@ export const DashboardPage = () => {
                   </div>
 
                   {/* Execution Buttons */}
-                  <div className="pt-8 space-y-4">
+                  {/* Execution Buttons */}
+                  <div className="pt-2 grid grid-cols-2 gap-3">
                      <button onClick={() => initiateOrder('BUY')}
-                        className="w-full py-5 rounded-[2rem] bg-emerald-600 hover:bg-emerald-500 active:scale-[0.97] transition-all font-black text-xs uppercase tracking-[0.3em] text-white shadow-2xl shadow-emerald-900/30 ring-1 ring-white/10 flex items-center justify-center gap-3">
-                        <ArrowUp size={18} strokeWidth={3} />
-                        Execute Buy
+                        className="py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.97] transition-all font-black text-[10px] uppercase tracking-[0.2em] text-white shadow-2xl shadow-emerald-900/30 ring-1 ring-white/10 flex flex-col items-center justify-center gap-1.5">
+                        <ArrowUp size={16} strokeWidth={3} />
+                        Buy
                      </button>
                      <button onClick={() => initiateOrder('SELL')}
-                        className="w-full py-5 rounded-[2rem] bg-rose-600 hover:bg-rose-500 active:scale-[0.97] transition-all font-black text-xs uppercase tracking-[0.3em] text-white shadow-2xl shadow-rose-900/30 ring-1 ring-white/10 flex items-center justify-center gap-3">
-                        <ArrowDown size={18} strokeWidth={3} />
-                        Execute Sell
+                        className="py-4 rounded-2xl bg-rose-600 hover:bg-rose-500 active:scale-[0.97] transition-all font-black text-[10px] uppercase tracking-[0.2em] text-white shadow-2xl shadow-rose-900/30 ring-1 ring-white/10 flex flex-col items-center justify-center gap-1.5">
+                        <ArrowDown size={16} strokeWidth={3} />
+                        Sell
                      </button>
                   </div>
                </div>
