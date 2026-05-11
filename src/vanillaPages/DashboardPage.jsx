@@ -61,7 +61,7 @@ export const DashboardPage = () => {
    const executeOrder = async () => {
       console.log("[EXECUTION] Start:", { orderType, lotSize, activeSymbol });
       setIsExecuting(true);
-      
+
       if (!db) {
          console.error("[EXECUTION] Critical Error: DB module not initialized");
          setIsExecuting(false);
@@ -186,7 +186,7 @@ export const DashboardPage = () => {
    }, [activeSymbol, prices]);
 
    return (
-      <div className="h-[100dvh] bg-[#0d1117] text-white flex flex-col overflow-hidden selection:bg-blue-500/20 max-w-[1600px] mx-auto w-full relative border-x border-white/5 shadow-2xl">
+      <div className="min-h-[100dvh] lg:h-[100dvh] bg-[#0d1117] text-white flex flex-col overflow-x-hidden lg:overflow-hidden selection:bg-blue-500/20 max-w-[1600px] mx-auto w-full relative border-x border-white/5 shadow-2xl">
 
          {/* Institutional Ticker - Compact Desktop Only */}
          <div className="hidden lg:flex shrink-0 bg-black/40 border-b border-white/5 py-1.5 overflow-hidden">
@@ -232,11 +232,11 @@ export const DashboardPage = () => {
          </div>
 
          {/* Main Terminal Area */}
-         <main className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+         <main className="flex-1 flex flex-col md:flex-row relative h-auto lg:h-full">
             {/* Chart Area */}
-            <div className="flex-1 relative bg-[#090c10] min-h-[40vh] md:min-h-0 overflow-hidden">
+            <div className="flex-1 relative bg-[#090c10] h-[850px] md:h-full md:min-h-0 overflow-hidden pb-40 md:pb-0">
                {!isLoading && (
-                  <div className="absolute inset-0 w-full h-full z-10 pl-1 md:pl-0">
+                  <div className="absolute inset-0 w-full h-full z-10 pl-11 md:pl-0">
                      <TradingViewChart symbol={activeSymbol || 'FX:EURUSD'} theme="dark" />
                   </div>
                )}
@@ -248,8 +248,8 @@ export const DashboardPage = () => {
                   </div>
                )}
 
-               {/* Mobile Header Overlay - Compact */}
-               <div className="lg:hidden absolute top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-black/60 backdrop-blur-xl rounded-full border border-white/5 flex items-center gap-3 z-20 shadow-xl pointer-events-none">
+               {/* Mobile Header Overlay - Repositioned to clear TV tools */}
+               <div className="lg:hidden absolute top-[52px] left-1/2 -translate-x-1/2 px-4 py-1.5 bg-black/60 backdrop-blur-xl rounded-full border border-white/5 flex items-center gap-3 z-20 shadow-xl pointer-events-none ring-1 ring-white/10">
                   <p className={`text-xs font-black tracking-tighter tabular-nums ${priceColor} transition-all duration-300`}>{terminalPrice}</p>
                   <div className="w-px h-2.5 bg-white/10"></div>
                   <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">+1.42%</span>
@@ -328,16 +328,16 @@ export const DashboardPage = () => {
             </div>
          </main>
 
-         {/* Mobile Bottom Execution Bar - Compact & Optimized */}
-         <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0d1117]/98 backdrop-blur-3xl border-t border-white/10 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[0_-15px_50px_rgba(0,0,0,0.9)]">
-            <div className="space-y-4">
+         {/* Mobile Bottom Execution Bar - Ultra-Compact */}
+         <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0d1117]/98 backdrop-blur-3xl border-t border-white/10 px-4 pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-15px_50px_rgba(0,0,0,0.9)]">
+            <div className="space-y-3">
                <div className="flex items-center justify-between gap-6">
-                  <div className="flex-1 space-y-2">
-                     <p className="text-[9px] font-black text-gray-500 uppercase tracking-[0.2em]">Trade Size</p>
-                     <div className="flex items-center gap-3">
-                        <button onClick={() => adjustLotSize(-0.01)} className="w-10 h-10 bg-white/[0.05] rounded-xl border border-white/10 flex items-center justify-center font-black text-lg active:scale-90 text-gray-400 transition-all">-</button>
-                        <input type="number" value={lotSize} onChange={(e) => setLotSize(e.target.value)} step="0.01" className="w-14 bg-transparent text-center font-black text-lg focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                        <button onClick={() => adjustLotSize(0.01)} className="w-10 h-10 bg-white/[0.05] rounded-xl border border-white/10 flex items-center justify-center font-black text-lg active:scale-90 text-gray-400 transition-all">+</button>
+                  <div className="flex-1 space-y-1.5">
+                     <p className="text-[8px] font-black text-gray-500 uppercase tracking-[0.2em] ml-0.5">Trade Size</p>
+                     <div className="flex items-center gap-2">
+                        <button onClick={() => adjustLotSize(-0.01)} className="w-9 h-9 bg-white/[0.05] rounded-xl border border-white/10 flex items-center justify-center font-black text-lg active:scale-90 text-gray-400 transition-all">-</button>
+                        <input type="number" value={lotSize} onChange={(e) => setLotSize(e.target.value)} step="0.01" className="w-12 bg-transparent text-center font-black text-base focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        <button onClick={() => adjustLotSize(0.01)} className="w-9 h-9 bg-white/[0.05] rounded-xl border border-white/10 flex items-center justify-center font-black text-lg active:scale-90 text-gray-400 transition-all">+</button>
                      </div>
                   </div>
                   <div className="text-right flex flex-col justify-end">
@@ -346,10 +346,10 @@ export const DashboardPage = () => {
                   </div>
                </div>
 
-               <div className="flex gap-3">
-                  <button onClick={() => initiateOrder('SELL')} className="flex-1 py-3.5 rounded-2xl bg-rose-600 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-rose-900/30 active:scale-95 transition-all ring-1 ring-white/10">Sell</button>
-                  <button onClick={() => initiateOrder('BUY')} className="flex-1 py-3.5 rounded-2xl bg-emerald-600 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-emerald-900/30 active:scale-95 transition-all ring-1 ring-white/10">Buy</button>
-               </div>
+                <div className="flex gap-2">
+                   <button onClick={() => initiateOrder('SELL')} className="flex-1 py-3 rounded-2xl bg-rose-600 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-rose-900/30 active:scale-95 transition-all ring-1 ring-white/10">Sell</button>
+                   <button onClick={() => initiateOrder('BUY')} className="flex-1 py-3 rounded-2xl bg-emerald-600 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-emerald-900/30 active:scale-95 transition-all ring-1 ring-white/10">Buy</button>
+                </div>
             </div>
          </div>
 

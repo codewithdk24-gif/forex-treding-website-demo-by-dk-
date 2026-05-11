@@ -33,7 +33,7 @@ export default function LandingPage() {
   const [openFeatureId, setOpenFeatureId] = useState(null);
   const [priceData, setPriceData] = useState({ bid: '1.08240', ask: '1.08252', color: 'text-white' });
   const [mounted, setMounted] = useState(false);
-  
+
   const pwaPrompt = useStore(state => state.pwaPrompt);
   const installPwa = useStore(state => state.installPwa);
 
@@ -94,7 +94,7 @@ export default function LandingPage() {
             Login
           </Link>
           {pwaPrompt && (
-            <button 
+            <button
               onClick={installPwa}
               className="hidden md:flex px-5 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.1] text-[10px] font-black uppercase tracking-widest text-blue-400 hover:text-white hover:bg-blue-600/20 hover:border-blue-500/30 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all flex items-center gap-2 group"
             >
@@ -116,7 +116,7 @@ export default function LandingPage() {
         {isMenuOpen && (
           <>
             {/* Backdrop Overlay */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -125,7 +125,7 @@ export default function LandingPage() {
             />
 
             {/* Sidebar Drawer */}
-            <motion.div 
+            <motion.div
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
@@ -136,7 +136,7 @@ export default function LandingPage() {
               <div className="flex flex-col h-full relative">
                 {/* Decorative Lighting Atmosphere */}
                 <div className="absolute top-[-10%] right-[-20%] w-[400px] h-[400px] bg-blue-600/10 blur-[100px] rounded-full pointer-events-none -z-10 animate-pulse"></div>
-                
+
                 {/* Header Block */}
                 <div className="px-6 py-6 flex justify-between items-center shrink-0 border-b border-white/5 bg-[#0d1117]">
                   <div className="flex items-center gap-3">
@@ -146,8 +146,8 @@ export default function LandingPage() {
                       <span className="text-[6px] font-black text-blue-500 uppercase tracking-[0.4em] mt-1 opacity-60">Institutional</span>
                     </div>
                   </div>
-                  <button 
-                    onClick={() => toggleMenu(false)} 
+                  <button
+                    onClick={() => toggleMenu(false)}
                     className="w-9 h-9 rounded-xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-gray-500 hover:text-white transition-all active:scale-90"
                   >
                     <X size={18} />
@@ -172,22 +172,22 @@ export default function LandingPage() {
                     <p className="text-[8px] font-black text-gray-600 uppercase tracking-[0.4em] ml-1">Main Infrastructure</p>
                     <div className="flex flex-col gap-2.5">
                       {[
-                        { label: 'Markets',       icon: <BarChart3 size={18} />, id: 'markets' },
-                        { label: 'Execution',     icon: <Zap size={18} />,        id: 'execution' },
-                        { label: 'Pricing',       icon: <Gem size={18} />,        id: 'pricing' },
-                        { label: 'Infrastructure',icon: <Cpu size={18} />,        id: 'infrastructure' }
+                        { label: 'Markets', icon: <BarChart3 size={18} />, id: 'markets' },
+                        { label: 'Execution', icon: <Zap size={18} />, id: 'execution' },
+                        { label: 'Pricing', icon: <Gem size={18} />, id: 'pricing' },
+                        { label: 'Infrastructure', icon: <Cpu size={18} />, id: 'infrastructure' }
                       ].map((item) => (
-                        <a 
-                          key={item.label} 
-                          href={`#${item.id}`} 
+                        <a
+                          key={item.label}
+                          href={`#${item.id}`}
                           onClick={() => toggleMenu(false)}
                           className="p-4 bg-white/[0.02] border border-white/[0.05] rounded-2xl flex items-center justify-between group active:scale-[0.98] transition-all hover:bg-white/[0.04] hover:border-white/[0.1]"
                         >
                           <div className="flex items-center gap-4">
-                             <div className="w-9 h-9 rounded-xl bg-white/[0.03] flex items-center justify-center text-gray-500 group-hover:text-blue-400 transition-colors">
-                                {item.icon}
-                             </div>
-                             <span className="text-sm font-black uppercase tracking-tight text-white/80 group-hover:text-white">{item.label}</span>
+                            <div className="w-9 h-9 rounded-xl bg-white/[0.03] flex items-center justify-center text-gray-500 group-hover:text-blue-400 transition-colors">
+                              {item.icon}
+                            </div>
+                            <span className="text-sm font-black uppercase tracking-tight text-white/80 group-hover:text-white">{item.label}</span>
                           </div>
                           <ChevronRight className="text-gray-700 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" size={14} />
                         </a>
@@ -200,7 +200,7 @@ export default function LandingPage() {
                     <p className="text-[8px] font-black text-gray-600 uppercase tracking-[0.4em] ml-1">Quick Access</p>
                     <div className="grid grid-cols-2 gap-2.5">
                       {pwaPrompt && (
-                        <button 
+                        <button
                           onClick={() => { installPwa(); toggleMenu(false); }}
                           className="p-4 bg-blue-600/5 border border-blue-500/10 rounded-2xl flex flex-col items-center gap-2 text-blue-400 hover:bg-blue-600/10 transition-all active:scale-95"
                         >
@@ -218,8 +218,8 @@ export default function LandingPage() {
 
                 {/* Footer Navigation CTA */}
                 <div className="p-6 bg-[#0d1117] border-t border-white/5 space-y-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-                  <Link 
-                    href="/dashboard" 
+                  <Link
+                    href="/dashboard"
                     onClick={() => toggleMenu(false)}
                     className="w-full py-4 bg-blue-600 text-white flex items-center justify-center gap-2.5 rounded-2xl shadow-xl shadow-blue-600/20 active:scale-95 transition-all relative overflow-hidden group"
                   >
