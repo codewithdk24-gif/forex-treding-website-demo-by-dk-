@@ -99,16 +99,25 @@ export const useStore = create((set, get) => ({
   setConnectionStatus: (status) => set({ connectionStatus: status }),
 
   activeChannel: null,
+  lastInitTime: 0,
 
   // --- Real-time Sync Logic (Supabase ONLY) ---
   initializeRealtime: (userId) => {
     if (!userId) return;
 
+    // Prevention of rapid initialization loops
+    const now = Date.now();
     if (get().activeChannel) {
       console.log("[INFRA] Realtime Singleton: Already Active");
       return;
     }
 
+    if (now - get().lastInitTime < 5000) {
+      console.warn("[INFRA] Realtime Initialization throttled (Cooldown)");
+      return;
+    }
+
+    set({ lastInitTime: now });
     console.log("[INFRA] Initializing Supabase Realtime Engine...");
 
     const fetchInitialData = async () => {

@@ -165,11 +165,19 @@ const SidebarContent = ({
       {/* User Footer Section */}
       <div className="mt-auto space-y-3 pt-4 border-t border-white/5 pb-[max(2rem,env(safe-area-inset-bottom))] px-4 relative z-30 bg-[#0d1117] shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
         <div className="flex items-center justify-center xl:justify-start gap-4 px-2 py-3 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-700/20 border border-blue-500/20 flex items-center justify-center text-blue-500 font-black shrink-0 shadow-lg uppercase overflow-hidden">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 border border-white/10 flex items-center justify-center text-white font-black shrink-0 shadow-lg uppercase overflow-hidden">
             {profile?.avatar_url ? (
               <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
             ) : (
-              <span className="text-sm">{user?.email ? user.email[0] : (isAdmin ? 'A' : 'T')}</span>
+              <span className="text-xs tracking-tighter">
+                {(() => {
+                  const name = profile?.full_name || user?.user_metadata?.full_name || 'Trader';
+                  if (!name || name === 'Trader') return 'TR';
+                  const parts = name.trim().split(/\s+/);
+                  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+                  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+                })()}
+              </span>
             )}
           </div>
           <div className={`${isMobile ? 'block' : 'hidden xl:block'} min-w-0`}>

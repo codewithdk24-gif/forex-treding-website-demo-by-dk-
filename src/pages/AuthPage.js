@@ -13,6 +13,7 @@ export default function AuthPage() {
   const showNotification = useTradeStore(state => state.showNotification);
   
   const [authMode, setAuthMode] = useState('login');
+  const [fullName, setFullName] = useState('');
   const [isAdminLogin, setIsAdminLogin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,12 +45,19 @@ export default function AuthPage() {
       return;
     }
 
+    if (authMode === 'signup' && !fullName.trim()) {
+      showNotification({ type: 'ERROR', message: 'Full Name is required!' });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       if (authMode === 'signup') {
         console.log("STEP: Signup Triggered");
-        const { data, error } = await signUp(email, password);
+        const { data, error } = await signUp(email, password, {
+          data: { full_name: fullName.trim() }
+        });
         
         console.log("STEP: Signup Response", { data, error });
 
@@ -188,6 +196,19 @@ export default function AuthPage() {
           </div>
 
           <form className="space-y-5" onSubmit={handleAuth}>
+            {!isLogin && (
+              <div className="space-y-2 group">
+                <label className="text-xs font-black text-gray-400 uppercase tracking-widest group-focus-within:text-blue-500 transition-colors">Full Identification</label>
+                <input 
+                  type="text" 
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Legal Name" 
+                  required 
+                  className="input-field bg-[#131722] py-4 w-full focus:border-blue-600/50 transition-all" 
+                />
+              </div>
+            )}
             <div className="space-y-2">
               <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Authorized Email</label>
               <input name="login_id" type="email" placeholder="Enter Email" required className="input-field bg-[#131722] py-4 w-full" />

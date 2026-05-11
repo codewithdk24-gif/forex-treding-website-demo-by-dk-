@@ -1,10 +1,13 @@
 import { supabase } from './supabaseClient';
 
-// Institutional Timeout Guard (7 seconds)
-const withTimeout = async (promise, timeoutMs = 7000) => {
+// Institutional Timeout Guard
+const withTimeout = async (promise, operationName = "Supabase Operation", timeoutMs = 7000) => {
   let timeoutId;
   const timeoutPromise = new Promise((_, reject) => {
-    timeoutId = setTimeout(() => reject(new Error("Supabase Operation Timeout")), timeoutMs);
+    timeoutId = setTimeout(() => {
+      console.warn(`[DB] ${operationName} Timed Out after ${timeoutMs}ms`);
+      reject(new Error(`${operationName} Timeout`));
+    }, timeoutMs);
   });
   try {
     return await Promise.race([promise, timeoutPromise]);
@@ -22,7 +25,8 @@ export const db = {
           .from('profiles')
           .select('*')
           .eq('id', userId)
-          .maybeSingle()
+          .maybeSingle(),
+        "getProfile"
       );
       if (result.error) throw result.error;
       return result.data;
@@ -62,7 +66,8 @@ export const db = {
           .select('*')
           .eq('user_id', userId)
           .eq('account_type', type)
-          .eq('is_active', true)
+          .eq('is_active', true),
+        "getActiveWallet"
       );
 
       if (result.error) throw result.error;
@@ -75,7 +80,8 @@ export const db = {
             .from('wallets')
             .insert([{ user_id: userId, account_type: type, balance: 100000, is_active: true }])
             .select()
-            .maybeSingle()
+            .maybeSingle(),
+          "createWallet"
         );
         
         if (createResult.error) throw createResult.error;
@@ -188,7 +194,8 @@ export const db = {
           .from('trades')
           .insert([finalizedData])
           .select()
-          .maybeSingle()
+          .maybeSingle(),
+        "executeTrade"
       );
       
       if (result.error) {

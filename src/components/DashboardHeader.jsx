@@ -114,7 +114,15 @@ export default function DashboardHeader() {
                   {profile?.avatar_url ? (
                     <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
-                    <User size={20} className="text-blue-500 opacity-80" />
+                    <span className="text-[10px] font-black text-blue-500 uppercase">
+                       {(() => {
+                          const name = profile?.full_name || user?.user_metadata?.full_name || 'Trader';
+                          if (!name || name === 'Trader') return 'TR';
+                          const parts = name.trim().split(/\s+/);
+                          if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+                          return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+                       })()}
+                    </span>
                   )}
                </div>
             </div>
