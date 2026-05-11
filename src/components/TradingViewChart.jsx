@@ -33,7 +33,7 @@ export const TradingViewChart = ({ symbol = 'FX:EURUSD', theme = 'dark' }) => {
           "locale": "en",
           "toolbar_bg": theme === 'dark' ? "#131722" : "#ffffff",
           "enable_publishing": false,
-          "hide_side_toolbar": false,
+          "hide_side_toolbar": typeof window !== 'undefined' && window.innerWidth < 1024,
           "allow_symbol_change": true,
           "container_id": containerId,
           "backgroundColor": theme === 'dark' ? "#0f1115" : "#f5f7fb",

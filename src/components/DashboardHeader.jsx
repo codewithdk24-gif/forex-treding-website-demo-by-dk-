@@ -46,7 +46,7 @@ export default function DashboardHeader() {
   };
 
   return (
-    <nav className="h-20 border-b border-white/[0.06] flex items-center justify-between px-6 md:px-10 shrink-0 bg-[#0d1117]/80 backdrop-blur-xl z-50 w-full sticky top-0">
+    <nav className="h-16 lg:h-20 border-b border-white/[0.06] flex items-center justify-between px-3 md:px-10 shrink-0 bg-[#0d1117]/80 backdrop-blur-xl z-50 w-full sticky top-0">
       <div className="flex items-center gap-3 md:gap-4">
          {/* Mobile Menu Toggle */}
          <button 

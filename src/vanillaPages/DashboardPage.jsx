@@ -186,7 +186,7 @@ export const DashboardPage = () => {
    }, [activeSymbol, prices]);
 
    return (
-      <div className="min-h-[100dvh] lg:h-[100dvh] bg-[#0d1117] text-white flex flex-col overflow-x-hidden lg:overflow-hidden selection:bg-blue-500/20 max-w-[1600px] mx-auto w-full relative border-x border-white/5 shadow-2xl">
+      <div className="min-h-[100dvh] lg:h-[100dvh] bg-[#0d1117] text-white flex flex-col overflow-x-hidden lg:overflow-hidden selection:bg-blue-500/20 lg:max-w-[1600px] lg:mx-auto w-full relative lg:border-x border-white/5 shadow-2xl">
 
          {/* Institutional Ticker - Compact Desktop Only */}
          <div className="hidden lg:flex shrink-0 bg-black/40 border-b border-white/5 py-1.5 overflow-hidden">
@@ -203,7 +203,7 @@ export const DashboardPage = () => {
          </div>
 
          {/* Terminal Control Bar - Compact for Mobile */}
-         <div className="h-10 lg:h-14 flex items-center justify-between px-3 md:px-6 bg-[#0d1117]/40 backdrop-blur-md border-b border-white/5 z-40 shrink-0">
+         <div className="h-10 lg:h-14 flex items-center justify-between px-2 md:px-6 bg-[#0d1117]/40 backdrop-blur-md border-b border-white/5 z-40 shrink-0">
             <div className="flex items-center gap-3 lg:gap-6">
                <div className="hidden lg:flex items-center gap-3 bg-white/[0.03] px-3 py-1.5 rounded-xl border border-white/5">
                   <BarChart3 size={14} className="text-blue-500" />
@@ -233,10 +233,10 @@ export const DashboardPage = () => {
 
          {/* Main Terminal Area */}
          <main className="flex-1 flex flex-col md:flex-row relative h-auto lg:h-full">
-            {/* Chart Area */}
+            {/* Chart Area - Edge-to-Edge on Mobile */}
             <div className="flex-1 relative bg-[#090c10] h-full overflow-hidden pb-24 lg:pb-0">
                {!isLoading && (
-                  <div className="absolute inset-0 w-full h-full z-10 pl-0 md:pl-0">
+                  <div className="absolute inset-0 w-full h-full z-10 pl-0 md:pl-0 overflow-hidden">
                      <TradingViewChart symbol={activeSymbol || 'FX:EURUSD'} theme="dark" />
                   </div>
                )}
