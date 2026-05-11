@@ -113,7 +113,15 @@ export const AuthProvider = ({ children }) => {
         
         // Single call to get session
         const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) throw error;
+        
+        if (error) {
+          if (error.message?.includes('Refresh Token Not Found') || error.status === 400) {
+            console.warn("[INFRA] Stale session detected, clearing local storage...");
+            await supabase.auth.signOut({ scope: 'local' }).catch(() => {});
+          } else {
+            throw error;
+          }
+        }
         
         console.log(`[INFRA] session check complete in ${Date.now() - startTime}ms`);
         
@@ -122,7 +130,10 @@ export const AuthProvider = ({ children }) => {
           await refreshUserData(session.user.id, true);
         }
       } catch (err) {
-        console.error('[INFRA] Auth Init Error:', err);
+        // Suppress known noisy auth errors to keep terminal clean
+        if (!err.message?.includes('Refresh Token Not Found')) {
+          console.error('[INFRA] Auth Init Error:', err);
+        }
       } finally {
         if (mounted) {
           setLoading(false);
