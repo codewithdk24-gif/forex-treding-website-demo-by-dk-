@@ -202,31 +202,31 @@ export const DashboardPage = () => {
             </div>
          </div>
 
-         {/* Terminal Control Bar */}
-         <div className="h-14 flex items-center justify-between px-4 md:px-6 bg-[#0d1117]/40 backdrop-blur-md border-b border-white/5 z-40 shrink-0">
-            <div className="flex items-center gap-6">
-               <div className="flex items-center gap-3 bg-white/[0.03] px-3 py-1.5 rounded-xl border border-white/5">
+         {/* Terminal Control Bar - Compact for Mobile */}
+         <div className="h-10 lg:h-14 flex items-center justify-between px-3 md:px-6 bg-[#0d1117]/40 backdrop-blur-md border-b border-white/5 z-40 shrink-0">
+            <div className="flex items-center gap-3 lg:gap-6">
+               <div className="hidden lg:flex items-center gap-3 bg-white/[0.03] px-3 py-1.5 rounded-xl border border-white/5">
                   <BarChart3 size={14} className="text-blue-500" />
                   <span className="text-[11px] font-black uppercase tracking-widest">{activeSymbol || 'EUR / USD'}</span>
                </div>
 
-               <div className="hidden sm:flex items-center bg-white/[0.03] p-1 rounded-xl border border-white/5">
-                  <button onClick={() => setMode('demo')} className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${mode === 'demo' ? 'bg-orange-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}>Demo</button>
-                  <button onClick={() => setMode('live')} className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all ${mode === 'live' ? 'bg-emerald-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}>Live</button>
+               <div className="flex items-center bg-white/[0.03] p-0.5 lg:p-1 rounded-lg lg:rounded-xl border border-white/5">
+                  <button onClick={() => setMode('demo')} className={`px-2 lg:px-4 py-1 text-[8px] lg:text-[9px] font-black uppercase tracking-widest rounded-md lg:rounded-lg transition-all ${mode === 'demo' ? 'bg-orange-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}>Demo</button>
+                  <button onClick={() => setMode('live')} className={`px-2 lg:px-4 py-1 text-[8px] lg:text-[9px] font-black uppercase tracking-widest rounded-md lg:rounded-lg transition-all ${mode === 'live' ? 'bg-emerald-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}>Live</button>
                </div>
             </div>
 
-            <div className="flex items-center gap-6">
-               <div className="flex items-center gap-4 bg-emerald-500/5 px-3 py-1.5 rounded-xl border border-emerald-500/10">
+            <div className="flex items-center gap-4 lg:gap-6">
+               <div className="hidden lg:flex items-center gap-4 bg-emerald-500/5 px-3 py-1.5 rounded-xl border border-emerald-500/10">
                   <p className={`text-lg font-black tracking-tighter tabular-nums ${priceColor} transition-all duration-300 leading-none`}>{terminalPrice}</p>
                   <div className="flex flex-col">
                      <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest leading-none">+1.42%</span>
                   </div>
                </div>
-               <div className="hidden md:flex items-center gap-2">
-                  <button className="p-2 text-gray-500 hover:text-white transition-colors"><MousePointer2 size={16} /></button>
-                  <button className="p-2 text-gray-500 hover:text-white transition-colors"><Crosshair size={16} /></button>
-                  <button className="p-2 text-gray-500 hover:text-white transition-colors"><Timer size={16} /></button>
+               <div className="flex items-center gap-1 lg:gap-2">
+                  <button className="p-1.5 text-gray-500 hover:text-white transition-colors"><MousePointer2 size={14} /></button>
+                  <button className="p-1.5 text-gray-500 hover:text-white transition-colors"><Crosshair size={14} /></button>
+                  <button className="p-1.5 text-gray-500 hover:text-white transition-colors lg:block hidden"><Timer size={14} /></button>
                </div>
             </div>
          </div>
@@ -234,9 +234,9 @@ export const DashboardPage = () => {
          {/* Main Terminal Area */}
          <main className="flex-1 flex flex-col md:flex-row relative h-auto lg:h-full">
             {/* Chart Area */}
-            <div className="flex-1 relative bg-[#090c10] h-[850px] md:h-full md:min-h-0 overflow-hidden pb-40 md:pb-0">
+            <div className="flex-1 relative bg-[#090c10] h-full overflow-hidden pb-24 lg:pb-0">
                {!isLoading && (
-                  <div className="absolute inset-0 w-full h-full z-10 pl-11 md:pl-0">
+                  <div className="absolute inset-0 w-full h-full z-10 pl-0 md:pl-0">
                      <TradingViewChart symbol={activeSymbol || 'FX:EURUSD'} theme="dark" />
                   </div>
                )}
@@ -248,9 +248,11 @@ export const DashboardPage = () => {
                   </div>
                )}
 
-               {/* Mobile Header Overlay - Repositioned to clear TV tools */}
-               <div className="lg:hidden absolute top-[52px] left-1/2 -translate-x-1/2 px-4 py-1.5 bg-black/60 backdrop-blur-xl rounded-full border border-white/5 flex items-center gap-3 z-20 shadow-xl pointer-events-none ring-1 ring-white/10">
-                  <p className={`text-xs font-black tracking-tighter tabular-nums ${priceColor} transition-all duration-300`}>{terminalPrice}</p>
+               {/* Compact Mobile Floating Info Strip */}
+               <div className="lg:hidden absolute top-2 left-1/2 -translate-x-1/2 px-3 py-1 bg-black/80 backdrop-blur-xl rounded-lg border border-white/10 flex items-center gap-2.5 z-20 shadow-2xl pointer-events-none ring-1 ring-white/10">
+                  <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{activeSymbol || 'EUR/USD'}</span>
+                  <div className="w-px h-2.5 bg-white/10"></div>
+                  <p className={`text-[11px] font-black tracking-tighter tabular-nums ${priceColor} transition-all duration-300`}>{terminalPrice}</p>
                   <div className="w-px h-2.5 bg-white/10"></div>
                   <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">+1.42%</span>
                </div>
@@ -329,28 +331,24 @@ export const DashboardPage = () => {
             </div>
          </main>
 
-         {/* Mobile Bottom Execution Bar - Ultra-Compact */}
-         <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0d1117]/98 backdrop-blur-3xl border-t border-white/10 px-4 pt-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-15px_50px_rgba(0,0,0,0.9)]">
-            <div className="space-y-3">
-               <div className="flex items-center justify-between gap-6">
-                  <div className="flex-1 space-y-1.5">
-                     <p className="text-[8px] font-black text-gray-500 uppercase tracking-[0.2em] ml-0.5">Trade Size</p>
-                     <div className="flex items-center gap-2">
-                        <button onClick={() => adjustLotSize(-0.01)} className="w-9 h-9 bg-white/[0.05] rounded-xl border border-white/10 flex items-center justify-center font-black text-lg active:scale-90 text-gray-400 transition-all">-</button>
-                        <input type="number" value={lotSize} onChange={(e) => setLotSize(e.target.value)} step="0.01" className="w-12 bg-transparent text-center font-black text-base focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                        <button onClick={() => adjustLotSize(0.01)} className="w-9 h-9 bg-white/[0.05] rounded-xl border border-white/10 flex items-center justify-center font-black text-lg active:scale-90 text-gray-400 transition-all">+</button>
-                     </div>
+         {/* Mobile Bottom Execution Bar - Institutional Layout */}
+         <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0d1117]/95 backdrop-blur-2xl border-t border-white/10 px-4 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-[0_-10px_40px_rgba(0,0,0,0.8)]">
+            <div className="flex flex-col gap-2">
+               <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 bg-white/[0.03] px-2 py-1 rounded-lg border border-white/5">
+                     <p className="text-[8px] font-black text-gray-500 uppercase tracking-widest">SIZE:</p>
+                     <input type="number" value={lotSize} onChange={(e) => setLotSize(e.target.value)} step="0.01" className="w-10 bg-transparent text-center font-black text-[10px] text-white focus:outline-none" />
                   </div>
-                  <div className="text-right flex flex-col justify-end">
-                     <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest mb-1">PROFIT: +${formattedProfit}</p>
-                     <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest">RISK: -${formattedRisk}</p>
+                  <div className="flex gap-3">
+                     <p className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">PROFIT: +${formattedProfit}</p>
+                     <p className="text-[8px] font-black text-rose-500 uppercase tracking-widest">RISK: -${formattedRisk}</p>
                   </div>
                </div>
 
-                <div className="flex gap-2">
-                   <button onClick={() => initiateOrder('SELL')} className="flex-1 py-3 rounded-2xl bg-rose-600 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-rose-900/30 active:scale-95 transition-all ring-1 ring-white/10">Sell</button>
-                   <button onClick={() => initiateOrder('BUY')} className="flex-1 py-3 rounded-2xl bg-emerald-600 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-emerald-900/30 active:scale-95 transition-all ring-1 ring-white/10">Buy</button>
-                </div>
+               <div className="flex gap-2">
+                  <button onClick={() => initiateOrder('SELL')} className="flex-1 py-2.5 rounded-xl bg-rose-600 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-rose-900/30 active:scale-95 transition-all">Sell</button>
+                  <button onClick={() => initiateOrder('BUY')} className="flex-1 py-2.5 rounded-xl bg-emerald-600 text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-emerald-900/30 active:scale-95 transition-all">Buy</button>
+               </div>
             </div>
          </div>
 
